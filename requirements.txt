@@ -1,7 +1,0 @@
-Flask
-PyMySQL
-python-dotenv
-Flask-Cors
-flask-mysqldb
-
-# pip install -r requirements.txt
