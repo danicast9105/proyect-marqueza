@@ -33,21 +33,21 @@ class contacto_services:
         c.close()
         return "Contacto agregado correctamente"
 
-    def deleteContacto():
+    def deleteContacto(id):
         sql = "DELETE FROM T_CONTACTO WHERE CONT_ID = %s"
 
         c = current_app.mysql.connection.cursor()
-        c.execute(sql, ("cont_id",))
+        c.execute(sql, (id,))
         current_app.mysql.connection.commit()
         c.close()
 
         return "Contacto eliminado correctamente"
 
-    def updateContacto():
-        sql = "UPDATE T_CONTACTO SET CONT_TIPO_DATO = %s, CONT_CONTENIDO = %s WHERE CONT_ID = %s"
+    def updateContacto(id, tipo_contacto, contenido, proveedor_id):
+        sql = "UPDATE T_CONTACTO SET CONT_TIPO_DATO = %s, CONT_CONTENIDO = %s, CONT_PROV_ID = %s WHERE CONT_ID = %s"
 
         c = current_app.mysql.connection.cursor()
-        c.execute(sql, ("cont_tipo", "cont_contenido", "cont_id"))
+        c.execute(sql, (tipo_contacto, contenido, proveedor_id, id))
         current_app.mysql.connection.commit()
         c.close()
 

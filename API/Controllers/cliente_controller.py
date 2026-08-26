@@ -16,7 +16,9 @@ class cliente_controller:
         data = cliente_services.deleteCliente(id)
         return jsonify(data), 200
 
-    def cntModCliente():
-        data = cliente_services.updateCliente()
-        return jsonify(data), 201
+    def cntModCliente(id):
+        persona_id = request.json["persona_id"]
+
+        data = cliente_services.updateCliente(id, persona_id)
+        return jsonify(data), 200
 

@@ -46,11 +46,11 @@ class cliente_services:
 
         return "Cliente eliminado correctamente"
 
-    def updateCliente():
-        sql = "UPDATE T_CLIENTE SET CLI_UUID = %s, CLI_PER_ID = %s"
+    def updateCliente(id, persona_id):
+        sql = "UPDATE T_CLIENTE SET CLI_PER_ID = %s WHERE CLI_ID = %s"
 
         c = current_app.mysql.connection.cursor()
-        c.execute(sql, ("cli_uuid", "cli_per_id"))
+        c.execute(sql, (persona_id, id))
         current_app.mysql.connection.commit()
         c.close()
 

@@ -13,12 +13,12 @@ def createcontacto():
     x = contacto_controller.cntAddContacto()
     return x
 
-@contacto_bp.route('/', methods=['PUT'])
-def updatecontacto():
-    x = contacto_controller.cntModContacto()
+@contacto_bp.route('/<id>', methods=['PUT'])
+def updatecontacto(id):
+    x = contacto_controller.cntModContacto(id)
     return x
 
-@contacto_bp.route('/', methods=['DELETE'])
-def deletecontacto():
-    x = contacto_controller.cntDelContacto()
+@contacto_bp.route('/<id>', methods=['DELETE'])
+def deletecontacto(id):
+    x = contacto_controller.cntDelContacto(id)
     return x

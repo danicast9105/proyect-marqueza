@@ -13,9 +13,9 @@ def createCliente():
     x = cliente_controller.cntAddCliente()
     return x
 
-@cliente_bp.route('/', methods=['PUT'])
-def updateCliente():
-    x = cliente_controller.cntModCliente()
+@cliente_bp.route('/<id>', methods=['PUT'])
+def updateCliente(id):
+    x = cliente_controller.cntModCliente(id)
     return x
 
 @cliente_bp.route('/<id>', methods=['DELETE'])
