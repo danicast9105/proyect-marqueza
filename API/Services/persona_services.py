@@ -1,50 +1,52 @@
 from flask import current_app
 from Models.persona import Persona
+import uuid as uuid_lib
 
-def servListPersona():
-    sql = "SELECT * FROM T_PERSONA"
+class persona_services:
+    def servListPersona():
+        sql = "SELECT * FROM T_PERSONA"
 
-    c   = current_app.mysql.connection.cursor() 
-    c.execute(sql)
-    
-    data = c.fetchall()
-    print(data)
-    
-    personas_l =[ ]
-    for u in data:
-        personas_l.append(Persona(u[0],u[1],u[2],u[3],u[4],u[5],u[6],u[7],u[8],u[9]).to_dic())
+        c   = current_app.mysql.connection.cursor() 
+        c.execute(sql)
+        
+        data = c.fetchall()
+        print(data)
+        
+        personas_l =[ ]
+        for u in data:
+            personas_l.append(Persona(u[0],u[1],u[2],u[3],u[4],u[5],u[6],u[7],u[8],u[9]).to_dic())
 
-    print(personas_l)
-    c.close()
+        print(personas_l)
+        c.close()
 
-    return personas_l
+        return personas_l
 
-def addPersona():
-    sql = "INSERT INTO T_PERSONA (PER_UUID, PER_NOMBRE, PER_SEG_NOMBRE, PER_PRI_APELLIDO, PER_SEG_APELLIDO, PER_CORREO, PER_DIRECCION, PER_IDENTIFICACION, PER_TELEFONO) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    def addPersona():
+        sql = "INSERT INTO T_PERSONA (PER_UUID, PER_NOMBRE, PER_SEG_NOMBRE, PER_PRI_APELLIDO, PER_SEG_APELLIDO, PER_CORREO, PER_DIRECCION, PER_IDENTIFICACION, PER_TELEFONO) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
-    c   = current_app.mysql.connection.cursor()
-    c.execute(sql, ("per_uuid", "per_nombre", "per_seg_nombre", "per_pri_apellido", "per_seg_apellido", "per_correo", "per_direccion", "per_identificacion", "per_telefono"))
-    current_app.mysql.connection.commit()
+        c   = current_app.mysql.connection.cursor()
+        c.execute(sql, ("per_uuid", "per_nombre", "per_seg_nombre", "per_pri_apellido", "per_seg_apellido", "per_correo", "per_direccion", "per_identificacion", "per_telefono"))
+        current_app.mysql.connection.commit()
 
-    c.close()
-    return "Persona agregada correctamente"
+        c.close()
+        return "Persona agregada correctamente"
 
-def deletePersona():
-    sql = "DELETE FROM T_PERSONA WHERE PER_ID = %s"
+    def deletePersona():
+        sql = "DELETE FROM T_PERSONA WHERE PER_ID = %s"
 
-    c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("per_id",))
-    current_app.mysql.connection.commit()
-    c.close()
+        c = current_app.mysql.connection.cursor()
+        c.execute(sql, ("per_id",))
+        current_app.mysql.connection.commit()
+        c.close()
 
-    return "Persona eliminada correctamente"
+        return "Persona eliminada correctamente"
 
-def updatePersona():
-    sql = "UPDATE T_PERSONA SET PER_NOMBRE = %s, PER_SEG_NOMBRE = %s, PER_PRI_APELLIDO = %s, PER_SEG_APELLIDO = %s, PER_CORREO = %s, PER_DIRECCION = %s, PER_IDENTIFICACION = %s, PER_TELEFONO = %s WHERE PER_ID = %s"
+    def updatePersona():
+        sql = "UPDATE T_PERSONA SET PER_NOMBRE = %s, PER_SEG_NOMBRE = %s, PER_PRI_APELLIDO = %s, PER_SEG_APELLIDO = %s, PER_CORREO = %s, PER_DIRECCION = %s, PER_IDENTIFICACION = %s, PER_TELEFONO = %s WHERE PER_ID = %s"
 
-    c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("per_nombre", "per_seg_nombre", "per_pri_apellido", "per_seg_apellido", "per_correo", "per_direccion", "per_identificacion", "per_telefono", "per_id"))
-    current_app.mysql.connection.commit()
-    c.close()
+        c = current_app.mysql.connection.cursor()
+        c.execute(sql, ("per_nombre", "per_seg_nombre", "per_pri_apellido", "per_seg_apellido", "per_correo", "per_direccion", "per_identificacion", "per_telefono", "per_id"))
+        current_app.mysql.connection.commit()
+        c.close()
 
-    return "Persona actualizada correctamente"
+        return "Persona actualizada correctamente"
