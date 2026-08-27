@@ -1,19 +1,32 @@
 from flask import jsonify, request
-from Services.detalles_etc_services import servListDetalles_etc, addDetalles_etc, deleteDetalles_etc, updateDetalles_etc
+from Services.detalles_etc_services import detalles_etc_services
 
-def cntListDetalles_etc():
-    data = servListDetalles_etc()
-    return jsonify(data), 200
+class detalles_etc_controller:
+    def cntListDetalles_etc():
+        data = detalles_etc_services.servListDetalles_etc()
+        return jsonify(data), 200
 
-def cntAddDetalles_etc():
-    data = addDetalles_etc()
-    return jsonify(data), 200
+    def cntAddDetalles_etc():
+        data = request.get_json(silent=True)
 
-def cntDelDetalles_etc():
-    data = deleteDetalles_etc()
-    return jsonify(data), 200
+        det_etc_nombre = data["det_etc_nombre"]
+        det_etc_etc_id = data["det_etc_etc_id"]
+        det_etc_per_id = data["det_etc_per_id"]
 
-def cntModDetalles_etc():
-    data = updateDetalles_etc()
-    return jsonify(data), 201
+        x = detalles_etc_services.addDetalles_etc(det_etc_nombre, det_etc_etc_id, det_etc_per_id)
+        return jsonify(x), 200
+
+    def cntDelDetalles_etc(id):
+        data = detalles_etc_services.deleteDetalles_etc(id)
+        return jsonify(data), 200
+
+    def cntModDetalles_etc(id):
+        data = request.get_json(silent=True)
+        
+        det_etc_nombre = data["det_etc_nombre"]
+        det_etc_etc_id = data["det_etc_etc_id"]
+        det_etc_per_id = data["det_etc_per_id"]
+
+        x = detalles_etc_services.updateDetalles_etc(id, det_etc_nombre, det_etc_etc_id, det_etc_per_id)
+        return jsonify(x), 200
 

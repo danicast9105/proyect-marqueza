@@ -1,13 +1,19 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API de MISCELANEA 3.0",
-    "description": "API REST para gestión de usuarios y eventos.",
-    "version": "2.0.0"
+    "title": "API de Marqueza C",
+    "description": "API REST para gestión de usuarios e inventarios.",
+    "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:5000"
+      "url": "http://192.168.1.9:5000/usuarios/"
+    },
+    {
+      "url": "http://192.168.1.9:5000/clientes/"
+    },
+    {
+      "url": "http://192.168.1.9:5000/usuarios/"
     }
   ],
   "tags": [
