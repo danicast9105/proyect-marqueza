@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios — MARQUEZA</title>
+    <!-- Estilos específicos para la sección de usuarios y componentes responsivos -->
+    <link rel="stylesheet" href="estilos4.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
+    <nav class="barra_lateral close">
+        <header>
+            <!-- Contenedor para el logo y el texto del título -->
+            <div class="imagen_texto">
+                <span class="imagen">
+                    <img src="../../fondo/icono 3.png" alt="Logo Marqueza">
+                </span>
+                <div class="texto texto_titulo">
+                    <span class="titulo">MARQUEZA</span>
+                    <span class="subtitulo">confecciones que inspiran</span>
+                </div>
+            </div>
+
+            <!-- Flecha (desktop) -->
+            <i class='bx bx-chevron-right toggle'></i>
+
+            <!-- Hamburger (tablet / móvil) — oculto en desktop vía CSS -->
+            <div class="hamburger" id="hamburger" aria-label="Abrir menú" role="button" tabindex="0">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </header>
+
+        <!-- ── Menú principal ── -->
+        <!-- Contenedor del menú de navegación -->
+        <div class="barra_menu">
+            <div class="menu">
+                <!-- Lista de enlaces de navegación -->
+                <ul class="links_menu">
+                    <li class="nav_links">
+                        <a href="../inicio/inicio.html">
+                            <i class='bx bx-home-alt icon'></i>
+                            <span class="texto nav_texto">Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../insumos/insumos.html">
+                            <i class='bx bx-task icon'></i>
+                            <span class="texto nav_texto">Insumos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bxs-t-shirt icon'></i>
+                            <span class="texto nav_texto">Productos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-money-withdraw icon'></i>
+                            <span class="texto nav_texto">Pedidos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-book-content icon'></i>
+                            <span class="texto nav_texto">Cotizaciones</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../usuarios/usuarios.html">
+                            <i class='bx bx-user icon'></i>
+                            <span class="texto nav_texto">Usuarios</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../ayuda/ayuda.html">
+                            <i class='bx bx-help-circle icon'></i>
+                            <span class="texto nav_texto">Ayuda</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Sección inferior del menú: botón de salir y selector de modo oscuro/claro -->
+            <div class="boton-contenido">
+                <!-- Enlace para salir de la sesión -->
+                <li>
+                    <a href="#">
+                        <i class='bx bx-log-out icon'></i>
+                        <span class="texto nav_texto">Salir</span>
+                    </a>
+                </li>
+
+                <!-- Selector de modo oscuro/claro -->
+                <li class="modo">
+                    <!-- Iconos de sol y luna para representar los modos -->
+                    <div class="sol_luna">
+                        <i class='bx bx-sun icon sol'></i>
+                        <i class='bx bx-moon icon luna'></i>
+                    </div>
+                    <span class="texto modo_texto">Oscuro</span>
+
+                    <!-- Interruptor visual para cambiar el modo -->
+                    <div class="toggle_switch">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+    <div class="cont_2">
+        <h1 class="titulo_seccion">Gestion de Usuarios</h1>
+        <div class="cont_busqueda">
+            <input type="text" placeholder="Buscar usuario...">
+            <button>Buscar</button>
+            <button class="agregar">Agregar Usuario</button>
+        </div>
+
+        <!-- Contenedor de la Tabla de Datos -->
+        <div class="cont_tabla">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Rol</th>
+                        <th>Contraseña</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- El contenido se genera automáticamente desde usuarios.js -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Ventana Modal para Agregar Usuario -->
+    <div id="modalUsuario" class="modal-container">
+        <div class="modal-content">
+            <header>
+                <h2>Agregar Usuario</h2>
+                <i class='bx bx-x' id="cerrarModal" aria-label="Cerrar"></i>
+            </header>
+            <form id="formUsuario">
+                <div class="input-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" required placeholder="Ingrese nombre">
+                </div>
+                <div class="input-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <input type="email" id="correo" required placeholder="correo@ejemplo.com">
+                </div>
+                <div class="input-group">
+                    <label for="rol">Rol</label>
+                    <select id="rol" required>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Empleado">Empleado</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="contrasena">Contraseña</label>
+                    <input type="password" id="contrasena" required placeholder="Contraseña">
+                </div>
+                <div class="input-group">
+                    <label for="confirmarContrasena">Confirmar Contraseña</label>
+                    <input type="password" id="confirmarContrasena" required placeholder="Confirme la contraseña">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button>
+                    <button type="submit" class="btn-primario">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ventana Modal para Editar Usuario -->
+    <div id="modalEditarUsuario" class="modal-container">
+        <div class="modal-content">
+            <header>
+                <h2>Editar Usuario</h2>
+                <i class='bx bx-x' id="cerrarEditModal" aria-label="Cerrar"></i>
+            </header>
+            <form id="formEditarUsuario">
+                <input type="hidden" id="editIndex">
+                <div class="input-group">
+                    <label for="editNombre">Nombre Completo</label>
+                    <input type="text" id="editNombre" required placeholder="Ingrese nombre">
+                </div>
+                <div class="input-group">
+                    <label for="editCorreo">Correo Electrónico</label>
+                    <input type="email" id="editCorreo" required placeholder="correo@ejemplo.com">
+                </div>
+                <div class="input-group">
+                    <label for="editRol">Rol</label>
+                    <select id="editRol" required>
+                        <option value="Administrador">Administrador</option>
+                        <option value="Empleado">Empleado</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="editContrasena">Nueva Contraseña (opcional)</label>
+                    <input type="password" id="editContrasena" placeholder="Dejar en blanco para no cambiar">
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secundario" id="btnCancelarEdit">Cancelar</button>
+                    <button type="submit" class="btn-primario">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
+    <script src="usuarios.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>
