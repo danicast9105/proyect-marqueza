@@ -14,10 +14,11 @@ class persona_controller:
         pri_apellido = data["pri_apellido"]
         seg_apellido = data["seg_apellido"]
         correo = data["correo"]
+        direccion = data["direccion"]
         identificacion = data["identificacion"]
         telefono = data["telefono"]
 
-        x = persona_services.addPersona(nombre, seg_nombre, pri_apellido, seg_apellido, correo, identificacion, telefono)
+        x = persona_services.addPersona(nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono)
         return jsonify(x), 200
 
     def cntDelPersona(id):
@@ -32,9 +33,10 @@ class persona_controller:
         pri_apellido = data["pri_apellido"]
         seg_apellido = data["seg_apellido"]
         correo = data["correo"]
+        direccion = data["direccion"]
         identificacion = data["identificacion"]
         telefono = data["telefono"]
 
-        x = persona_services.updatePersona(id, nombre, seg_nombre, pri_apellido, seg_apellido, correo, identificacion, telefono)
+        x = persona_services.updatePersona(id, nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono)
         return jsonify(x), 200
 

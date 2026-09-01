@@ -21,31 +21,32 @@ class persona_services:
 
         return personas_l
 
-    def addPersona():
+    def addPersona(nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono):
+        uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_PERSONA (PER_UUID, PER_NOMBRE, PER_SEG_NOMBRE, PER_PRI_APELLIDO, PER_SEG_APELLIDO, PER_CORREO, PER_DIRECCION, PER_IDENTIFICACION, PER_TELEFONO) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
         c   = current_app.mysql.connection.cursor()
-        c.execute(sql, ("per_uuid", "per_nombre", "per_seg_nombre", "per_pri_apellido", "per_seg_apellido", "per_correo", "per_direccion", "per_identificacion", "per_telefono"))
+        c.execute(sql, (uuid, nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono))
         current_app.mysql.connection.commit()
 
         c.close()
         return "Persona agregada correctamente"
 
-    def deletePersona():
+    def deletePersona(id):
         sql = "DELETE FROM T_PERSONA WHERE PER_ID = %s"
 
         c = current_app.mysql.connection.cursor()
-        c.execute(sql, ("per_id",))
+        c.execute(sql, (id,))
         current_app.mysql.connection.commit()
         c.close()
 
         return "Persona eliminada correctamente"
 
-    def updatePersona():
+    def updatePersona(id, nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono):
         sql = "UPDATE T_PERSONA SET PER_NOMBRE = %s, PER_SEG_NOMBRE = %s, PER_PRI_APELLIDO = %s, PER_SEG_APELLIDO = %s, PER_CORREO = %s, PER_DIRECCION = %s, PER_IDENTIFICACION = %s, PER_TELEFONO = %s WHERE PER_ID = %s"
 
         c = current_app.mysql.connection.cursor()
-        c.execute(sql, ("per_nombre", "per_seg_nombre", "per_pri_apellido", "per_seg_apellido", "per_correo", "per_direccion", "per_identificacion", "per_telefono", "per_id"))
+        c.execute(sql, (nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono, id))
         current_app.mysql.connection.commit()
         c.close()
 
