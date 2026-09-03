@@ -1,50 +1,53 @@
 from flask import current_app
 from Models.detalles_etc import Detalles_etc
+import uuid as uuid_lib
 
-def servListDetalles_etc():
-    sql = "SELECT * FROM T_DETALLES_ETC"
+class detalles_etc_services:
+    def servListDetalles_etc():
+        sql = "SELECT * FROM T_DETALLES_ETC"
 
-    c   = current_app.mysql.connection.cursor() 
-    c.execute(sql)
-    
-    data = c.fetchall()
-    print(data)
-    
-    detalles_etc_l =[ ]
-    for u in data:
-        detalles_etc_l.append(Detalles_etc(u[0],u[1],u[2],u[3],u[4]).to_dic())
+        c   = current_app.mysql.connection.cursor() 
+        c.execute(sql)
+        
+        data = c.fetchall()
+        print(data)
+        
+        detalles_etc_l =[ ]
+        for u in data:
+            detalles_etc_l.append(Detalles_etc(u[0],u[1],u[2],u[3],u[4]).to_dic())
 
-    print(detalles_etc_l)
-    c.close()
+        print(detalles_etc_l)
+        c.close()
 
-    return detalles_etc_l
+        return detalles_etc_l
 
-def addDetalles_etc():
-    sql = "INSERT INTO T_DETALLES_ETC (DET_ETC_UUID, DET_ETC_NOMBRE, DET_ETC_ETC_ID, DET_ETC_PER_ID) VALUES (%s, %s, %s, %s)"
+    def addDetalles_etc(det_etc_nombre, det_etc_etc_id, det_etc_per_id):
+        uuid = str(uuid_lib.uuid4())
+        sql = "INSERT INTO T_DETALLES_ETC (DET_ETC_UUID, DET_ETC_NOMBRE, DET_ETC_ETC_ID, DET_ETC_PER_ID) VALUES (%s, %s, %s, %s)"
 
-    c   = current_app.mysql.connection.cursor()
-    c.execute(sql, ("det_etc_uuid", "det_etc_nombre", "det_etc_etc_id", "det_etc_per_id"))
-    current_app.mysql.connection.commit()
+        c   = current_app.mysql.connection.cursor()
+        c.execute(sql, (uuid, det_etc_nombre, det_etc_etc_id, det_etc_per_id))
+        current_app.mysql.connection.commit()
 
-    c.close()
-    return "Detalle agregado correctamente"
+        c.close()
+        return "Detalle agregado correctamente"
 
-def deleteDetalles_etc():
-    sql = "DELETE FROM T_DETALLES_ETC WHERE DET_ETC_ID = %s"
+    def deleteDetalles_etc(id):
+        sql = "DELETE FROM T_DETALLES_ETC WHERE DET_ETC_ID = %s"
 
-    c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("det_etc_id",))
-    current_app.mysql.connection.commit()
-    c.close()
+        c = current_app.mysql.connection.cursor()
+        c.execute(sql, (id,))
+        current_app.mysql.connection.commit()
+        c.close()
 
-    return "Detalle eliminado correctamente"  
+        return "Detalle eliminado correctamente"  
 
-def updateDetalles_etc():
-    sql = "UPDATE T_DETALLES_ETC SET DET_ETC_NOMBRE = %s, DET_ETC_ETC_ID = %s, DET_ETC_PER_ID = %s WHERE DET_ETC_ID = %s"
+    def updateDetalles_etc(id, det_etc_nombre, det_etc_etc_id, det_etc_per_id):
+        sql = "UPDATE T_DETALLES_ETC SET DET_ETC_NOMBRE = %s, DET_ETC_ETC_ID = %s, DET_ETC_PER_ID = %s WHERE DET_ETC_ID = %s"
 
-    c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("det_etc_nombre", "det_etc_etc_id", "det_etc_per_id", "det_etc_id"))
-    current_app.mysql.connection.commit()
-    c.close()
+        c = current_app.mysql.connection.cursor()
+        c.execute(sql, (det_etc_nombre, det_etc_etc_id, det_etc_per_id,id))
+        current_app.mysql.connection.commit()
+        c.close()
 
-    return "Detalle actualizado correctamente"
+        return "Detalle actualizado correctamente"

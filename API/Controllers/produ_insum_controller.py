@@ -1,19 +1,30 @@
 from flask import jsonify, request
-from Services.produ_insum_services import servListProduInsum, addProduInsum, deleteProduInsum, updateProduInsum
+from Services.produ_insum_services import produ_insum_services
 
-def cntListProduInsum():
-    data = servListProduInsum()
-    return jsonify(data), 200
+class produ_insum_controller:
+    def cntListProduInsum():
+        data = produ_insum_services.servListProduInsum()
+        return jsonify(data), 200
 
-def cntAddProduInsum():
-    data = addProduInsum()
-    return jsonify(data), 200
+    def cntAddProduInsum():
+        data =  request.get_json(silent=True)
 
-def cntDelProduInsum():
-    data = deleteProduInsum()
-    return jsonify(data), 200
+        cantidad =  data["cantidad"]
+        producto_id = data["producto_id"]
+        insumo_id = data["insumo_id"]
+        x = produ_insum_services.addProduInsum(cantidad, producto_id, insumo_id)
+        return jsonify(x), 200
 
-def cntModProduInsum():
-    data = updateProduInsum()
-    return jsonify(data), 201
+    def cntDelProduInsum(id):
+        data = produ_insum_services.deleteProduInsum(id)
+        return jsonify(data), 200
+
+    def cntModProduInsum(id):
+        data =  request.get_json(silent=True)
+
+        cantidad =  data["cantidad"]
+        producto_id = data["producto_id"]
+        insumo_id = data["insumo_id"]
+        x = produ_insum_services.updateProduInsum(id, cantidad, producto_id, insumo_id)
+        return jsonify(x), 200
 

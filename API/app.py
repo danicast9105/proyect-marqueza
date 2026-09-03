@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from Routes.__init_ import load_routes
+from Routes import load_routes
 from flask_mysqldb import MySQL
 
 app = Flask(__name__)

@@ -1,17 +1,17 @@
 class Produ_insum:
 
-    def __init__(self, PRODINSU_ID, PRODINSU_UUID, PRODINSU_CANTIDAD, PRODINSU_PROD_ID, PRODINSU_INS_ID):
-        self.PRODINSU_ID = PRODINSU_ID
-        self.PRODINSU_UUID = PRODINSU_UUID
-        self.PRODINSU_CANTIDAD = PRODINSU_CANTIDAD
-        self.PRODINSU_PROD_ID = PRODINSU_PROD_ID
-        self.PRODINSU_INS_ID = PRODINSU_INS_ID
+    def __init__(self, PROINSU_ID, PROINSU_UUID, PROINSU_CANTIDAD, PROINSU_PROD_ID, PROINSU_INS_ID):
+        self.PROINSU_ID = PROINSU_ID
+        self.PROINSU_UUID = PROINSU_UUID
+        self.PROINSU_CANTIDAD = PROINSU_CANTIDAD
+        self.PROINSU_PROD_ID = PROINSU_PROD_ID
+        self.PROINSU_INS_ID = PROINSU_INS_ID
 
     def to_dic(self):
         return {
-            "id": self.PRODINSU_ID,
-            "uuid": self.PRODINSU_UUID,
-            "cantidad": self.PRODINSU_CANTIDAD,
-            "prod_id": self.PRODINSU_PROD_ID,
-            "ins_id": self.PRODINSU_INS_ID
+            "id": self.PROINSU_ID,
+            "uuid": self.PROINSU_UUID,
+            "cantidad": self.PROINSU_CANTIDAD,
+            "prod_id": self.PROINSU_PROD_ID,
+            "ins_id": self.PROINSU_INS_ID
         }
