@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayuda — MARQUEZA</title>
+    <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
+    <link rel="stylesheet" href="estilos6.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
+    <nav class="barra_lateral close">
+        <header>
+            <!-- Contenedor para el logo y el texto del título -->
+            <div class="imagen_texto">
+                <span class="imagen">
+                    <img src="../../fondo/icono 3.png" alt="Logo Marqueza">
+                </span>
+                <div class="texto texto_titulo">
+                    <span class="titulo">MARQUEZA</span>
+                    <span class="subtitulo">confecciones que inspiran</span>
+                </div>
+            </div>
+
+            <!-- Flecha (desktop) -->
+            <i class='bx bx-chevron-right toggle'></i>
+
+            <!-- Hamburger (tablet / móvil) — oculto en desktop vía CSS -->
+            <div class="hamburger" id="hamburger" aria-label="Abrir menú" role="button" tabindex="0">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </header>
+
+        <!-- ── Menú principal ── -->
+        <!-- Contenedor del menú de navegación -->
+        <div class="barra_menu">
+            <div class="menu">
+                <!-- Lista de enlaces de navegación -->
+                <ul class="links_menu">
+                    <li class="nav_links">
+                        <a href="../inicio/inicio.html">
+                            <i class='bx bx-home-alt icon'></i>
+                            <span class="texto nav_texto">Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../insumos/insumos.html">
+                            <i class='bx bx-task icon'></i>
+                            <span class="texto nav_texto">Insumos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bxs-t-shirt icon'></i>
+                            <span class="texto nav_texto">Productos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-money-withdraw icon'></i>
+                            <span class="texto nav_texto">Pedidos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-book-content icon'></i>
+                            <span class="texto nav_texto">Cotizaciones</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../usuarios/usuarios.html">
+                            <i class='bx bx-user icon'></i>
+                            <span class="texto nav_texto">Usuarios</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../ayuda/ayuda.html">
+                            <i class='bx bx-help-circle icon'></i>
+                            <span class="texto nav_texto">Ayuda</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Sección inferior del menú: botón de salir y selector de modo oscuro/claro -->
+            <div class="boton-contenido">
+                <!-- Enlace para salir de la sesión -->
+                <li>
+                    <a href="#">
+                        <i class='bx bx-log-out icon'></i>
+                        <span class="texto nav_texto">Salir</span>
+                    </a>
+                </li>
+
+                <!-- Selector de modo oscuro/claro -->
+                <li class="modo">
+                    <!-- Iconos de sol y luna para representar los modos -->
+                    <div class="sol_luna">
+                        <i class='bx bx-sun icon sol'></i>
+                        <i class='bx bx-moon icon luna'></i>
+                    </div>
+                    <span class="texto modo_texto">Oscuro</span>
+
+                    <!-- Interruptor visual para cambiar el modo -->
+                    <div class="toggle_switch">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+    <div class="cont_2">
+        <h1>Gestion de Ayuda</h1>
+        <div class="cont_busqueda">
+            <input type="text" placeholder="Buscar ayuda...">
+            <button type="button" id="btnBuscar">Buscar</button>
+        </div>
+        <div class="cont_filtros">
+            <h4>Filtrar por categoría:</h4>
+            <div class="filtro-estados">
+                <button type="button" class="estado-btn active" data-filter="Todos">Todos</button>
+                <button type="button" class="estado-btn" data-filter="General">General</button>
+                <button type="button" class="estado-btn" data-filter="Acciones">Acciones</button>
+                <button type="button" class="estado-btn" data-filter="Consejos">Consejos</button>
+                <button type="button" class="estado-btn" data-filter="Soporte">Soporte</button>
+            </div>
+        </div>
+        <div class="cont_ayuda">
+            <div class="caja_ayuda" data-category="General">
+                <h3><i class='bx bx-info-circle'></i> ¿Cómo funciona esta página?</h3>
+                <p>Esta sección sirve como centro de orientación para que puedas comprender rápidamente cómo moverte por la plataforma, encontrar información importante y realizar acciones básicas sin dificultad.</p>
+                <p>La página está organizada para que el usuario tenga acceso rápido a los módulos principales, pueda buscar contenido y filtrar la información según sus necesidades.</p>
+            </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bx-list-check'></i> Qué puedes hacer aquí</h3>
+                <ul>
+                    <li>Explorar el menú lateral para navegar entre módulos como inicio, insumos, usuarios y ayuda.</li>
+                    <li>Buscar información específica usando la barra de búsqueda.</li>
+                    <li>Filtrar contenido por categoría o nivel de complejidad para obtener resultados más precisos.</li>
+                    <li>Consultar guías rápidas sobre el uso del sistema y sus funciones.</li>
+                    <li>Identificar rápidamente las opciones más importantes del panel principal.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Consejos">
+                <h3><i class='bx bx-bulb'></i> Consejos útiles</h3>
+                <ul>
+                    <li>Usa filtros para encontrar respuestas más rápido y evitar revisar información irrelevante.</li>
+                    <li>Revisa primero las opciones del menú principal antes de buscar en otras secciones.</li>
+                    <li>Mantén el sistema actualizado y refresca la página si notas que alguna opción no responde correctamente.</li>
+                    <li>Lee con atención los mensajes del sistema, ya que suelen indicar el siguiente paso a seguir.</li>
+                    <li>Si realizas muchas acciones, organiza tus tareas por prioridad para trabajar de forma más eficiente.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Soporte">
+                <h3><i class='bx bx-support'></i> Ayuda y soporte</h3>
+                <p>Si tienes dudas sobre cómo usar alguna función, puedes revisar estos bloques de orientación o comunicarte con el administrador del sistema para recibir asistencia más personalizada.</p>
+                <p>También es recomendable revisar la información de cada módulo antes de realizar cambios importantes, para evitar errores y ahorrar tiempo.</p>
+            </div>
+
+            <div class="caja_ayuda" data-category="Navegación">
+                <h3><i class='bx bx-navigation'></i> Navegación recomendada</h3>
+                <ul>
+                    <li>Comienza en el inicio para tener una visión general del sistema.</li>
+                    <li>Desde allí, ingresa a los módulos relacionados con tus tareas diarias.</li>
+                    <li>Usa la ayuda cada vez que necesites recordar cómo realizar una acción específica.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Buenas prácticas">
+                <h3><i class='bx bx-check-shield'></i> Buenas prácticas</h3>
+                <ul>
+                    <li>Verifica los datos antes de guardar cambios importantes.</li>
+                    <li>No compartas información confidencial con terceros.</li>
+                    <li>Guarda tus avances periódicamente si estás trabajando en varias acciones.</li>
+                    <li>Consulta la ayuda cuando una función no te resulte familiar.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Preguntas">
+                <h3><i class='bx bx-question-mark'></i> Preguntas frecuentes</h3>
+                <ul>
+                    <li>¿Cómo encuentro una opción rápida? Usa la barra de búsqueda o el menú lateral.</li>
+                    <li>¿Qué hago si no aparece una sección? Verifica que estés en el módulo correcto y que la página se haya cargado por completo.</li>
+                    <li>¿Cómo sé si una acción se guardó? El sistema suele mostrar un mensaje de confirmación o cambio en la interfaz.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Problemas">
+                <h3><i class='bx bx-error-circle'></i> Solución de problemas básicos</h3>
+                <ul>
+                    <li>Si la página se ve incompleta, refresca el navegador.</li>
+                    <li>Si un botón no responde, espera unos segundos y vuelve a intentarlo.</li>
+                    <li>Si persisten los problemas, revisa tu conexión o contacta al soporte.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Trabajo">
+                <h3><i class='bx bx-time-five'></i> Flujo de trabajo recomendado</h3>
+                <p>Para trabajar de forma eficiente puedes seguir este orden: revisar el inicio, abrir el módulo necesario, completar la acción, verificar el resultado y guardar los cambios si aplica.</p>
+                <p>Este flujo ayuda a reducir errores y facilita el seguimiento de las tareas.</p>
+            </div>
+
+            <div class="caja_ayuda" data-category="Equipos">
+                <h3><i class='bx bx-group'></i> Uso para equipos</h3>
+                <p>Si varias personas usan el sistema, es recomendable mantener una comunicación clara sobre los cambios realizados, los módulos que se están usando y los datos que se están actualizando.</p>
+                <p>Así se evita la duplicación de tareas y se mejora la organización del trabajo.</p>
+            </div>
+
+            <div class="caja_ayuda" data-category="Primeros pasos">
+                <h3><i class='bx bx-rocket'></i> Primeros pasos</h3>
+                <ul>
+                    <li>Identifica cuál es tu rol dentro del sistema.</li>
+                    <li>Explora las opciones principales del menú.</li>
+                    <li>Realiza una tarea sencilla para familiarizarte con la interfaz.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Accesos">
+                <h3><i class='bx bx-key'></i> Accesos rápidos</h3>
+                <p>Para ahorrar tiempo, usa el menú lateral y la barra de búsqueda como atajos principales para llegar a cualquier módulo sin perder tiempo navegando.</p>
+            </div>
+
+            <div class="caja_ayuda" data-category="Módulos">
+                <h3><i class='bx bx-book-open'></i> Guía de módulos</h3>
+                <ul>
+                    <li>Inicio: vista general del sistema.</li>
+                    <li>Insumos: registro y control de materiales.</li>
+                    <li>Usuarios: administración de perfiles y accesos.</li>
+                    <li>Ayuda: orientación y soporte para usuarios.</li>
+                </ul>
+            </div>
+
+            <div class="caja_ayuda" data-category="Funciones">
+                <h3><i class='bx bx-star'></i> Funciones recomendadas</h3>
+                <p>Las funciones más útiles suelen ser la búsqueda, los filtros, la navegación por módulos y la revisión de mensajes del sistema, ya que facilitan la ejecución de tareas diarias.</p>
+            </div>
+        </div>
+    </div>
+        
+    <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
+    <script src="ayuda.js"></script>
+</body>
+
+</html>
