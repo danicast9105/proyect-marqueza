@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insumos — MARQUEZA</title>
+    <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
+    <link rel="stylesheet" href="estilos5.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+
+<body>
+    <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
+    <nav class="barra_lateral close">
+        <header>
+            <!-- Contenedor para el logo y el texto del título -->
+            <div class="imagen_texto">
+                <span class="imagen">
+                    <img src="../../fondo/icono 3.png" alt="Logo Marqueza">
+                </span>
+                <div class="texto texto_titulo">
+                    <span class="titulo">MARQUEZA</span>
+                    <span class="subtitulo">confecciones que inspiran</span>
+                </div>
+            </div>
+
+            <!-- Flecha (desktop) -->
+            <i class='bx bx-chevron-right toggle'></i>
+
+            <!-- Hamburger (tablet / móvil) — oculto en desktop vía CSS -->
+            <div class="hamburger" id="hamburger" aria-label="Abrir menú" role="button" tabindex="0">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </header>
+
+        <!-- ── Menú principal ── -->
+        <!-- Contenedor del menú de navegación -->
+        <div class="barra_menu">
+            <div class="menu">
+                <!-- Lista de enlaces de navegación -->
+                <ul class="links_menu">
+                    <li class="nav_links">
+                        <a href="../inicio/inicio.html">
+                            <i class='bx bx-home-alt icon'></i>
+                            <span class="texto nav_texto">Inicio</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../insumos/insumos.html">
+                            <i class='bx bx-task icon'></i>
+                            <span class="texto nav_texto">Insumos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bxs-t-shirt icon'></i>
+                            <span class="texto nav_texto">Productos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-money-withdraw icon'></i>
+                            <span class="texto nav_texto">Pedidos</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="#">
+                            <i class='bx bx-book-content icon'></i>
+                            <span class="texto nav_texto">Cotizaciones</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../usuarios/usuarios.html">
+                            <i class='bx bx-user icon'></i>
+                            <span class="texto nav_texto">Usuarios</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../ayuda/ayuda.html">
+                            <i class='bx bx-help-circle icon'></i>
+                            <span class="texto nav_texto">Ayuda</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Sección inferior del menú: botón de salir y selector de modo oscuro/claro -->
+            <div class="boton-contenido">
+                <!-- Enlace para salir de la sesión -->
+                <li>
+                    <a href="#">
+                        <i class='bx bx-log-out icon'></i>
+                        <span class="texto nav_texto">Salir</span>
+                    </a>
+                </li>
+
+                <!-- Selector de modo oscuro/claro -->
+                <li class="modo">
+                    <!-- Iconos de sol y luna para representar los modos -->
+                    <div class="sol_luna">
+                        <i class='bx bx-sun icon sol'></i>
+                        <i class='bx bx-moon icon luna'></i>
+                    </div>
+                    <span class="texto modo_texto">Oscuro</span>
+
+                    <!-- Interruptor visual para cambiar el modo -->
+                    <div class="toggle_switch">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </div>
+        </div>
+    </nav>
+    <div class="cont_2">
+        <h1>Gestion de Insumos</h1>
+        <div class="cont_busqueda">
+            <input type="text" placeholder="Buscar insumo...">
+            <button type="button" id="btnBuscar">Buscar</button>
+            <button type="button" class="agregar">Agregar Insumo</button>
+            <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
+        </div>
+        <div class="cont_filtros">
+            <div class="filtro-grupo">
+                <label for="filtroCategoria">Filtrar por Categoría:</label>
+                <select id="filtroCategoria">
+                    <option value="">Todas</option>
+                    <!-- Las categorías se generan dinámicamente desde insumos.js -->
+                </select>
+            </div>
+            <div class="filtro-estados">
+                <button type="button" class="estado-btn active" data-status="Todos">Todos</button>
+                <button type="button" class="estado-btn" data-status="Bajo">Bajo</button>
+                <button type="button" class="estado-btn" data-status="Medio">Medio</button>
+                <button type="button" class="estado-btn" data-status="Bueno">Bueno</button>
+            </div>
+        </div>
+
+        <!-- Contenedor de la Tabla de Datos -->
+        <div class="cont_tabla">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Categoria</th>
+                        <th>Cantidad</th>
+                        <th>Unidad</th>
+                        <th>Precio Unitario</th>
+                        <th>Estado</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- El contenido se genera automáticamente desde insumos.js -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Ventana Modal para Agregar Insumo -->
+    <div id="modalInsumo" class="modal-container">
+        <div class="modal-content">
+            <header>
+                <h2>Agregar Insumo</h2>
+                <i class='bx bx-x' id="cerrarModal" aria-label="Cerrar"></i>
+            </header>
+            <form id="formInsumo">
+                <div class="input-group">
+                    <label for="nombre">Nombre del Insumo</label>
+                    <input type="text" id="nombre" required placeholder="Ingrese el nombre del insumo">
+                </div>
+                <div class="input-group">
+                    <label for="categoria">Categoría</label>
+                    <input type="text" id="categoria" required placeholder="Ej. Tela, Hilo, Botones">
+                </div>
+                <div class="input-group">
+                    <label for="cantidad">Cantidad</label>
+                    <input type="number" id="cantidad" min="1" step="1" required placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="unidad">Unidad</label>
+                    <input type="text" id="unidad" required placeholder="Ej. metros, piezas">
+                </div>
+                <div class="input-group">
+                    <label for="precioUnitario">Precio Unitario</label>
+                    <input type="number" id="precioUnitario" min="0" step="0.01" required placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label for="estado">Estado</label>
+                    <select id="estado" required>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Agotado">Agotado</option>
+                        <option value="Pedido">Pedido</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button>
+                    <button type="submit" class="btn-primario">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ventana Modal para Editar Insumo -->
+    <div id="modalEditarInsumo" class="modal-container">
+        <div class="modal-content">
+            <header>
+                <h2>Editar Insumo</h2>
+                <i class='bx bx-x' id="cerrarEditModal" aria-label="Cerrar"></i>
+            </header>
+            <form id="formEditarInsumo">
+                <input type="hidden" id="editIndex">
+                <div class="input-group">
+                    <label for="editNombre">Nombre del Insumo</label>
+                    <input type="text" id="editNombre" required placeholder="Ingrese el nombre del insumo">
+                </div>
+                <div class="input-group">
+                    <label for="editCategoria">Categoría</label>
+                    <input type="text" id="editCategoria" required placeholder="Ej. Tela, Hilo, Botones">
+                </div>
+                <div class="input-group">
+                    <label for="editCantidad">Cantidad</label>
+                    <input type="number" id="editCantidad" min="1" step="1" required placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="editUnidad">Unidad</label>
+                    <input type="text" id="editUnidad" required placeholder="Ej. metros, piezas">
+                </div>
+                <div class="input-group">
+                    <label for="editPrecioUnitario">Precio Unitario</label>
+                    <input type="number" id="editPrecioUnitario" min="0" step="0.01" required placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label for="editEstado">Estado</label>
+                    <select id="editEstado" required>
+                        <option value="Disponible">Disponible</option>
+                        <option value="Agotado">Agotado</option>
+                        <option value="Pedido">Pedido</option>
+                    </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-secundario" id="btnCancelarEdit">Cancelar</button>
+                    <button type="submit" class="btn-primario">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="insumos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>
