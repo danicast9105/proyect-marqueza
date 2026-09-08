@@ -1,0 +1,235 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Marqueza C",
+    "description": "API REST para gestión de usuarios e inventarios.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://192.168.1.9:5000/usuarios/"
+    },
+    {
+      "url": "http://192.168.1.9:5000/clientes/"
+    },
+    {
+      "url": "http://192.168.1.9:5000/usuarios/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Usuarios",
+      "description": "Gestión de aprendices"
+    },
+    {
+      "name": "Eventos",
+      "description": "Gestión de eventos"
+    }
+  ],
+  "paths": {
+    
+    "/usuarios": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Listar usuarios",
+        "responses": {
+          "200": {
+            "description": "Lista de usuarios"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Crear usuario",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "genero": { "type": "string" },
+                  "frm": { "type": "string" },
+                  "numdoc": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario creado"
+          }
+        }
+      }
+    },
+
+    "/usuarios/{id}": {
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Obtener usuario por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario encontrado"
+          },
+          "404": {
+            "description": "Usuario no encontrado"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Usuarios"],
+        "summary": "Actualizar usuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "genero": { "type": "string" },
+                  "frm": { "type": "string" },
+                  "numdoc": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Usuario actualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Usuarios"],
+        "summary": "Eliminar usuario",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuario eliminado"
+          }
+        }
+      }
+    },
+
+    "/eventos": {
+      "get": {
+        "tags": ["Eventos"],
+        "summary": "Listar eventos",
+        "responses": {
+          "200": {
+            "description": "Lista de eventos"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Eventos"],
+        "summary": "Crear evento",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "nombre": { "type": "string" },
+                  "fecha": { "type": "string", "format": "date" },
+                  "lugar": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Evento creado"
+          }
+        }
+      }
+    },
+
+    "/eventos/{id}": {
+      "get": {
+        "tags": ["Eventos"],
+        "summary": "Obtener evento por ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento encontrado"
+          },
+          "404": {
+            "description": "Evento no encontrado"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Eventos"],
+        "summary": "Actualizar evento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento actualizado"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Eventos"],
+        "summary": "Eliminar evento",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evento eliminado"
+          }
+        }
+      }
+    }
+
+  }
+}
