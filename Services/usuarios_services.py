@@ -3,7 +3,7 @@ from Models.usuarios import Usuarios
 import uuid as uuid_lib
 
 def servListUsuarios():
-    sql = "SELECT * FROM T_USUARIOS"
+    sql = "SELECT * FROM t_usuarios"
 
     c   = current_app.mysql.connection.cursor() 
     c.execute(sql)
