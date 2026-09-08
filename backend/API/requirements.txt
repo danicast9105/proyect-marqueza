@@ -1,7 +1,9 @@
 flask
 flask-mysqldb
 python-dotenv
-flask-cors
+gunicorn
+mysqlcliente
+#flask-cors
 
 # django: framework web de alto nivel para construir aplicaciones web en Python
 # fast-api: framework web moderno y rápido para construir APIs en Python
