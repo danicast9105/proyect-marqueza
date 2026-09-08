@@ -5,7 +5,7 @@
      • Hamburger + menú desplegable (tablet / móvil ≤ 1024 px): Controla la barra superior responsive.
      • Drag lateral (solo desktop): Permite arrastrar la barra lateral para colapsarla.
      • Modo oscuro / claro: Cambia el tema visual de la aplicación.
-     • Gestión de Usuarios: CRUD (Crear, Leer, Actualizar, Eliminar) usando LocalStorage.
+    • Gestión de Usuarios: CRUD (Crear, Leer, Actualizar, Eliminar) usando la API.
    ============================================================ */
 
 // --- Selección de elementos del DOM para la interfaz general ---
@@ -190,6 +190,8 @@ sidebar.addEventListener("mouseleave", () => {
 /* ─────────────────────────────────────────────────────────
    GESTIÓN DE USUARIOS CON LOCAL STORAGE
    ───────────────────────────────────────────────────────── */
+
+if (false) {
 
 // --- Constantes y Selectores para la gestión de usuarios ---
 const STORAGE_KEY = 'marqueza_usuarios';
@@ -450,3 +452,142 @@ window.eliminarUsuario = (index) => {
 
 // Inicializar la tabla al cargar el script
 renderTabla();
+}
+
+/* ─────────────────────────────────────────────────────────
+   GESTIÓN DE USUARIOS CON API
+   ───────────────────────────────────────────────────────── */
+const API_URL = "http://localhost:5000/usuarios/";
+const apiTableBody = document.querySelector(".cont_tabla tbody");
+const apiSearchInput = document.querySelector(".cont_busqueda input");
+const apiModalUsuario = document.getElementById("modalUsuario");
+const apiFormUsuario = document.getElementById("formUsuario");
+const apiModalEditar = document.getElementById("modalEditarUsuario");
+const apiFormEditar = document.getElementById("formEditarUsuario");
+let usuariosApi = [];
+
+const mostrarErrorApi = (error) => {
+    const mensaje = error.message || "No fue posible completar la operación.";
+    if (window.Swal) Swal.fire("Error", mensaje, "error"); else alert(mensaje);
+};
+
+const requestApi = async (url, options = {}) => {
+    const response = await fetch(url, {
+        ...options,
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) }
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || data.message || "Error en la API.");
+    return data;
+};
+
+const escapeHtmlApi = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;").replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;").replaceAll('"', "&quot;");
+
+const renderTablaApi = (filtro = "") => {
+    const termino = filtro.toLowerCase();
+    const filtrados = usuariosApi.filter(usuario =>
+        String(usuario.nombre).toLowerCase().includes(termino) ||
+        String(usuario.correo).toLowerCase().includes(termino)
+    );
+    apiTableBody.innerHTML = filtrados.map(usuario => `
+        <tr>
+            <td>${escapeHtmlApi(usuario.id)}</td>
+            <td>${escapeHtmlApi(usuario.nombre)}</td>
+            <td>${escapeHtmlApi(usuario.correo)}</td>
+            <td>${Number(usuario.estado) === 1 ? "Activo" : "Inactivo"}</td>
+            <td>${escapeHtmlApi(usuario.det_etc_id)}</td>
+            <td><button class="btn-editar" onclick="editarUsuarioApi(${usuario.id})">Editar</button>
+            <button class="btn-eliminar" onclick="eliminarUsuarioApi(${usuario.id})">Eliminar</button></td>
+        </tr>`).join("");
+};
+
+const cargarUsuariosApi = async () => {
+    try {
+        usuariosApi = await requestApi(API_URL);
+        renderTablaApi(apiSearchInput.value);
+    } catch (error) {
+        apiTableBody.innerHTML = '<tr><td colspan="6">No se pudieron cargar los usuarios.</td></tr>';
+        mostrarErrorApi(error);
+    }
+};
+
+const cerrarModalApi = () => { apiModalUsuario.style.display = "none"; apiFormUsuario.reset(); };
+const cerrarEditarApi = () => { apiModalEditar.style.display = "none"; apiFormEditar.reset(); };
+document.querySelector(".agregar").addEventListener("click", () => { apiFormUsuario.reset(); apiModalUsuario.style.display = "flex"; });
+document.getElementById("cerrarModal").addEventListener("click", cerrarModalApi);
+document.getElementById("btnCancelar").addEventListener("click", cerrarModalApi);
+document.getElementById("cerrarEditModal").addEventListener("click", cerrarEditarApi);
+document.getElementById("btnCancelarEdit").addEventListener("click", cerrarEditarApi);
+document.querySelector(".cont_busqueda button:not(.agregar)").addEventListener("click", () => renderTablaApi(apiSearchInput.value));
+apiSearchInput.addEventListener("input", () => renderTablaApi(apiSearchInput.value));
+window.addEventListener("click", (event) => {
+    if (event.target === apiModalUsuario) cerrarModalApi();
+    if (event.target === apiModalEditar) cerrarEditarApi();
+});
+
+const datosFormularioApi = (prefijo = "") => {
+    const ids = prefijo === "edit"
+        ? { nombre: "editNombre", correo: "editCorreo", contrasena: "editContrasena", estado: "editEstado", detEtcId: "editDetEtcId" }
+        : { nombre: "nombre", correo: "correo", contrasena: "contrasena", estado: "estado", detEtcId: "detEtcId" };
+    const campos = Object.fromEntries(Object.entries(ids).map(([campo, id]) => [campo, document.getElementById(id)]));
+    const campoFaltante = Object.entries(campos).find(([, elemento]) => !elemento);
+    if (campoFaltante) throw new Error(`No se encontró el campo ${campoFaltante[0]} del formulario.`);
+
+    return {
+        nombre: campos.nombre.value.trim(),
+        correo: campos.correo.value.trim(),
+        contrasena: campos.contrasena.value,
+        estado: Number(campos.estado.value),
+        det_etc_id: Number(campos.detEtcId.value)
+    };
+};
+
+apiFormUsuario.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    if (document.getElementById("contrasena").value !== document.getElementById("confirmarContrasena").value) {
+        mostrarErrorApi(new Error("Las contraseñas no coinciden.")); return;
+    }
+    try {
+        const resultado = await requestApi(API_URL, { method: "POST", body: JSON.stringify(datosFormularioApi()) });
+        cerrarModalApi(); await cargarUsuariosApi();
+        if (window.Swal) Swal.fire("Guardado", `Usuario creado con el ID ${resultado.id}.`, "success");
+    } catch (error) { mostrarErrorApi(error); }
+});
+
+apiFormEditar.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const id = document.getElementById("editIndex").value;
+    try {
+        await requestApi(`${API_URL}${id}`, { method: "PUT", body: JSON.stringify(datosFormularioApi("edit")) });
+        cerrarEditarApi(); await cargarUsuariosApi();
+        if (window.Swal) Swal.fire("Actualizado", "Los cambios fueron guardados.", "success");
+    } catch (error) { mostrarErrorApi(error); }
+});
+
+window.editarUsuarioApi = (id) => {
+    const usuario = usuariosApi.find(item => Number(item.id) === Number(id));
+    if (!usuario) return;
+    document.getElementById("editIndex").value = usuario.id;
+    document.getElementById("editNombre").value = usuario.nombre || "";
+    document.getElementById("editCorreo").value = usuario.correo || "";
+    document.getElementById("editContrasena").value = usuario.contrasena || "";
+    document.getElementById("editEstado").value = usuario.estado;
+    document.getElementById("editDetEtcId").value = usuario.det_etc_id || "";
+    apiModalEditar.style.display = "flex";
+};
+
+window.eliminarUsuarioApi = async (id) => {
+    const confirmado = window.Swal
+        ? (await Swal.fire({ title: "¿Eliminar usuario?", text: "Esta acción no se puede deshacer.", icon: "warning", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar" })).isConfirmed
+        : confirm("¿Eliminar usuario? Esta acción no se puede deshacer.");
+    if (!confirmado) return;
+    try {
+        await requestApi(`${API_URL}${id}`, { method: "DELETE" });
+        await cargarUsuariosApi();
+        if (window.Swal) Swal.fire("Eliminado", "El usuario fue eliminado.", "success");
+    } catch (error) { mostrarErrorApi(error); }
+};
+
+cargarUsuariosApi();

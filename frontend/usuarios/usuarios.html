@@ -127,12 +127,12 @@
             <table>
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Nombre</th>
                         <th>Correo</th>
-                        <th>Rol</th>
-                        <th>Contraseña</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
+                        <th>Estado</th>
+                        <th>Detalle ETC</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -159,19 +159,23 @@
                     <input type="email" id="correo" required placeholder="correo@ejemplo.com">
                 </div>
                 <div class="input-group">
-                    <label for="rol">Rol</label>
-                    <select id="rol" required>
-                        <option value="Administrador">Administrador</option>
-                        <option value="Empleado">Empleado</option>
-                    </select>
-                </div>
-                <div class="input-group">
                     <label for="contrasena">Contraseña</label>
                     <input type="password" id="contrasena" required placeholder="Contraseña">
                 </div>
                 <div class="input-group">
                     <label for="confirmarContrasena">Confirmar Contraseña</label>
                     <input type="password" id="confirmarContrasena" required placeholder="Confirme la contraseña">
+                </div>
+                <div class="input-group">
+                    <label for="estado">Estado</label>
+                    <select id="estado" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="detEtcId">ID detalle ETC</label>
+                    <input type="number" id="detEtcId" required min="1" placeholder="ID del detalle ETC">
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button>
@@ -199,15 +203,19 @@
                     <input type="email" id="editCorreo" required placeholder="correo@ejemplo.com">
                 </div>
                 <div class="input-group">
-                    <label for="editRol">Rol</label>
-                    <select id="editRol" required>
-                        <option value="Administrador">Administrador</option>
-                        <option value="Empleado">Empleado</option>
+                    <label for="editContrasena">Contraseña</label>
+                    <input type="password" id="editContrasena" required placeholder="Contraseña">
+                </div>
+                <div class="input-group">
+                    <label for="editEstado">Estado</label>
+                    <select id="editEstado" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
                     </select>
                 </div>
                 <div class="input-group">
-                    <label for="editContrasena">Nueva Contraseña (opcional)</label>
-                    <input type="password" id="editContrasena" placeholder="Dejar en blanco para no cambiar">
+                    <label for="editDetEtcId">ID detalle ETC</label>
+                    <input type="number" id="editDetEtcId" required min="1" placeholder="ID del detalle ETC">
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn-secundario" id="btnCancelarEdit">Cancelar</button>
