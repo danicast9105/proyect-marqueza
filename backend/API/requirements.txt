@@ -1,0 +1,15 @@
+flask
+flask-mysqldb
+python-dotenv
+flask-cors
+
+# django: framework web de alto nivel para construir aplicaciones web en Python
+# fast-api: framework web moderno y rápido para construir APIs en Python
+# flask: micro framework para constuir aplicaciones web en Python
+
+# flask-mysqldb: extensión para conectar Flask con bases de datos MySQL
+# python-dotenv: permite cargar variables de entorno desde un archivo .env  
+# flask-cors: extensión para manejar solicitudes de origen cruzado (CORS) 
+#             en aplicaciones Flask
+
+# pip install -r requirements.txt
