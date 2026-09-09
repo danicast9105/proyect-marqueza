@@ -4,7 +4,7 @@ import uuid as uuid_lib
 
 class cliente_services:
     def servListCliente():
-        sql = "SELECT * FROM T_CLIENTE"
+        sql = "SELECT * FROM t_cliente"
 
         c   = current_app.mysql.connection.cursor() 
         c.execute(sql)
