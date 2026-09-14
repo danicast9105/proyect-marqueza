@@ -5,7 +5,7 @@
     "description": "API REST para personas, usuarios, inventario, ventas y cotizaciones.",
     "version": "1.0.0"
   },
-  "servers": [{ "url": "http://localhost:5000", "description": "Servidor local" }],
+  "servers": [{ "url": "http://127.0.0.1:5000", "description": "Servidor local" }],
   "tags": [
     { "name": "Clientes" }, { "name": "Contactos" }, { "name": "Cotizaciones" },
     { "name": "Detalles ETC" }, { "name": "ETC" }, { "name": "Insumos" },
