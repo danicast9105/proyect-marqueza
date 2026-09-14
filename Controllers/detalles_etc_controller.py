@@ -6,6 +6,12 @@ class detalles_etc_controller:
         data = detalles_etc_services.servListDetalles_etc()
         return jsonify(data), 200
 
+    def cntGetDetalles_etc(id):
+        data = detalles_etc_services.getDetalles_etc(id)
+        if data is None:
+            return jsonify({"error": "Detalle no encontrado"}), 404
+        return jsonify(data), 200
+
     def cntAddDetalles_etc():
         data = request.get_json(silent=True)
 

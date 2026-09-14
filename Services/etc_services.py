@@ -21,6 +21,13 @@ class etc_services:
 
         return etc_l
 
+    def getETC(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_ESTADO_TIPOS_CATEGORIAS WHERE ETC_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return ETC(*row).to_dic() if row else None
+
     def addETC(etc_nombre):
         uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_ESTADO_TIPOS_CATEGORIAS (ETC_UUID, ETC_NOMBRE) VALUES (%s, %s)"

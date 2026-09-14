@@ -21,6 +21,13 @@ class detalles_etc_services:
 
         return detalles_etc_l
 
+    def getDetalles_etc(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_DETALLES_ETC WHERE DET_ETC_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Detalles_etc(*row).to_dic() if row else None
+
     def addDetalles_etc(det_etc_nombre, det_etc_etc_id, det_etc_per_id):
         uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_DETALLES_ETC (DET_ETC_UUID, DET_ETC_NOMBRE, DET_ETC_ETC_ID, DET_ETC_PER_ID) VALUES (%s, %s, %s, %s)"

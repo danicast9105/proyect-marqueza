@@ -22,6 +22,13 @@ class insumos_services:
         
         return insumos_l
 
+    def getInsumos(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_INSUMOS WHERE INS_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Insumos(*row).to_dic() if row else None
+
     def addInsumos(codigo, nombre, cantidad, precio, estado, usuario_id, proveedor_id, etc_id):
         uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_INSUMOS (INS_UUID, INS_CODIGO, INS_NOMBRE, INS_CANTIDAD, INS_PRECIO, INS_ESTADO, INS_USUA_ID, INS_PROV_ID, INS_DET_ETC_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"

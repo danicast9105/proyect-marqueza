@@ -21,3 +21,7 @@ def updateInsumos(id):
 def deleteInsumos(id):
     x = insumos_controller.cntDelInsumos(id)
     return x
+
+@insumos_bp.route('/<int:id>', methods=['GET'])
+def getInsumos(id):
+    return insumos_controller.cntGetInsumos(id)

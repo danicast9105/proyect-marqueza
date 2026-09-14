@@ -8,6 +8,10 @@ def listCliente():
     x = cliente_controller.cntListCliente()
     return x
 
+@cliente_bp.route('/<int:id>', methods=['GET'])
+def getCliente(id):
+    return cliente_controller.cntGetCliente(id)
+
 @cliente_bp.route('/', methods=['POST'])
 def createCliente():
     x = cliente_controller.cntAddCliente()

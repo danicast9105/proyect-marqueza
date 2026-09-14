@@ -22,3 +22,7 @@ def updatePersona(id):
 def deletePersona(id):
     x = persona_controller.cntDelPersona(id)
     return x
+
+@persona_bp.route('/<int:id>', methods=['GET'])
+def getPersona(id):
+    return persona_controller.cntGetPersona(id)

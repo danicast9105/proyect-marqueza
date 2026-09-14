@@ -22,3 +22,7 @@ def updateDetalles_etc(id):
 def deleteDetalles_etc(id):
     x = detalles_etc_controller.cntDelDetalles_etc(id)
     return x
+
+@detalles_etc_bp.route('/<int:id>', methods=['GET'])
+def getDetalles_etc(id):
+    return detalles_etc_controller.cntGetDetalles_etc(id)

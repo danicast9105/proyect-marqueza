@@ -6,6 +6,12 @@ class produ_insum_controller:
         data = produ_insum_services.servListProduInsum()
         return jsonify(data), 200
 
+    def cntGetProduInsum(id):
+        data = produ_insum_services.getProduInsum(id)
+        if data is None:
+            return jsonify({"error": "Relación producto-insumo no encontrada"}), 404
+        return jsonify(data), 200
+
     def cntAddProduInsum():
         data =  request.get_json(silent=True)
 

@@ -21,6 +21,13 @@ class cliente_services:
 
         return clientes_l
 
+    def getCliente(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_CLIENTE WHERE CLI_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Cliente(*row).to_dic() if row else None
+
     def addCliente(persona_id):
         uuid = str(uuid_lib.uuid4())
 
