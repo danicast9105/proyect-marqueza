@@ -1,8 +1,14 @@
 from flask import jsonify, request
-from Services.usuarios_services import servListUsuarios, addUsuarios, deleteUsuarios, updateUsuarios
+from Services.usuarios_services import servListUsuarios, getUsuarios, addUsuarios, deleteUsuarios, updateUsuarios
 
 def cntListUsuarios():
     data = servListUsuarios()
+    return jsonify(data), 200
+
+def cntGetUsuarios(id):
+    data = getUsuarios(id)
+    if data is None:
+        return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(data), 200
 
 def cntAddUsuarios():
@@ -61,28 +67,17 @@ def cntDelUsuarios(id):
     data = deleteUsuarios(id)
     return jsonify(data), 200
 
-def cntModUsuarios():
+def cntModUsuarios(id):
     # Validar que el cuerpo de la petición exista o que no se mande vacio o en blanco
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
 
-    id_usuario = data.get("id")
     nombre = data.get("nombre")
     correo = data.get("correo")
     contrasena = data.get("contrasena")
     estado = data.get("estado")
     det_etc_id = data.get("det_etc_id")
-
-    # Validar que id sea obligatorio y numero entero
-    if id_usuario is None:
-        return jsonify({"error": "El campo 'id' es obligatorio"}), 400
-    try:
-        id_usuario = int(id_usuario)
-        if id_usuario <= 0:
-            raise ValueError
-    except (ValueError, TypeError):
-        return jsonify({"error": "El campo 'id' debe ser un entero positivo"}), 400
 
     # Verificar que al menos uno de los campos esté cambiado para actualizar 
     if (nombre is None and correo is None and contrasena is None and
@@ -121,7 +116,7 @@ def cntModUsuarios():
             return jsonify({"error": "El campo 'det_etc_id' debe ser un entero positivo"}), 400
 
     result = updateUsuarios(
-        id_usuario,
+        id,
         nombre.strip() if nombre else None,
         correo.strip() if correo else None,
         contrasena.strip() if contrasena else None,

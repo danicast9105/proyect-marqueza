@@ -6,6 +6,12 @@ class cotizaciones_controller:
         data = cotizaciones_services.servListCotizaciones()
         return jsonify(data), 200
 
+    def cntGetCotizaciones(id):
+        data = cotizaciones_services.getCotizaciones(id)
+        if data is None:
+            return jsonify({"error": "Cotización no encontrada"}), 404
+        return jsonify(data), 200
+
     def cntAddCotizaciones():
         data = request.get_json(silent=True)
 
