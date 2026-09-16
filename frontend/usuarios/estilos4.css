@@ -322,17 +322,42 @@ body.dark .switch::before {
     flex-wrap: wrap;
     gap: 10px;
     width: 100%;
-    max-width: 500px;
+    max-width: none;
     background: #fff;
-    padding: 5px;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding: 12px;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     border: 1px solid #e0e3eb;
 }
 
-.cont_busqueda input {
+.campo_busqueda {
     flex: 1;
-    padding: 10px 15px;
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 14px;
+    min-height: 46px;
+    background: #fff;
+    border: 1px solid #d9e2ef;
+    border-radius: 10px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo_busqueda:focus-within {
+    border-color: var(--module-accent, #27b7f5);
+    box-shadow: 0 0 0 4px var(--module-accent-soft, rgba(39, 183, 245, 0.12));
+}
+
+.campo_busqueda i {
+    color: var(--module-accent, #27b7f5);
+    font-size: 20px;
+}
+
+.campo_busqueda input {
+    width: 100%;
+    min-width: 0;
+    padding: 10px 0;
     border: none;
     outline: none;
     background: transparent;
@@ -341,10 +366,15 @@ body.dark .switch::before {
 }
 
 .cont_busqueda button {
-    padding: 10px 20px;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
     border: none;
     border-radius: 8px;
-    background: var(--sidebar-color);
+    background: var(--module-accent, var(--sidebar-color));
     color: #fff;
     font-weight: 500;
     cursor: pointer;
@@ -354,6 +384,18 @@ body.dark .switch::before {
 .cont_busqueda button:hover {
     opacity: 0.9;
     transform: translateY(-1px);
+}
+
+body.dark .campo_busqueda {
+    background: #ffffff;
+}
+
+body.dark .cont_busqueda {
+    background: #ffffff;
+}
+
+body.dark .campo_busqueda input {
+    color: #f4f7f8;
 }
 
 /* --- Estilos de la Tabla Responsiva --- */
@@ -772,9 +814,14 @@ body.dark .btn-secundario {
         gap: 8px;
     }
 
+    .campo_busqueda {
+        width: 100%;
+        min-width: 0;
+    }
+
     .cont_busqueda input {
-        border-bottom: 1px solid var(--primary-color-light);
-        margin-bottom: 5px;
+        border-bottom: 0;
+        margin-bottom: 0;
     }
 
     .cont_busqueda button {

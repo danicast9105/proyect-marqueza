@@ -7,17 +7,18 @@
     <title>Productos — MARQUEZA</title>
     <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
     <link rel="stylesheet" href="estilos_productos.css">
+    <link rel="stylesheet" href="../shared/base.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
-<body>
+<body class="module-productos">
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
             <!-- Contenedor para el logo y el texto del título -->
             <div class="imagen_texto">
                 <span class="imagen">
-                    <img src="../../frontend/fondo/icono 3.png" alt="Logo Marqueza">
+                    <img src="../fondo/icono 3.png" alt="Logo Marqueza">
                 </span>
                 <div class="texto texto_titulo">
                     <span class="titulo">MARQUEZA</span>
@@ -61,7 +62,7 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../ventas/ventas.html">
                             <i class='bx bx-money-withdraw icon'></i>
                             <span class="texto nav_texto">Pedidos</span>
                         </a>
@@ -74,7 +75,19 @@
                     </li>
                     <li class="nav_links">
                         <a href="../clientes/clientes.html">
-                            <i class='bx bx-user icon'></i>
+                            <i class='bx bx-group icon'></i>
+                            <span class="texto nav_texto">Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../proveedores/proveedores.html">
+                            <i class='bx bx-package icon'></i>
+                            <span class="texto nav_texto">Proveedores</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../usuarios/usuarios.html">
+                            <i class='bx bx-user-circle icon'></i>
                             <span class="texto nav_texto">Usuarios</span>
                         </a>
                     </li>
@@ -153,4 +166,6 @@
 </form></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="../shared/navigation.js"></script>
+<script src="../shared/theme-persistence.js"></script>
 <script src="productos.js"></script></body></html>

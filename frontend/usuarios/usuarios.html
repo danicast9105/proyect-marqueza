@@ -7,17 +7,18 @@
     <title>Usuarios — MARQUEZA</title>
     <!-- Estilos específicos para la sección de usuarios y componentes responsivos -->
     <link rel="stylesheet" href="estilos4.css">
+    <link rel="stylesheet" href="../shared/base.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
-<body>
+<body class="module-usuarios">
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
             <!-- Contenedor para el logo y el texto del título -->
             <div class="imagen_texto">
                 <span class="imagen">
-                    <img src="../../fondo/icono 3.png" alt="Logo Marqueza">
+                    <img src="../fondo/icono 3.png" alt="Logo Marqueza">
                 </span>
                 <div class="texto texto_titulo">
                     <span class="titulo">MARQUEZA</span>
@@ -55,13 +56,13 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../productos/productos.html">
                             <i class='bx bxs-t-shirt icon'></i>
                             <span class="texto nav_texto">Productos</span>
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../ventas/ventas.html">
                             <i class='bx bx-money-withdraw icon'></i>
                             <span class="texto nav_texto">Pedidos</span>
                         </a>
@@ -73,8 +74,20 @@
                         </a>
                     </li>
                     <li class="nav_links">
+                        <a href="../clientes/clientes.html">
+                            <i class='bx bx-group icon'></i>
+                            <span class="texto nav_texto">Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../proveedores/proveedores.html">
+                            <i class='bx bx-package icon'></i>
+                            <span class="texto nav_texto">Proveedores</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
                         <a href="../usuarios/usuarios.html">
-                            <i class='bx bx-user icon'></i>
+                            <i class='bx bx-user-circle icon'></i>
                             <span class="texto nav_texto">Usuarios</span>
                         </a>
                     </li>
@@ -117,9 +130,18 @@
     <div class="cont_2">
         <h1 class="titulo_seccion">Gestion de Usuarios</h1>
         <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar usuario...">
-            <button>Buscar</button>
-            <button class="agregar">Agregar Usuario</button>
+            <div class="campo_busqueda">
+                <i class="bx bx-search" aria-hidden="true"></i>
+                <input id="buscarUsuario" type="search" placeholder="Buscar por nombre o correo..." aria-label="Buscar usuarios">
+            </div>
+            <button type="button" id="btnBuscar" class="btn-buscar">
+                <i class="bx bx-search" aria-hidden="true"></i>
+                <span>Buscar</span>
+            </button>
+            <button type="button" class="agregar">
+                <i class="bx bx-user-plus" aria-hidden="true"></i>
+                <span>Agregar Usuario</span>
+            </button>
         </div>
 
         <!-- Contenedor de la Tabla de Datos -->
@@ -218,8 +240,10 @@
     </div>
 
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
-    <script src="usuarios.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../shared/navigation.js"></script>
+    <script src="../shared/theme-persistence.js"></script>
+    <script src="usuarios.js"></script>
 </body>
 
 </html>

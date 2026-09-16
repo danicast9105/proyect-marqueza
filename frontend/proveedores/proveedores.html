@@ -7,17 +7,18 @@
     <title>Proveedores — MARQUEZA</title>
     <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
     <link rel="stylesheet" href="estilos_proveedores.css">
+    <link rel="stylesheet" href="../shared/base.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
-<body>
+<body class="module-proveedores">
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
             <!-- Contenedor para el logo y el texto del título -->
             <div class="imagen_texto">
                 <span class="imagen">
-                    <img src="../../frontend/fondo/icono 3.png" alt="Logo Marqueza">
+                    <img src="../fondo/icono 3.png" alt="Logo Marqueza">
                 </span>
                 <div class="texto texto_titulo">
                     <span class="titulo">MARQUEZA</span>
@@ -49,19 +50,19 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="../insumos/proveedores.html">
-                            <i class='bx bx-task icon'></i>
+                        <a href="../proveedores/proveedores.html">
+                            <i class='bx bx-package icon'></i>
                             <span class="texto nav_texto">Proveedores</span>
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../productos/productos.html">
                             <i class='bx bxs-t-shirt icon'></i>
                             <span class="texto nav_texto">Productos</span>
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../ventas/ventas.html">
                             <i class='bx bx-money-withdraw icon'></i>
                             <span class="texto nav_texto">Pedidos</span>
                         </a>
@@ -74,7 +75,13 @@
                     </li>
                     <li class="nav_links">
                         <a href="../clientes/clientes.html">
-                            <i class='bx bx-user icon'></i>
+                            <i class='bx bx-group icon'></i>
+                            <span class="texto nav_texto">Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../usuarios/usuarios.html">
+                            <i class='bx bx-user-circle icon'></i>
                             <span class="texto nav_texto">Usuarios</span>
                         </a>
                     </li>
@@ -117,9 +124,9 @@
     <div class="cont_2">
         <h1>Gestion de Proveedores</h1>
         <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar insumo...">
+            <input type="text" placeholder="Buscar proveedor...">
             <button type="button" id="btnBuscar">Buscar</button>
-            <button type="button" class="agregar">Agregar Insumo</button>
+            <button type="button" class="agregar">Agregar Proveedor</button>
             <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
         </div>
         <div class="cont_filtros">
@@ -144,11 +151,16 @@
 <tbody></tbody></table></div>
     </div>
 
-    <!-- Ventana Modal para Agregar Insumo -->
+    <!-- Ventana Modal para Agregar Proveedor -->
     <div id="modalProveedor" class="modal-container">
 <div class="modal-content"><header><h2>Agregar Proveedores</h2><i class='bx bx-x' id="cerrarModal"></i></header>
 <form id="formProveedor">
 <div class="input-group"><label for="empresa">Empresa</label><input id="empresa" type="text" required placeholder="Nombre del proveedor"></div><div class="input-group"><label for="contacto">Contacto</label><input id="contacto" type="text" required placeholder="Persona de contacto"></div><div class="input-group"><label for="telefono">Teléfono</label><input id="telefono" type="tel" required placeholder="Teléfono"></div><div class="input-group"><label for="correo">Correo</label><input id="correo" type="email" required placeholder="correo@ejemplo.com"></div><div class="input-group"><label for="direccion">Dirección</label><input id="direccion" type="text" required placeholder="Dirección"></div>
 <div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
 </form></div></div>
-<script src="proveedores.js"></script></body></html>
+<script src="../shared/navigation.js"></script>
+<script src="../shared/theme-persistence.js"></script>
+<script src="../shared/app-shell.js"></script>
+<script src="../shared/crud-page.js"></script>
+<script src="proveedores.js"></script>
+</body></html>

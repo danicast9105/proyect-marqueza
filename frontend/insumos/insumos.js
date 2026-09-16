@@ -247,8 +247,8 @@ const renderTabla = () => {
             <td data-label="Unidad">${insumo.unidad}</td>
             <td data-label="Precio">${formatNumber(insumo.precioUnitario)}</td>
             <td data-label="Estado"><span class="estado-badge ${estadoVisual.clase}">${estadoVisual.label}</span></td>
-            <td data-label="Editar"><button class="btn-editar" onclick="editarInsumo(${insumo.originalIndex})">Editar</button></td>
-            <td data-label="Eliminar"><button class="btn-eliminar" onclick="eliminarInsumo(${insumo.originalIndex})">Eliminar</button></td>
+            <td data-label="Editar"><button type="button" class="btn-editar" data-index="${insumo.originalIndex}">Editar</button></td>
+            <td data-label="Eliminar"><button type="button" class="btn-eliminar" data-index="${insumo.originalIndex}">Eliminar</button></td>
         `;
         tableBody.appendChild(tr);
     });
@@ -301,6 +301,14 @@ estadoButtons.forEach(btn => {
     });
 });
 btnExportPdf?.addEventListener('click', exportToPDF);
+
+tableBody?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-index]");
+    if (!button) return;
+    const index = Number(button.dataset.index);
+    if (button.classList.contains("btn-editar")) editarInsumo(index);
+    if (button.classList.contains("btn-eliminar")) eliminarInsumo(index);
+});
 
 btnAgregar?.addEventListener("click", () => {
     modalInsumo.style.display = "flex";

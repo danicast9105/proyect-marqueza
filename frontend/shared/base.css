@@ -1,0 +1,146 @@
+/* Base visual compartida por los modulos del frontend. */
+:root {
+    --marqueza-cyan: #27b7f5;
+    --marqueza-navy: #12304a;
+    --marqueza-coral: #ff7f66;
+    --marqueza-cream: #ffffff;
+    --marqueza-ink: #263746;
+    --marqueza-muted: #6b7a88;
+    --marqueza-shadow: 0 14px 34px rgba(18, 48, 74, 0.12);
+}
+
+body[class*="module-"] {
+    --module-accent: var(--marqueza-cyan);
+    --module-accent-soft: rgba(39, 183, 245, 0.12);
+}
+
+.module-inicio {
+    --module-accent: #1f7a8c;
+    --module-accent-soft: rgba(31, 122, 140, 0.14);
+}
+
+.module-insumos {
+    --module-accent: #2a9d8f;
+    --module-accent-soft: rgba(42, 157, 143, 0.14);
+}
+
+.module-productos {
+    --module-accent: #e76f51;
+    --module-accent-soft: rgba(231, 111, 81, 0.14);
+}
+
+.module-clientes {
+    --module-accent: #277da1;
+    --module-accent-soft: rgba(39, 125, 161, 0.14);
+}
+
+.module-proveedores {
+    --module-accent: #588157;
+    --module-accent-soft: rgba(88, 129, 87, 0.14);
+}
+
+.module-ventas {
+    --module-accent: #c77d00;
+    --module-accent-soft: rgba(199, 125, 0, 0.14);
+}
+
+.module-usuarios {
+    --module-accent: #6c5ce7;
+    --module-accent-soft: rgba(108, 92, 231, 0.14);
+}
+
+.module-ayuda {
+    --module-accent: #d97706;
+    --module-accent-soft: rgba(217, 119, 6, 0.14);
+}
+
+body {
+    background: var(--marqueza-cream);
+    color: var(--marqueza-ink);
+}
+
+body.dark {
+    background: #17232d;
+    color: #edf5f8;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.cont_2,
+.contenido,
+.cont_ayuda {
+    animation: marqueza-enter 0.45s ease both;
+}
+
+.cont_tabla,
+.cont_grafica,
+.cont_info,
+.caja_ayuda {
+    box-shadow: var(--marqueza-shadow);
+}
+
+.module-inicio .cont_busqueda button,
+.module-insumos .cont_busqueda button,
+.module-productos .cont_busqueda button,
+.module-clientes .cont_busqueda button,
+.module-proveedores .cont_busqueda button,
+.module-ventas .cont_busqueda button,
+.module-usuarios .cont_busqueda button {
+    background: var(--module-accent);
+}
+
+.module-inicio .cont_2 h1,
+.module-insumos .cont_2 h1,
+.module-productos .cont_2 h1,
+.module-clientes .cont_2 h1,
+.module-proveedores .cont_2 h1,
+.module-ventas .cont_2 h1,
+.module-usuarios .cont_2 h1,
+.module-ayuda h1 {
+    color: var(--module-accent);
+}
+
+.module-inicio .cont_info,
+.module-insumos .cont_filtros,
+.module-productos .cont_filtros,
+.module-clientes .cont_filtros,
+.module-proveedores .cont_filtros,
+.module-ventas .cont_filtros,
+.module-usuarios .cont_filtros,
+.module-ayuda .caja_ayuda {
+    border-top: 3px solid var(--module-accent);
+    background: var(--module-accent-soft);
+}
+
+@keyframes marqueza-enter {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding-left: 0;
+    }
+
+    .cont_2,
+    .contenido,
+    .cont_ayuda {
+        width: min(100% - 24px, 720px);
+        margin-inline: auto;
+    }
+}

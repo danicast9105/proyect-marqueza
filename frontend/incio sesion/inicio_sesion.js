@@ -1,39 +1,33 @@
-/* llamada al formulario */
-const formulario = document.getElementById('formulario');
+class LoginForm {
+    constructor(formulario) {
+        this.formulario = formulario;
+        this.username = formulario.querySelector("#usuario");
+        this.password = formulario.querySelector("#contraseña");
+    }
 
-/* condicion y evento de formulario */
-if (!formulario) {
-    console.error('Formulario no encontrado: asegúrate de que el elemento tenga id="formulario"');
-} else {
-    formulario.addEventListener('submit', function (event) {
+    init() {
+        this.formulario.addEventListener("submit", (event) => this.submit(event));
+    }
+
+    submit(event) {
         event.preventDefault();
-        /* obtención de los valores de los campos */
-        const username = document.getElementById('usuario');
-        const password = document.getElementById('contraseña');
+        const username = this.username?.value.trim() || "";
+        const password = this.password?.value || "";
 
-        const usernameValue = username ? username.value.trim() : '';
-        const passwordValue = password ? password.value : '';
-        
-        /* condición de campos vacíos */
-        if (!usernameValue || !passwordValue) {
-            alert('Por favor completa todos los campos');
-            return;
+        if (!username || !password) {
+            return Swal.fire({ icon: "warning", title: "Campos incompletos", text: "Por favor completa todos los campos." });
         }
-        /* validación de credenciales */
-        if (usernameValue === 'admin' && passwordValue === 'admin123') {
-            Swal.fire({
-                title: "Inicio de sesión exitoso",
-                icon: "success",
-                text: "Bienvenido " + usernameValue,
-            });
-        } 
-        /* mensaje de error para credenciales incorrectas */
-        else {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                text: " Tu usuario o contraseña son incorrectos",
-            });
-        }
-    });
+
+        const valid = username === "admin" && password === "admin123";
+        Swal.fire({
+            title: valid ? "Inicio de sesión exitoso" : "Error",
+            icon: valid ? "success" : "error",
+            text: valid ? `Bienvenido ${username}` : "Tu usuario o contraseña son incorrectos"
+        });
+    }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const formulario = document.getElementById("formulario");
+    if (formulario) new LoginForm(formulario).init();
+});

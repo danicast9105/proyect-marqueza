@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotizaciones | MARQUEZA</title>
+    <link rel="stylesheet" href="estilos_cotizaciones.css">
+    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body class="module-cotizaciones">
+    <nav class="barra_lateral sidebar-standard close">
+        <header>
+            <div class="imagen_texto">
+                <span class="imagen"><img src="../fondo/icono 3.png" alt="Logo Marqueza"></span>
+                <div class="texto texto_titulo">
+                    <span class="titulo">MARQUEZA</span>
+                    <span class="subtitulo">confecciones que inspiran</span>
+                </div>
+            </div>
+            <i class="bx bx-chevron-right toggle" aria-label="Expandir menú"></i>
+            <div class="hamburger" id="hamburger" aria-label="Abrir menú" role="button" tabindex="0">
+                <span></span><span></span><span></span>
+            </div>
+        </header>
+        <div class="barra_menu">
+            <div class="menu"><ul class="links_menu"></ul></div>
+            <div class="boton-contenido">
+                <li><a href="#"><i class="bx bx-log-out icon"></i><span class="texto nav_texto">Salir</span></a></li>
+                <li class="modo">
+                    <div class="sol_luna"><i class="bx bx-sun icon sol"></i><i class="bx bx-moon icon luna"></i></div>
+                    <span class="texto modo_texto">Oscuro</span>
+                    <div class="toggle_switch" role="button" tabindex="0" aria-label="Cambiar tema"><span class="switch"></span></div>
+                </li>
+            </div>
+        </div>
+    </nav>
+
+    <main class="cotizaciones-page">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow"><i class="bx bx-line-chart"></i> Visión comercial</p>
+                <h1>Cotizaciones</h1>
+                <p>Consulta el movimiento general de inventario, compras, ventas y propuestas comerciales.</p>
+            </div>
+            <button type="button" class="btn-primary" id="btnNuevaCotizacion"><i class="bx bx-plus"></i> Nueva cotización</button>
+        </header>
+
+        <section class="metric-grid" aria-label="Resumen general">
+            <article class="metric-card metric-expense"><i class="bx bx-wallet"></i><div><span>Gasto en insumos</span><strong id="totalGastos">$0</strong><small id="detalleInsumos">0 unidades compradas</small></div></article>
+            <article class="metric-card metric-stock"><i class="bx bx-package"></i><div><span>Valor de productos</span><strong id="valorProductos">$0</strong><small id="detalleProductos">0 productos registrados</small></div></article>
+            <article class="metric-card metric-sales"><i class="bx bx-trending-up"></i><div><span>Ventas registradas</span><strong id="totalVentas">$0</strong><small id="detalleVentas">0 operaciones</small></div></article>
+            <article class="metric-card metric-quotes"><i class="bx bx-file"></i><div><span>Cotizaciones activas</span><strong id="totalCotizaciones">0</strong><small id="detalleCotizaciones">$0 proyectado</small></div></article>
+        </section>
+
+        <section class="analysis-grid">
+            <article class="panel balance-panel">
+                <div class="panel-heading"><div><p class="eyebrow">Balance general</p><h2>Compras, inventario y ventas</h2></div><i class="bx bx-bar-chart-alt-2"></i></div>
+                <div class="balance-list">
+                    <div><span><i class="bx bx-cart-add"></i> Unidades compradas</span><strong id="balanceCompras">0</strong></div>
+                    <div><span><i class="bx bx-box"></i> Unidades en productos</span><strong id="balanceStock">0</strong></div>
+                    <div><span><i class="bx bx-receipt"></i> Cotizaciones emitidas</span><strong id="balanceEmitidas">0</strong></div>
+                </div>
+                <div class="balance-bar"><span id="balanceBarFill"></span></div>
+                <p class="panel-note" id="balanceNota">Registra una cotización para comenzar el seguimiento comercial.</p>
+            </article>
+            <article class="panel source-panel">
+                <div class="panel-heading"><div><p class="eyebrow">Fuentes locales</p><h2>Datos utilizados</h2></div><i class="bx bx-data"></i></div>
+                <p>El balance se actualiza con la información guardada en los módulos de Insumos, Productos y Ventas.</p>
+                <div class="source-tags"><span>Insumos</span><span>Productos</span><span>Ventas</span></div>
+                <button type="button" class="btn-secondary" id="btnActualizar"><i class="bx bx-refresh"></i> Actualizar balance</button>
+            </article>
+        </section>
+
+        <section class="panel quote-panel">
+            <div class="panel-heading"><div><p class="eyebrow">Historial</p><h2>Registro de cotizaciones</h2></div><div class="quote-tools"><input id="buscarCotizacion" type="search" placeholder="Buscar cliente o producto..." aria-label="Buscar cotizaciones"><select id="filtroEstado" aria-label="Filtrar por estado"><option value="">Todos los estados</option><option value="Pendiente">Pendiente</option><option value="Enviada">Enviada</option><option value="Aprobada">Aprobada</option><option value="Rechazada">Rechazada</option></select></div></div>
+            <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="cotizacionesBody"></tbody></table><p class="empty-state" id="emptyState">Aún no hay cotizaciones registradas.</p></div>
+        </section>
+    </main>
+
+    <div class="modal-container" id="modalCotizacion" aria-hidden="true">
+        <div class="modal-content"><header><div><p class="eyebrow">Registro comercial</p><h2 id="modalTitle">Nueva cotización</h2></div><button type="button" class="icon-button" id="btnCerrarModal" aria-label="Cerrar"><i class="bx bx-x"></i></button></header>
+            <form id="formCotizacion"><input type="hidden" id="quoteIndex" value="-1"><div class="form-grid"><label>Fecha<input id="quoteFecha" type="date" required></label><label>Cliente<select id="quoteCliente" required><option value="">Selecciona un cliente</option></select></label><label>Producto<input id="quoteProducto" type="text" required placeholder="Producto o servicio"></label><label>Cantidad<input id="quoteCantidad" type="number" min="1" required></label><label>Precio unitario<input id="quotePrecio" type="number" min="0" step="0.01" required></label><label>Estado<select id="quoteEstado"><option>Pendiente</option><option>Enviada</option><option>Aprobada</option><option>Rechazada</option></select></label><label class="full-field">Notas<textarea id="quoteNotas" rows="3" placeholder="Condiciones o detalles de la propuesta"></textarea></label></div><div class="modal-actions"><button type="button" class="btn-secondary" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primary"><i class="bx bx-save"></i> Guardar cotización</button></div></form>
+        </div>
+    </div>
+
+    <script src="../shared/navigation.js"></script>
+    <script src="../shared/theme-persistence.js"></script>
+    <script src="../shared/app-shell.js"></script>
+    <script src="../shared/sidebar.js"></script>
+    <script src="cotizaciones.js"></script>
+</body>
+</html>

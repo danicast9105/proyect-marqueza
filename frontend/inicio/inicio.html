@@ -10,18 +10,19 @@
     <title>Inicio — MARQUEZA</title>
     <!-- Enlaza la hoja de estilos CSS principal -->
     <link rel="stylesheet" href="estilos3.css">
+    <link rel="stylesheet" href="../shared/base.css">
     <!-- Enlaza la biblioteca de iconos Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
-<body>
+<body class="module-inicio">
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
             <!-- Contenedor para el logo y el texto del título -->
             <div class="imagen_texto">
                 <span class="imagen">
-                    <img src="../../fondo/icono 3.png" alt="Logo Marqueza">
+                    <img src="../fondo/icono 3.png" alt="Logo Marqueza">
                 </span>
                 <div class="texto texto_titulo">
                     <span class="titulo">MARQUEZA</span>
@@ -59,13 +60,13 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../productos/productos.html">
                             <i class='bx bxs-t-shirt icon'></i>
                             <span class="texto nav_texto">Productos</span>
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="#">
+                        <a href="../ventas/ventas.html">
                             <i class='bx bx-money-withdraw icon'></i>
                             <span class="texto nav_texto">Pedidos</span>
                         </a>
@@ -77,8 +78,20 @@
                         </a>
                     </li>
                     <li class="nav_links">
+                        <a href="../clientes/clientes.html">
+                            <i class='bx bx-group icon'></i>
+                            <span class="texto nav_texto">Clientes</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
+                        <a href="../proveedores/proveedores.html">
+                            <i class='bx bx-package icon'></i>
+                            <span class="texto nav_texto">Proveedores</span>
+                        </a>
+                    </li>
+                    <li class="nav_links">
                         <a href="../usuarios/usuarios.html">
-                            <i class='bx bx-user icon'></i>
+                            <i class='bx bx-user-circle icon'></i>
                             <span class="texto nav_texto">Usuarios</span>
                         </a>
                     </li>
@@ -191,6 +204,8 @@
     <!-- Enlaza la biblioteca ECharts para la visualización de datos -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.min.js"></script>
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
+    <script src="../shared/navigation.js"></script>
+    <script src="../shared/theme-persistence.js"></script>
     <script src="inicio.js"></script>
 </body>
 

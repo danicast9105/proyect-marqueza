@@ -250,8 +250,8 @@ const renderTabla = (filtro = "") => {
             <td>${usuario.correo}</td>
             <td>${usuario.rol}</td>
             <td>********</td>
-            <td><button class="btn-editar" onclick="editarUsuario(${usuario.originalIndex})">Editar</button></td>
-            <td><button class="btn-eliminar" onclick="eliminarUsuario(${usuario.originalIndex})">Eliminar</button></td>
+            <td><button type="button" class="btn-editar" data-index="${usuario.originalIndex}">Editar</button></td>
+            <td><button type="button" class="btn-eliminar" data-index="${usuario.originalIndex}">Eliminar</button></td>
         `;
         tableBody.appendChild(tr);
     });
@@ -262,6 +262,14 @@ btnBuscar?.addEventListener("click", () => renderTabla(searchInput.value));
 
 // Búsqueda en tiempo real mientras el usuario escribe
 searchInput?.addEventListener("input", () => renderTabla(searchInput.value));
+
+tableBody?.addEventListener("click", (event) => {
+    const button = event.target.closest("button[data-index]");
+    if (!button) return;
+    const index = Number(button.dataset.index);
+    if (button.classList.contains("btn-editar")) editarUsuario(index);
+    if (button.classList.contains("btn-eliminar")) eliminarUsuario(index);
+});
 
 // --- Control del Modal de Agregar ---
 btnAgregar?.addEventListener("click", () => {
