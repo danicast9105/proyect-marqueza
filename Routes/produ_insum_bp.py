@@ -21,3 +21,7 @@ def updateProduInsum(id):
 def deleteProduInsum(id):
     x = produ_insum_controller.cntDelProduInsum(id)
     return x
+
+@produ_insum_bp.route('/<int:id>', methods=['GET'])
+def getProduInsum(id):
+    return produ_insum_controller.cntGetProduInsum(id)

@@ -21,6 +21,13 @@ class produ_insum_services:
 
         return produ_insum_l
 
+    def getProduInsum(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_PRODU_INSUM WHERE PROINSU_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Produ_insum(*row).to_dic() if row else None
+
     def addProduInsum(cantidad, producto_id, insumo_id):
         uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_PRODU_INSUM (PROINSU_UUID, PROINSU_CANTIDAD, PROINSU_PROD_ID, PROINSU_INS_ID) VALUES (%s, %s, %s, %s)"

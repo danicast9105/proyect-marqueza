@@ -1,50 +1,38 @@
 from flask import current_app
 from Models.ventas import Ventas
+import uuid as uuid_lib
 
 def servListVentas():
-    sql = "SELECT * FROM T_VENTAS"
-
-    c   = current_app.mysql.connection.cursor() 
-    c.execute(sql)
-    
+    c = current_app.mysql.connection.cursor()
+    c.execute("SELECT * FROM T_VENTAS")
     data = c.fetchall()
-    print(data)
-    
-    ventas_l =[ ]
-    for u in data:
-        ventas_l.append(Ventas(u[0],u[1],u[2],u[3],u[4],u[5]).to_dic())
-
-    print(ventas_l)
     c.close()
+    return [Ventas(*row).to_dic() for row in data]
 
-    return ventas_l
+def getVentas(id):
+    c = current_app.mysql.connection.cursor()
+    c.execute("SELECT * FROM T_VENTAS WHERE VENT_ID = %s", (id,))
+    row = c.fetchone()
+    c.close()
+    return Ventas(*row).to_dic() if row else None
 
-def addVentas():
-    sql = "INSERT INTO T_VENTAS (VENT_UUID, VENT_PRO_CODIGO, VENT_PRO_NOMBRE, VENT_USUA_ID, VENT_CLI_ID) VALUES (%s, %s, %s, %s, %s)"
-
-    c   = current_app.mysql.connection.cursor()
-    c.execute(sql, ("vent_uuid, vent_pro_codigo, vent_pro_nombre, vent_usua_id, vent_cli_id"))
+def addVentas(fecha, usua_id, cli_id):
+    c = current_app.mysql.connection.cursor()
+    c.execute("INSERT INTO T_VENTAS (VENT_UUID, VENT_FECHA, VENT_USUA_ID, VENT_CLI_ID) VALUES (%s, %s, %s, %s)", (str(uuid_lib.uuid4()), fecha, usua_id, cli_id))
     current_app.mysql.connection.commit()
-
     c.close()
     return "Venta agregado correctamente"
 
-def deleteVentas():
-    sql = "DELETE FROM T_VENTAS WHERE VENT_ID = %s"
-
+def deleteVentas(id):
     c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("vent_id",))
+    c.execute("DELETE FROM T_VENTAS WHERE VENT_ID = %s", (id,))
     current_app.mysql.connection.commit()
     c.close()
-
     return "Venta eliminado correctamente"
 
-def updateVentas():
-    sql = "UPDATE T_VENTAS SET VENT_UUID = %s, VENT_PRO_CODIGO = %s, VENT_PRO_NOMBRE = %s, VENT_USUA_ID = %s, VENT_CLI_ID = %s"
-
+def updateVentas(id, fecha, usua_id, cli_id):
     c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("vent_uuid, vent_pro_codigo, vent_pro_nombre, vent_usua_id, vent_cli_id"))
+    c.execute("UPDATE T_VENTAS SET VENT_FECHA = %s, VENT_USUA_ID = %s, VENT_CLI_ID = %s WHERE VENT_ID = %s", (fecha, usua_id, cli_id, id))
     current_app.mysql.connection.commit()
     c.close()
-
     return "Venta actualizado correctamente"

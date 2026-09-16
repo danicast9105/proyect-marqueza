@@ -21,6 +21,13 @@ class contacto_services:
 
         return contactos_l
 
+    def getContacto(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_CONTACTO WHERE CONT_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Contacto(*row).to_dic() if row else None
+
     def addContacto(tipo_contacto, contenido, proveedor_id):
         uuid = str(uuid_lib.uuid4())
 

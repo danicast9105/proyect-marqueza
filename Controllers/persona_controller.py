@@ -6,6 +6,12 @@ class persona_controller:
         data = persona_services.servListPersona()
         return jsonify(data), 200
 
+    def cntGetPersona(id):
+        data = persona_services.getPersona(id)
+        if data is None:
+            return jsonify({"error": "Persona no encontrada"}), 404
+        return jsonify(data), 200
+
     def cntAddPersona():
         data = request.get_json(silent=True)
 

@@ -6,6 +6,12 @@ class cliente_controller:
         data = cliente_services.servListCliente()
         return jsonify(data), 200
 
+    def cntGetCliente(id):
+        data = cliente_services.getCliente(id)
+        if data is None:
+            return jsonify({"error": "Cliente no encontrado"}), 404
+        return jsonify(data), 200
+
     def cntAddCliente():
         # Validar que el cuerpo del json no esté vacio 
         data = request.get_json(silent=True)
