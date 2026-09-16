@@ -1,5 +1,5 @@
-from flask import Blueprint, jsonify
-from Controllers.proveedor_controller import cntListProveedor, cntAddProveedor, cntDelProveedor, cntModProveedor
+from flask import Blueprint
+from Controllers.proveedor_controller import cntListProveedor, cntAddProveedor, cntDelProveedor, cntModProveedor, cntGetProveedor
 
 proveedor_bp = Blueprint('proveedor_bp', __name__)
 
@@ -8,17 +8,21 @@ def listProveedor():
     x = cntListProveedor()
     return x
 
+@proveedor_bp.route('/<int:id>', methods=['GET'])
+def getProveedor(id):
+    return cntGetProveedor(id)
+
 @proveedor_bp.route('/', methods=['POST'])
 def createProveedor():
-    x = cntAddProveedor
+    x = cntAddProveedor()
     return x
 
-@proveedor_bp.route('/', methods=['PUT'])
-def updateProveedor():
-    x = cntModProveedor
+@proveedor_bp.route('/<int:id>', methods=['PUT'])
+def updateProveedor(id):
+    x = cntModProveedor(id)
     return x
 
-@proveedor_bp.route('/', methods=['DELETE'])
-def deleteProveedor():
-    x = cntDelProveedor
+@proveedor_bp.route('/<int:id>', methods=['DELETE'])
+def deleteProveedor(id):
+    x = cntDelProveedor(id)
     return x

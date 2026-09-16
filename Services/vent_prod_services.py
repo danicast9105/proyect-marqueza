@@ -1,50 +1,38 @@
 from flask import current_app
 from Models.vent_prod import Vent_prod
+import uuid as uuid_lib
 
 def servListVentProd():
-    sql = "SELECT * FROM T_VENT_PROD"
-
-    c   = current_app.mysql.connection.cursor() 
-    c.execute(sql)
-    
+    c = current_app.mysql.connection.cursor()
+    c.execute("SELECT * FROM T_VENT_PROD")
     data = c.fetchall()
-    print(data)
-    
-    vent_prod_l =[ ]
-    for u in data:
-        vent_prod_l.append(Vent_prod(u[0],u[1],u[2],u[3],u[4]).to_dic())
-
-    print(vent_prod_l)
     c.close()
+    return [Vent_prod(*row).to_dic() for row in data]
 
-    return vent_prod_l
+def getVentProd(id):
+    c = current_app.mysql.connection.cursor()
+    c.execute("SELECT * FROM T_VENT_PROD WHERE VENTPRO_ID = %s", (id,))
+    row = c.fetchone()
+    c.close()
+    return Vent_prod(*row).to_dic() if row else None
 
-def addVentProd():
-    sql = "INSERT INTO T_VENT_PROD (VENTPRO_UUID, VENTPRO_CANTIDAD, VENTPRO_VENT_ID, VENTPRO_PROD_ID) VALUES (%s, %s, %s, %s)"
-
-    c   = current_app.mysql.connection.cursor()
-    c.execute(sql, ("ventpro_uuid, ventpro_cantidad, ventpro_vent_id, ventpro_prod_id"))
+def addVentProd(cantidad, vent_id, prod_id):
+    c = current_app.mysql.connection.cursor()
+    c.execute("INSERT INTO T_VENT_PROD (VENTPRO_UUID, VENTPRO_CANTIDAD, VENTPRO_VENT_ID, VENTPRO_PROD_ID) VALUES (%s, %s, %s, %s)", (str(uuid_lib.uuid4()), cantidad, vent_id, prod_id))
     current_app.mysql.connection.commit()
-
     c.close()
     return "Venta_producto agregado correctamente"
 
-def deleteVentProd():
-    sql = "DELETE FROM T_VENT_PROD WHERE VENTPRO_ID = %s"
-
+def deleteVentProd(id):
     c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("ventpro_id",))
+    c.execute("DELETE FROM T_VENT_PROD WHERE VENTPRO_ID = %s", (id,))
     current_app.mysql.connection.commit()
     c.close()
+    return "Venta_producto eliminado correctamente"
 
-    return "Usuario eliminado correctamente"
-
-def updateVentProd():
-    sql = "UPDATE T_VENT_PROD SET VENTPRO_UUID = %s, VENTPRO_CANTIDAD = %s, VENTPRO_VENT_ID = %s, VENTPRO_PROD_ID = %s"
-
+def updateVentProd(id, cantidad, vent_id, prod_id):
     c = current_app.mysql.connection.cursor()
-    c.execute(sql, ("ventpro_uuid, ventpro_cantidad, ventpro_vent_id, ventpro_prod_id"))
+    c.execute("UPDATE T_VENT_PROD SET VENTPRO_CANTIDAD = %s, VENTPRO_VENT_ID = %s, VENTPRO_PROD_ID = %s WHERE VENTPRO_ID = %s", (cantidad, vent_id, prod_id, id))
     current_app.mysql.connection.commit()
     c.close()
-
     return "Venta_producto actualizado correctamente"

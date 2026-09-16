@@ -22,3 +22,7 @@ def updateETC(id):
 def deleteETC(id):
     x = etc_controller.cntDelETC(id)
     return x
+
+@etc_bp.route('/<int:id>', methods=['GET'])
+def getETC(id):
+    return etc_controller.cntGetETC(id)

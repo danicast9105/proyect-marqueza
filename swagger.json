@@ -1,235 +1,192 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API de Marqueza C",
-    "description": "API REST para gestión de usuarios e inventarios.",
+    "title": "API de Marqueza",
+    "description": "API REST para personas, usuarios, inventario, ventas y cotizaciones.",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "http://192.168.1.9:5000/usuarios/"
-    },
-    {
-      "url": "http://192.168.1.9:5000/clientes/"
-    },
-    {
-      "url": "http://192.168.1.9:5000/usuarios/"
-    }
-  ],
+  "servers": [{ "url": "http://127.0.0.1:5000", "description": "Servidor local" }],
   "tags": [
-    {
-      "name": "Usuarios",
-      "description": "Gestión de aprendices"
-    },
-    {
-      "name": "Eventos",
-      "description": "Gestión de eventos"
-    }
+    { "name": "Clientes" }, { "name": "Contactos" }, { "name": "Cotizaciones" },
+    { "name": "Detalles ETC" }, { "name": "ETC" }, { "name": "Insumos" },
+    { "name": "Personas" }, { "name": "Productos" }, { "name": "Productos-insumos" },
+    { "name": "Proveedores" }, { "name": "Usuarios" }, { "name": "Ventas" },
+    { "name": "Ventas-productos" }
   ],
   "paths": {
-    
-    "/usuarios": {
-      "get": {
-        "tags": ["Usuarios"],
-        "summary": "Listar usuarios",
-        "responses": {
-          "200": {
-            "description": "Lista de usuarios"
-          }
-        }
-      },
-      "post": {
-        "tags": ["Usuarios"],
-        "summary": "Crear usuario",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "nombre": { "type": "string" },
-                  "genero": { "type": "string" },
-                  "frm": { "type": "string" },
-                  "numdoc": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Usuario creado"
-          }
-        }
-      }
+    "/clientes/": {
+      "get": { "tags": ["Clientes"], "summary": "Listar clientes", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Clientes"], "summary": "Crear cliente", "requestBody": { "$ref": "#/components/requestBodies/Cliente" }, "responses": { "200": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } }
     },
-
+    "/clientes/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Clientes"], "summary": "Obtener cliente", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Clientes"], "summary": "Actualizar cliente", "requestBody": { "$ref": "#/components/requestBodies/Cliente" }, "responses": { "200": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } },
+      "delete": { "tags": ["Clientes"], "summary": "Eliminar cliente", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/contactos/": {
+      "get": { "tags": ["Contactos"], "summary": "Listar contactos", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Contactos"], "summary": "Crear contacto", "requestBody": { "$ref": "#/components/requestBodies/Contacto" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/contactos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Contactos"], "summary": "Obtener contacto", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Contactos"], "summary": "Actualizar contacto", "requestBody": { "$ref": "#/components/requestBodies/Contacto" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Contactos"], "summary": "Eliminar contacto", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/cotizaciones/": {
+      "get": { "tags": ["Cotizaciones"], "summary": "Listar cotizaciones", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Cotizaciones"], "summary": "Crear cotización", "requestBody": { "$ref": "#/components/requestBodies/Cotizacion" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/cotizaciones/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Cotizaciones"], "summary": "Obtener cotización", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Cotizaciones"], "summary": "Actualizar cotización", "requestBody": { "$ref": "#/components/requestBodies/Cotizacion" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Cotizaciones"], "summary": "Eliminar cotización", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/detalles-etc/": {
+      "get": { "tags": ["Detalles ETC"], "summary": "Listar detalles ETC", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Detalles ETC"], "summary": "Crear detalle ETC", "requestBody": { "$ref": "#/components/requestBodies/DetalleEtc" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/detalles-etc/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Detalles ETC"], "summary": "Obtener detalle ETC", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Detalles ETC"], "summary": "Actualizar detalle ETC", "requestBody": { "$ref": "#/components/requestBodies/DetalleEtc" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Detalles ETC"], "summary": "Eliminar detalle ETC", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/etc/": {
+      "get": { "tags": ["ETC"], "summary": "Listar ETC", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["ETC"], "summary": "Crear ETC", "requestBody": { "$ref": "#/components/requestBodies/Etc" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/etc/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["ETC"], "summary": "Obtener ETC", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["ETC"], "summary": "Actualizar ETC", "requestBody": { "$ref": "#/components/requestBodies/Etc" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["ETC"], "summary": "Eliminar ETC", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/insumos/": {
+      "get": { "tags": ["Insumos"], "summary": "Listar insumos", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Insumos"], "summary": "Crear insumo", "requestBody": { "$ref": "#/components/requestBodies/Insumo" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/insumos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Insumos"], "summary": "Obtener insumo", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Insumos"], "summary": "Actualizar insumo", "requestBody": { "$ref": "#/components/requestBodies/Insumo" }, "responses": { "201": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Insumos"], "summary": "Eliminar insumo", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/personas/": {
+      "get": { "tags": ["Personas"], "summary": "Listar personas", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Personas"], "summary": "Crear persona", "requestBody": { "$ref": "#/components/requestBodies/Persona" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/personas/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Personas"], "summary": "Obtener persona", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Personas"], "summary": "Actualizar persona", "requestBody": { "$ref": "#/components/requestBodies/PersonaUpdate" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Personas"], "summary": "Eliminar persona", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/productos/": {
+      "get": { "tags": ["Productos"], "summary": "Listar productos", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Productos"], "summary": "Crear producto", "requestBody": { "$ref": "#/components/requestBodies/Producto" }, "responses": { "201": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } }
+    },
+    "/productos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Productos"], "summary": "Obtener producto", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Productos"], "summary": "Actualizar producto", "requestBody": { "$ref": "#/components/requestBodies/Producto" }, "responses": { "200": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } },
+      "delete": { "tags": ["Productos"], "summary": "Eliminar producto", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/productos-insumos/": {
+      "get": { "tags": ["Productos-insumos"], "summary": "Listar relaciones producto-insumo", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Productos-insumos"], "summary": "Crear relación producto-insumo", "requestBody": { "$ref": "#/components/requestBodies/ProductoInsumo" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/productos-insumos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Productos-insumos"], "summary": "Obtener relación producto-insumo", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Productos-insumos"], "summary": "Actualizar relación producto-insumo", "requestBody": { "$ref": "#/components/requestBodies/ProductoInsumo" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Productos-insumos"], "summary": "Eliminar relación producto-insumo", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/proveedores/": {
+      "get": { "tags": ["Proveedores"], "summary": "Listar proveedores", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Proveedores"], "summary": "Crear proveedor", "requestBody": { "$ref": "#/components/requestBodies/Proveedor" }, "responses": { "201": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } }
+    },
+    "/proveedores/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Proveedores"], "summary": "Obtener proveedor", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Proveedores"], "summary": "Actualizar proveedor", "requestBody": { "$ref": "#/components/requestBodies/Proveedor" }, "responses": { "200": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } },
+      "delete": { "tags": ["Proveedores"], "summary": "Eliminar proveedor", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/usuarios/": {
+      "get": { "tags": ["Usuarios"], "summary": "Listar usuarios", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Usuarios"], "summary": "Crear usuario", "requestBody": { "$ref": "#/components/requestBodies/Usuario" }, "responses": { "201": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } }
+    },
     "/usuarios/{id}": {
-      "get": {
-        "tags": ["Usuarios"],
-        "summary": "Obtener usuario por ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Usuario encontrado"
-          },
-          "404": {
-            "description": "Usuario no encontrado"
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Usuarios"],
-        "summary": "Actualizar usuario",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "nombre": { "type": "string" },
-                  "genero": { "type": "string" },
-                  "frm": { "type": "string" },
-                  "numdoc": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Usuario actualizado"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Usuarios"],
-        "summary": "Eliminar usuario",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Usuario eliminado"
-          }
-        }
-      }
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Usuarios"], "summary": "Obtener usuario", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Usuarios"], "summary": "Actualizar usuario", "requestBody": { "$ref": "#/components/requestBodies/UsuarioUpdate" }, "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "delete": { "tags": ["Usuarios"], "summary": "Eliminar usuario", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
     },
-
-    "/eventos": {
-      "get": {
-        "tags": ["Eventos"],
-        "summary": "Listar eventos",
-        "responses": {
-          "200": {
-            "description": "Lista de eventos"
-          }
-        }
-      },
-      "post": {
-        "tags": ["Eventos"],
-        "summary": "Crear evento",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "nombre": { "type": "string" },
-                  "fecha": { "type": "string", "format": "date" },
-                  "lugar": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Evento creado"
-          }
-        }
-      }
+    "/ventas/": {
+      "get": { "tags": ["Ventas"], "summary": "Listar ventas", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Ventas"], "summary": "Crear venta", "requestBody": { "$ref": "#/components/requestBodies/Venta" }, "responses": { "201": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } }
     },
-
-    "/eventos/{id}": {
-      "get": {
-        "tags": ["Eventos"],
-        "summary": "Obtener evento por ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Evento encontrado"
-          },
-          "404": {
-            "description": "Evento no encontrado"
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Eventos"],
-        "summary": "Actualizar evento",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Evento actualizado"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Eventos"],
-        "summary": "Eliminar evento",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Evento eliminado"
-          }
-        }
-      }
+    "/ventas/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Ventas"], "summary": "Obtener venta", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Ventas"], "summary": "Actualizar venta", "requestBody": { "$ref": "#/components/requestBodies/Venta" }, "responses": { "200": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } },
+      "delete": { "tags": ["Ventas"], "summary": "Eliminar venta", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
+    },
+    "/ventas-productos/": {
+      "get": { "tags": ["Ventas-productos"], "summary": "Listar relaciones venta-producto", "responses": { "200": { "$ref": "#/components/responses/Ok" } } },
+      "post": { "tags": ["Ventas-productos"], "summary": "Crear relación venta-producto", "requestBody": { "$ref": "#/components/requestBodies/VentaProducto" }, "responses": { "201": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } }
+    },
+    "/ventas-productos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "get": { "tags": ["Ventas-productos"], "summary": "Obtener relación venta-producto", "responses": { "200": { "$ref": "#/components/responses/Ok" }, "404": { "$ref": "#/components/responses/NotFound" } } },
+      "put": { "tags": ["Ventas-productos"], "summary": "Actualizar relación venta-producto", "requestBody": { "$ref": "#/components/requestBodies/VentaProducto" }, "responses": { "200": { "$ref": "#/components/responses/Ok" }, "400": { "$ref": "#/components/responses/BadRequest" } } },
+      "delete": { "tags": ["Ventas-productos"], "summary": "Eliminar relación venta-producto", "responses": { "200": { "$ref": "#/components/responses/Ok" } } }
     }
-
+  },
+  "components": {
+    "parameters": {
+      "Id": { "name": "id", "in": "path", "required": true, "description": "Identificador del recurso", "schema": { "type": "integer", "minimum": 1 } }
+    },
+    "responses": {
+      "Ok": { "description": "Operación exitosa" },
+      "BadRequest": { "description": "Solicitud inválida" },
+      "NotFound": { "description": "Recurso no encontrado" }
+    },
+    "requestBodies": {
+      "Cliente": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cliente" } } } },
+      "Contacto": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Contacto" } } } },
+      "Cotizacion": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cotizacion" } } } },
+      "DetalleEtc": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/DetalleEtc" } } } },
+      "Etc": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Etc" } } } },
+      "Insumo": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Insumo" } } } },
+      "Persona": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Persona" } } } },
+      "PersonaUpdate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PersonaUpdate" } } } },
+      "Producto": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Producto" } } } },
+      "ProductoInsumo": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProductoInsumo" } } } },
+      "Proveedor": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Proveedor" } } } },
+      "Usuario": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Usuario" } } } },
+      "UsuarioUpdate": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/UsuarioUpdate" } } } },
+      "Venta": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Venta" } } } },
+      "VentaProducto": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/VentaProducto" } } } }
+    },
+    "schemas": {
+      "Cliente": { "type": "object", "required": ["persona_id"], "properties": { "persona_id": { "type": "integer", "minimum": 1 } } },
+      "Contacto": { "type": "object", "required": ["tipo_contacto", "contenido", "proveedor_id"], "properties": { "tipo_contacto": { "type": "string" }, "contenido": { "type": "string" }, "proveedor_id": { "type": "integer" } } },
+      "Cotizacion": { "type": "object", "required": ["pro_codigo", "pro_nombre", "pro_cantidad", "pro_precio", "total_pagar", "usuario_id", "cliente_id"], "properties": { "pro_codigo": { "type": "string" }, "pro_nombre": { "type": "string" }, "pro_cantidad": { "type": "number" }, "pro_precio": { "type": "number" }, "total_pagar": { "type": "number" }, "usuario_id": { "type": "integer" }, "cliente_id": { "type": "integer" } } },
+      "DetalleEtc": { "type": "object", "required": ["det_etc_nombre", "det_etc_etc_id", "det_etc_per_id"], "properties": { "det_etc_nombre": { "type": "string" }, "det_etc_etc_id": { "type": "integer" }, "det_etc_per_id": { "type": "integer" } } },
+      "Etc": { "type": "object", "required": ["etc_nombre"], "properties": { "etc_nombre": { "type": "string" } } },
+      "Insumo": { "type": "object", "required": ["codigo", "nombre", "cantidad", "precio", "estado", "usuario_id", "proveedor_id", "etc_id"], "properties": { "codigo": { "type": "string" }, "nombre": { "type": "string" }, "cantidad": { "type": "number" }, "precio": { "type": "number" }, "estado": { "type": "string" }, "usuario_id": { "type": "integer" }, "proveedor_id": { "type": "integer" }, "etc_id": { "type": "integer" } } },
+      "Persona": { "type": "object", "required": ["nombre", "pri_apellido", "correo", "direccion", "identificacion", "telefono"], "properties": { "nombre": { "type": "string" }, "seg_nombre": { "type": "string" }, "pri_apellido": { "type": "string" }, "seg_apellido": { "type": "string" }, "correo": { "type": "string", "format": "email" }, "direccion": { "type": "string" }, "identificacion": { "type": "string" }, "telefono": { "type": "string" } } },
+      "PersonaUpdate": { "type": "object", "minProperties": 1, "properties": { "nombre": { "type": "string" }, "seg_nombre": { "type": "string" }, "pri_apellido": { "type": "string" }, "seg_apellido": { "type": "string" }, "correo": { "type": "string", "format": "email" }, "direccion": { "type": "string" }, "identificacion": { "type": "string" }, "telefono": { "type": "string" } } },
+      "Producto": { "type": "object", "required": ["codigo", "nombre", "cantidad", "precio", "estado", "usua_id", "det_etc_id"], "properties": { "codigo": { "type": "string" }, "nombre": { "type": "string" }, "cantidad": { "type": "number" }, "precio": { "type": "number" }, "estado": { "type": "string" }, "usua_id": { "type": "integer" }, "det_etc_id": { "type": "integer" } } },
+      "ProductoInsumo": { "type": "object", "required": ["cantidad", "producto_id", "insumo_id"], "properties": { "cantidad": { "type": "number" }, "producto_id": { "type": "integer" }, "insumo_id": { "type": "integer" } } },
+      "Proveedor": { "type": "object", "required": ["per_id"], "properties": { "per_id": { "type": "integer", "minimum": 1 } } },
+      "Usuario": { "type": "object", "required": ["nombre", "correo", "contrasena"], "properties": { "nombre": { "type": "string" }, "correo": { "type": "string", "format": "email" }, "contrasena": { "type": "string", "format": "password" }, "estado": { "type": "string", "default": "ACTIVO" }, "det_etc_id": { "type": "integer", "nullable": true } } },
+      "UsuarioUpdate": { "type": "object", "minProperties": 1, "properties": { "nombre": { "type": "string" }, "correo": { "type": "string", "format": "email" }, "contrasena": { "type": "string", "format": "password" }, "estado": { "type": "string" }, "det_etc_id": { "type": "integer", "nullable": true } } },
+      "Venta": { "type": "object", "required": ["fecha", "usua_id", "cli_id"], "properties": { "fecha": { "type": "string", "format": "date" }, "usua_id": { "type": "integer" }, "cli_id": { "type": "integer" } } },
+      "VentaProducto": { "type": "object", "required": ["cantidad", "vent_id", "prod_id"], "properties": { "cantidad": { "type": "number" }, "vent_id": { "type": "integer" }, "prod_id": { "type": "integer" } } }
+    }
   }
 }
