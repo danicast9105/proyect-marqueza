@@ -15,9 +15,17 @@ class MarquezaCrudPage {
         document.querySelector(".agregar")?.addEventListener("click", () => this.openModal());
         document.getElementById("cerrarModal")?.addEventListener("click", () => this.closeModal());
         document.getElementById("btnCancelar")?.addEventListener("click", () => this.closeModal());
+        document.getElementById("btnBuscar")?.addEventListener("click", () => this.render(this.searchInput?.value || ""));
+        document.getElementById("btnExportPdf")?.addEventListener("click", () => this.exportRecords());
         this.form.addEventListener("submit", (event) => this.submit(event));
         this.body.addEventListener("click", (event) => this.handleRowAction(event));
         this.searchInput?.addEventListener("input", () => this.render(this.searchInput.value));
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape" && this.modal.classList.contains("active")) this.closeModal();
+        });
+        this.modal.addEventListener("click", (event) => {
+            if (event.target === this.modal) this.closeModal();
+        });
         this.render();
     }
 
@@ -31,6 +39,22 @@ class MarquezaCrudPage {
 
     writeRecords(records) {
         localStorage.setItem(this.storageKey, JSON.stringify(records));
+    }
+
+    exportRecords() {
+        const records = this.readRecords();
+        if (!records.length) return;
+        const headers = this.columns.join(",");
+        const rows = records.map((record) => this.columns.map((column) => {
+            const value = String(record[column] ?? "").replaceAll('"', '""');
+            return `"${value}"`;
+        }).join(","));
+        const blob = new Blob([[headers, ...rows].join("\n")], { type: "text/csv;charset=utf-8" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${this.storageKey}.csv`;
+        link.click();
+        URL.revokeObjectURL(link.href);
     }
 
     collectForm() {
@@ -76,10 +100,13 @@ class MarquezaCrudPage {
             if (input) input.value = record[field] || "";
         });
         this.modal.classList.add("active");
+        this.modal.setAttribute("aria-hidden", "false");
+        this.modal.querySelector("input, select, textarea")?.focus();
     }
 
     closeModal() {
         this.modal.classList.remove("active");
+        this.modal.setAttribute("aria-hidden", "true");
         this.form.reset();
         this.editIndex = -1;
     }
@@ -88,6 +115,7 @@ class MarquezaCrudPage {
         event.preventDefault();
         const records = this.readRecords();
         const record = this.collectForm();
+        if (Object.values(record).some((value) => !value)) return;
         if (this.editIndex >= 0) records[this.editIndex] = record;
         else records.push(record);
         this.writeRecords(records);

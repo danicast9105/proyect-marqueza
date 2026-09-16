@@ -127,7 +127,7 @@ const renderTabla = () => {
     if (!productos.length) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="8" style="text-align:center; padding:20px;">
+                <td colspan="8" class="sin-resultados">
                     No se encontraron productos.
                 </td>
             </tr>

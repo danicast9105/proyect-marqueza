@@ -30,8 +30,10 @@ class MarquezaAppShell {
     }
 
     init() {
-        if (!this.body || !this.sidebar) return;
+        if (!this.body || !this.sidebar || this.body.dataset.marquezaShell === "ready") return;
+        this.body.dataset.marquezaShell = "ready";
         this.restoreTheme();
+        this.prepareControls();
         this.bindEvents();
         this.updateLayout();
     }
@@ -61,7 +63,20 @@ class MarquezaAppShell {
     toggleMobileMenu() {
         const isOpen = this.sidebar.classList.toggle("open");
         this.sidebar.classList.toggle("close", !isOpen);
+        this.hamburger?.setAttribute("aria-expanded", String(isOpen));
         this.updateLayout();
+    }
+
+    prepareControls() {
+        if (this.toggle) {
+            this.toggle.setAttribute("role", "button");
+            this.toggle.setAttribute("tabindex", "0");
+            this.toggle.setAttribute("aria-label", "Expandir o contraer el menú");
+        }
+        this.hamburger?.setAttribute("aria-expanded", String(this.sidebar.classList.contains("open")));
+        this.modeSwitch?.setAttribute("role", "button");
+        this.modeSwitch?.setAttribute("tabindex", "0");
+        this.modeSwitch?.setAttribute("aria-label", "Cambiar tema claro u oscuro");
     }
 
     updateLayout() {
@@ -81,6 +96,12 @@ class MarquezaAppShell {
             if (this.isTopbar()) return;
             this.sidebar.classList.toggle("close");
             this.updateLayout();
+        });
+        this.toggle?.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                this.toggle.click();
+            }
         });
         this.hamburger?.addEventListener("click", () => this.toggleMobileMenu());
         this.hamburger?.addEventListener("keydown", (event) => {
