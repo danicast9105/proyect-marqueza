@@ -22,3 +22,7 @@ def updatecontacto(id):
 def deletecontacto(id):
     x = contacto_controller.cntDelContacto(id)
     return x
+
+@contacto_bp.route('/<int:id>', methods=['GET'])
+def getContacto(id):
+    return contacto_controller.cntGetContacto(id)

@@ -21,6 +21,13 @@ class persona_services:
 
         return personas_l
 
+    def getPersona(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_PERSONA WHERE PER_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Persona(*row).to_dic() if row else None
+
     def addPersona(nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono):
         uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_PERSONA (PER_UUID, PER_NOMBRE, PER_SEG_NOMBRE, PER_PRI_APELLIDO, PER_SEG_APELLIDO, PER_CORREO, PER_DIRECCION, PER_IDENTIFICACION, PER_TELEFONO) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"

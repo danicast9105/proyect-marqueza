@@ -5,6 +5,7 @@ from Services.productos_services import (
     deleteProductos,
     updateProductos
 )
+from Services.productos_services import servListProductos, getProductos, addProductos, deleteProductos, updateProductos
 
 class productos_controller:
 
@@ -24,6 +25,31 @@ class productos_controller:
         estado = data.get("estado")
         usuario_id = data.get("usuario_id")
         etc_id = data.get("etc_id")
+def cntGetProductos(id):
+    data = getProductos(id)
+    if data is None:
+        return jsonify({"error": "Producto no encontrado"}), 404
+    return jsonify(data), 200
+
+def cntAddProductos():
+    data = request.get_json(silent=True) or {}
+    fields = ("codigo", "nombre", "cantidad", "precio", "estado", "usua_id", "det_etc_id")
+    if any(field not in data for field in fields):
+        return jsonify({"error": "Todos los campos del producto son obligatorios"}), 400
+    result = addProductos(*(data[field] for field in fields))
+    return jsonify(result), 201
+
+def cntDelProductos(id):
+    data = deleteProductos(id)
+    return jsonify(data), 200
+
+def cntModProductos(id):
+    data = request.get_json(silent=True) or {}
+    fields = ("codigo", "nombre", "cantidad", "precio", "estado", "usua_id", "det_etc_id")
+    if any(field not in data for field in fields):
+        return jsonify({"error": "Todos los campos del producto son obligatorios"}), 400
+    result = updateProductos(id, *(data[field] for field in fields))
+    return jsonify(result), 200
 
         if (codigo is None or nombre is None or cantidad is None or
             precio is None or estado is None or usuario_id is None or

@@ -5,6 +5,7 @@ from Services.vent_prod_services import (
     deleteVentProd,
     updateVentProd
 )
+from Services.vent_prod_services import servListVentProd, getVentProd, addVentProd, deleteVentProd, updateVentProd
 
 class vent_prod_controller:
 
@@ -21,6 +22,29 @@ class vent_prod_controller:
         cantidad = data.get("cantidad")
         vent_id = data.get("vent_id")
         prod_id = data.get("prod_id")
+def cntGetVentProd(id):
+    data = getVentProd(id)
+    if data is None:
+        return jsonify({"error": "Relación venta-producto no encontrada"}), 404
+    return jsonify(data), 200
+
+def cntAddVentProd():
+    data = request.get_json(silent=True) or {}
+    fields = ("cantidad", "vent_id", "prod_id")
+    if any(field not in data for field in fields):
+        return jsonify({"error": "Los campos cantidad, vent_id y prod_id son obligatorios"}), 400
+    return jsonify(addVentProd(*(data[field] for field in fields))), 201
+
+def cntDelVentProd(id):
+    data = deleteVentProd(id)
+    return jsonify(data), 200
+
+def cntModVentProd(id):
+    data = request.get_json(silent=True) or {}
+    fields = ("cantidad", "vent_id", "prod_id")
+    if any(field not in data for field in fields):
+        return jsonify({"error": "Los campos cantidad, vent_id y prod_id son obligatorios"}), 400
+    return jsonify(updateVentProd(id, *(data[field] for field in fields))), 200
 
         # Validar campos obligatorios
         if cantidad is None or vent_id is None or prod_id is None:

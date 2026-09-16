@@ -7,6 +7,12 @@ class insumos_controller:
         data = insumos_services.servListInsumos()
         return jsonify(data), 200
 
+    def cntGetInsumos(id):
+        data = insumos_services.getInsumos(id)
+        if data is None:
+            return jsonify({"error": "Insumo no encontrado"}), 404
+        return jsonify(data), 200
+
     def cntAddInsumos():
 
         data = request.get_json(silent=True)

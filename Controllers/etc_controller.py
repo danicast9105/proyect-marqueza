@@ -7,6 +7,12 @@ class etc_controller:
         data = etc_services.servListETC()
         return jsonify(data), 200
 
+    def cntGetETC(id):
+        data = etc_services.getETC(id)
+        if data is None:
+            return jsonify({"error": "ETC no encontrado"}), 404
+        return jsonify(data), 200
+
     def cntAddETC():
         data = request.get_json(silent=True)
         if not data:

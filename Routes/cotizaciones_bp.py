@@ -22,3 +22,7 @@ def updateCotizaciones(id):
 def deleteCotizaciones(id):
     x = cotizaciones_controller.cntDelCotizaciones(id)
     return x
+
+@cotizaciones_bp.route('/<int:id>', methods=['GET'])
+def getCotizaciones(id):
+    return cotizaciones_controller.cntGetCotizaciones(id)

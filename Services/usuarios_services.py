@@ -20,6 +20,13 @@ def servListUsuarios():
 
     return usuarios_l
 
+def getUsuarios(id):
+    c = current_app.mysql.connection.cursor()
+    c.execute("SELECT * FROM t_usuarios WHERE USUA_ID = %s", (id,))
+    row = c.fetchone()
+    c.close()
+    return Usuarios(*row).to_dic() if row else None
+
 def addUsuarios(nombre, correo, contrasena, estado, det_etc_id):
     c   = current_app.mysql.connection.cursor()
     c.execute("SELECT COALESCE(MAX(USUA_ID), 0) + 1 FROM T_USUARIOS")

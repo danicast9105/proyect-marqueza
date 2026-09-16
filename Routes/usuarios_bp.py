@@ -1,5 +1,5 @@
 from flask import Blueprint
-from Controllers.usuarios_controller import cntListUsuarios, cntAddUsuarios, cntDelUsuarios, cntModUsuarios
+from Controllers.usuarios_controller import cntListUsuarios, cntAddUsuarios, cntDelUsuarios, cntModUsuarios, cntGetUsuarios
 
 usuarios_bp = Blueprint('usuarios_bp', __name__)
 
@@ -22,3 +22,7 @@ def updateUsuarios(id):
 def deleteUsuarios(id):
     x = cntDelUsuarios(id)
     return x
+
+@usuarios_bp.route('/<int:id>', methods=['GET'])
+def getUsuarios(id):
+    return cntGetUsuarios(id)

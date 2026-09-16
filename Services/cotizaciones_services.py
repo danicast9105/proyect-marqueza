@@ -21,6 +21,13 @@ class cotizaciones_services:
 
         return cotizaciones_l
 
+    def getCotizaciones(id):
+        c = current_app.mysql.connection.cursor()
+        c.execute("SELECT * FROM T_COTIZACIONES WHERE COT_ID = %s", (id,))
+        row = c.fetchone()
+        c.close()
+        return Cotizaciones(*row).to_dic() if row else None
+
     def addCotizaciones(pro_codigo, pro_nombre, pro_cantidad, pro_precio, total_pagar, usuario_id, cliente_id):
         uuid = str(uuid_lib.uuid4())
         sql = "INSERT INTO T_COTIZACIONES (COT_UUID, COT_PRO_CODIGO, COT_PRO_NOMBRE, COT_PRO_CANTIDAD, COT_PRO_PRECIO, COT_TOTAL_PAGAR, COT_USUA_ID, COT_CLI_ID) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"

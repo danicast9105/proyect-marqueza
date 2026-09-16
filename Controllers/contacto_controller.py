@@ -7,6 +7,12 @@ class contacto_controller:
         data = contacto_services.servListContacto()
         return jsonify(data), 200
 
+    def cntGetContacto(id):
+        data = contacto_services.getContacto(id)
+        if data is None:
+            return jsonify({"error": "Contacto no encontrado"}), 404
+        return jsonify(data), 200
+
     def cntAddContacto():
         # Que la peticon no esté vacia
         data = request.get_json(silent=True)
