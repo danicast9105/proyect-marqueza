@@ -127,43 +127,26 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1>Gestion de Ventas</h1>
-        <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar insumo...">
-            <button type="button" id="btnBuscar">Buscar</button>
-            <button type="button" class="agregar">Agregar Venta</button>
-            <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
-        </div>
-        <div class="cont_filtros">
-            <div class="filtro-grupo">
-                <label for="filtroCategoria">Filtrar por Categoría:</label>
-                <select id="filtroCategoria">
-                    <option value="">Todas</option>
-                    <!-- Las categorías se generan dinámicamente desde ventas.js -->
-                </select>
-            </div>
-            <div class="filtro-estados">
-                <button type="button" class="estado-btn active" data-status="Todos">Todos</button>
-                <button type="button" class="estado-btn" data-status="Bajo">Bajo</button>
-                <button type="button" class="estado-btn" data-status="Medio">Medio</button>
-                <button type="button" class="estado-btn" data-status="Bueno">Bueno</button>
-            </div>
-        </div>
-
-        <!-- Contenedor de la Tabla de Datos -->
-        <div class="cont_tabla">
-<table><thead><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Editar</th><th>Eliminar</th></tr></thead>
-<tbody></tbody></table></div>
-    </div>
+    <main class="cont_2">
+        <section class="page-heading"><div><span class="eyebrow">Gestión comercial</span><h1>Ventas</h1><p>Consulta tus operaciones, identifica el movimiento comercial y mantén cada pedido bajo control.</p></div><button type="button" class="agregar heading-action"><i class='bx bx-plus'></i><span>Nueva venta</span></button></section>
+        <section class="sales-summary" aria-label="Resumen de ventas">
+            <article class="summary-card"><div class="summary-icon"><i class='bx bx-receipt'></i></div><div><span>Ventas registradas</span><strong id="totalVentas">0</strong><small>Operaciones en el periodo</small></div></article>
+            <article class="summary-card"><div class="summary-icon sales-value"><i class='bx bx-money-withdraw'></i></div><div><span>Ingresos acumulados</span><strong id="ingresosVentas">$0</strong><small>Valor total vendido</small></div></article>
+            <article class="summary-card"><div class="summary-icon units-sold"><i class='bx bx-package'></i></div><div><span>Unidades vendidas</span><strong id="unidadesVendidas">0</strong><small>Productos entregados</small></div></article>
+            <article class="summary-card"><div class="summary-icon average-sale"><i class='bx bx-line-chart'></i></div><div><span>Venta promedio</span><strong id="promedioVenta">$0</strong><small>Ingreso por operación</small></div></article>
+        </section>
+        <section class="workspace-panel"><div class="workspace-header"><div><span class="eyebrow">Historial comercial</span><h2>Operaciones registradas</h2></div><span class="record-count" id="resultadosVentas">0 resultados</span></div><div class="cont_busqueda"><div class="search-field"><input type="text" placeholder="Buscar por cliente, producto o fecha..." aria-label="Buscar venta"></div><button type="button" id="btnBuscar" class="btn-secondary"><i class='bx bx-search'></i><span>Buscar</span></button><button type="button" id="btnExportPdf" class="btn-secondary btn-pdf"><i class='bx bx-download'></i><span>Exportar</span></button></div></section>
+        <div class="cont_tabla"><div class="table-scroll"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table></div></div>
+    </main>
 
     <!-- Ventana Modal para Agregar Venta -->
     <div id="modalVenta" class="modal-container">
 <div class="modal-content"><header><h2>Agregar Ventas</h2><i class='bx bx-x' id="cerrarModal"></i></header>
 <form id="formVenta">
-<div class="input-group"><label for="fecha">Fecha</label><input id="fecha" type="date" required placeholder=""></div><div class="input-group"><label for="cliente">Cliente</label><input id="cliente" type="text" required placeholder="Cliente"></div><div class="input-group"><label for="producto">Producto</label><input id="producto" type="text" required placeholder="Producto"></div><div class="input-group"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" required placeholder="Cantidad"></div><div class="input-group"><label for="total">Total</label><input id="total" type="number" required placeholder="Total"></div>
+<div class="input-group"><label for="fecha">Fecha</label><input id="fecha" type="date" required placeholder=""></div><div class="input-group"><label for="cliente">Cliente</label><select id="cliente" required><option value="">Selecciona un cliente</option></select></div><div class="input-group"><label for="producto">Producto</label><select id="producto" required><option value="">Selecciona un producto</option></select></div><div class="input-group"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" min="1" required placeholder="Cantidad"></div><div class="input-group"><label for="total">Total</label><input id="total" type="number" required placeholder="Se calcula automáticamente" readonly></div>
 <div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
 </form></div></div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../shared/navigation.js"></script>
 <script src="../shared/theme-persistence.js"></script>
 <script src="../shared/app-shell.js"></script>

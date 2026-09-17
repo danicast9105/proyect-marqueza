@@ -127,14 +127,25 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1>Gestion de Ayuda</h1>
-        <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar ayuda...">
-            <button type="button" id="btnBuscar">Buscar</button>
-        </div>
+    <main class="cont_2">
+        <section class="page-heading">
+            <div><span class="eyebrow">Centro de orientación</span><h1>Ayuda</h1><p>Encuentra respuestas, conoce los módulos y aprende a trabajar con MARQUEZA de forma rápida y segura.</p></div>
+            <div class="help-heading-icon"><i class="bx bx-help-circle"></i></div>
+        </section>
+
+        <section class="quick-access" aria-label="Accesos rápidos de ayuda">
+            <a href="../inicio/inicio.html"><i class="bx bx-home-alt"></i><span><strong>Inicio</strong><small>Resumen general</small></span><i class="bx bx-chevron-right"></i></a>
+            <a href="../insumos/insumos.html"><i class="bx bx-package"></i><span><strong>Inventario</strong><small>Insumos y productos</small></span><i class="bx bx-chevron-right"></i></a>
+            <a href="../cotizaciones/cotizaciones.html"><i class="bx bx-file"></i><span><strong>Comercial</strong><small>Ventas y cotizaciones</small></span><i class="bx bx-chevron-right"></i></a>
+            <a href="../usuarios/usuarios.html"><i class="bx bx-user-circle"></i><span><strong>Accesos</strong><small>Usuarios y permisos</small></span><i class="bx bx-chevron-right"></i></a>
+        </section>
+
+        <section class="help-controls" aria-label="Buscar en la ayuda">
+            <div class="controls-heading"><div><span class="eyebrow">Guías y respuestas</span><h2>¿Qué necesitas encontrar?</h2></div><span class="help-count" id="helpCount">0 resultados</span></div>
+            <div class="cont_busqueda"><div class="help-search"><i class="bx bx-search"></i><input id="buscarAyuda" type="search" placeholder="Buscar por tema, módulo o pregunta..." aria-label="Buscar en la ayuda"></div><button type="button" id="btnBuscar"><i class="bx bx-search"></i><span>Buscar</span></button><button type="button" id="btnLimpiarAyuda" class="btn-clear"><i class="bx bx-refresh"></i><span>Limpiar</span></button></div>
+        </section>
         <div class="cont_filtros">
-            <h4>Filtrar por categoría:</h4>
+            <h4><i class="bx bx-filter-alt"></i> Filtrar por categoría</h4>
             <div class="filtro-estados">
                 <button type="button" class="estado-btn active" data-filter="Todos">Todos</button>
                 <button type="button" class="estado-btn" data-filter="General">General</button>
@@ -178,7 +189,7 @@
                 <p>También es recomendable revisar la información de cada módulo antes de realizar cambios importantes, para evitar errores y ahorrar tiempo.</p>
             </div>
 
-            <div class="caja_ayuda" data-category="Navegación">
+            <div class="caja_ayuda" data-category="General">
                 <h3><i class='bx bx-navigation'></i> Navegación recomendada</h3>
                 <ul>
                     <li>Comienza en el inicio para tener una visión general del sistema.</li>
@@ -187,7 +198,7 @@
                 </ul>
             </div>
 
-            <div class="caja_ayuda" data-category="Buenas prácticas">
+            <div class="caja_ayuda" data-category="Consejos">
                 <h3><i class='bx bx-check-shield'></i> Buenas prácticas</h3>
                 <ul>
                     <li>Verifica los datos antes de guardar cambios importantes.</li>
@@ -197,7 +208,7 @@
                 </ul>
             </div>
 
-            <div class="caja_ayuda" data-category="Preguntas">
+            <div class="caja_ayuda" data-category="Soporte">
                 <h3><i class='bx bx-question-mark'></i> Preguntas frecuentes</h3>
                 <ul>
                     <li>¿Cómo encuentro una opción rápida? Usa la barra de búsqueda o el menú lateral.</li>
@@ -206,7 +217,7 @@
                 </ul>
             </div>
 
-            <div class="caja_ayuda" data-category="Problemas">
+            <div class="caja_ayuda" data-category="Soporte">
                 <h3><i class='bx bx-error-circle'></i> Solución de problemas básicos</h3>
                 <ul>
                     <li>Si la página se ve incompleta, refresca el navegador.</li>
@@ -215,19 +226,19 @@
                 </ul>
             </div>
 
-            <div class="caja_ayuda" data-category="Trabajo">
+            <div class="caja_ayuda" data-category="Acciones">
                 <h3><i class='bx bx-time-five'></i> Flujo de trabajo recomendado</h3>
                 <p>Para trabajar de forma eficiente puedes seguir este orden: revisar el inicio, abrir el módulo necesario, completar la acción, verificar el resultado y guardar los cambios si aplica.</p>
                 <p>Este flujo ayuda a reducir errores y facilita el seguimiento de las tareas.</p>
             </div>
 
-            <div class="caja_ayuda" data-category="Equipos">
+            <div class="caja_ayuda" data-category="Consejos">
                 <h3><i class='bx bx-group'></i> Uso para equipos</h3>
                 <p>Si varias personas usan el sistema, es recomendable mantener una comunicación clara sobre los cambios realizados, los módulos que se están usando y los datos que se están actualizando.</p>
                 <p>Así se evita la duplicación de tareas y se mejora la organización del trabajo.</p>
             </div>
 
-            <div class="caja_ayuda" data-category="Primeros pasos">
+            <div class="caja_ayuda" data-category="General">
                 <h3><i class='bx bx-rocket'></i> Primeros pasos</h3>
                 <ul>
                     <li>Identifica cuál es tu rol dentro del sistema.</li>
@@ -236,12 +247,12 @@
                 </ul>
             </div>
 
-            <div class="caja_ayuda" data-category="Accesos">
+            <div class="caja_ayuda" data-category="Soporte">
                 <h3><i class='bx bx-key'></i> Accesos rápidos</h3>
                 <p>Para ahorrar tiempo, usa el menú lateral y la barra de búsqueda como atajos principales para llegar a cualquier módulo sin perder tiempo navegando.</p>
             </div>
 
-            <div class="caja_ayuda" data-category="Módulos">
+            <div class="caja_ayuda" data-category="General">
                 <h3><i class='bx bx-book-open'></i> Guía de módulos</h3>
                 <ul>
                     <li>Inicio: vista general del sistema.</li>
@@ -251,14 +262,87 @@
                 </ul>
             </div>
 
-            <div class="caja_ayuda" data-category="Funciones">
+            <div class="caja_ayuda" data-category="Acciones">
                 <h3><i class='bx bx-star'></i> Funciones recomendadas</h3>
                 <p>Las funciones más útiles suelen ser la búsqueda, los filtros, la navegación por módulos y la revisión de mensajes del sistema, ya que facilitan la ejecución de tareas diarias.</p>
             </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bx-user-plus'></i> Cómo registrar un usuario</h3>
+                <ol class="pasos">
+                    <li>Abre el módulo <strong>Usuarios</strong> desde el menú lateral.</li>
+                    <li>Selecciona <strong>Nuevo usuario</strong>.</li>
+                    <li>Completa nombre, correo, rol y contraseña.</li>
+                    <li>Confirma la contraseña y pulsa <strong>Guardar</strong>.</li>
+                </ol>
+            </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bx-package'></i> Cómo agregar un insumo</h3>
+                <ol class="pasos">
+                    <li>Entra a <strong>Insumos</strong> y pulsa <strong>Nuevo insumo</strong>.</li>
+                    <li>Escribe el nombre, categoría y unidad de medida.</li>
+                    <li>Selecciona el proveedor responsable.</li>
+                    <li>Indica cantidad, precio unitario y estado.</li>
+                    <li>Guarda el registro y verifica que aparezca en la tabla.</li>
+                </ol>
+            </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bxs-t-shirt'></i> Cómo registrar un producto</h3>
+                <ol class="pasos">
+                    <li>Abre el módulo <strong>Productos</strong>.</li>
+                    <li>Selecciona <strong>Nuevo producto</strong>.</li>
+                    <li>Registra código, nombre, cantidad y precio.</li>
+                    <li>Revisa el estado calculado del inventario.</li>
+                    <li>Pulsa <strong>Guardar</strong> para completar el registro.</li>
+                </ol>
+            </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bx-store'></i> Cómo registrar un proveedor</h3>
+                <ol class="pasos">
+                    <li>Ingresa a <strong>Proveedores</strong> y pulsa <strong>Nuevo proveedor</strong>.</li>
+                    <li>Escribe la empresa y la persona de contacto.</li>
+                    <li>Agrega teléfono, correo y dirección.</li>
+                    <li>Guarda la ficha para poder seleccionarla desde Insumos.</li>
+                </ol>
+            </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bx-file-plus'></i> Cómo crear una cotización</h3>
+                <ol class="pasos">
+                    <li>Abre <strong>Cotizaciones</strong> y selecciona <strong>Nueva cotización</strong>.</li>
+                    <li>Elige cliente y producto de los registros disponibles.</li>
+                    <li>Indica cantidad, precio unitario, estado y notas.</li>
+                    <li>Guarda la propuesta y usa el icono de descarga para generar el PDF.</li>
+                </ol>
+            </div>
+
+            <div class="caja_ayuda" data-category="Acciones">
+                <h3><i class='bx bx-money-withdraw'></i> Cómo registrar una venta</h3>
+                <ol class="pasos">
+                    <li>Entra a <strong>Ventas</strong> y pulsa <strong>Nueva venta</strong>.</li>
+                    <li>Selecciona el cliente y el producto vendido.</li>
+                    <li>Indica fecha y cantidad; el total se calcula automáticamente.</li>
+                    <li>Revisa los datos y confirma con <strong>Guardar</strong>.</li>
+                </ol>
+            </div>
+
+            <div class="caja_ayuda" data-category="Consejos">
+                <h3><i class='bx bx-edit-alt'></i> Cómo editar o eliminar</h3>
+                <ol class="pasos">
+                    <li>Localiza el registro con el buscador.</li>
+                    <li>Usa el icono del lápiz para modificar la información.</li>
+                    <li>Usa el icono de papelera solo cuando estés seguro.</li>
+                    <li>Confirma los cambios y revisa el resultado en la tabla.</li>
+                </ol>
+            </div>
         </div>
-    </div>
+    </main>
         
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../shared/navigation.js"></script>
     <script src="../shared/theme-persistence.js"></script>
     <script src="ayuda.js"></script>

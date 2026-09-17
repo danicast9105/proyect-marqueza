@@ -73,6 +73,24 @@ const getEstadoPorCantidad = (cantidad) => {
     return { label: "Bueno", clase: "estado-verde" };
 };
 
+const formatMoney = value => Number(value || 0).toLocaleString("es-CO", {
+    style: "currency",
+    currency: "COP",
+    maximumFractionDigits: 0
+});
+
+const updateSummary = (records = getProductos(), visibleRecords = records) => {
+    const lowStock = records.filter(item => getEstadoPorCantidad(item.cantidad).label === "Bajo").length;
+    const units = records.reduce((total, item) => total + Number(item.cantidad || 0), 0);
+    const catalogValue = records.reduce((total, item) => total + Number(item.cantidad || 0) * Number(item.precio || 0), 0);
+    const setText = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value; };
+    setText("totalProductos", records.length);
+    setText("productosBajos", lowStock);
+    setText("unidadesProductos", formatNumber(units));
+    setText("valorProductos", formatMoney(catalogValue));
+    setText("resultadosProductos", `${visibleRecords.length} ${visibleRecords.length === 1 ? "resultado" : "resultados"}`);
+};
+
 const getFilteredProductos = () => {
     const query = (searchInput?.value || "").trim().toLowerCase();
     const categoria = filtroCategoria?.value || "";
@@ -122,16 +140,11 @@ const renderTabla = () => {
     if (!tbody) return;
 
     const productos = getFilteredProductos();
+    updateSummary(getProductos(), productos);
     tbody.innerHTML = "";
 
     if (!productos.length) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="sin-resultados">
-                    No se encontraron productos.
-                </td>
-            </tr>
-        `;
+        tbody.innerHTML = '<tr><td colspan="7" class="sin-resultados"><i class="bx bx-search-alt-2"></i><strong>No encontramos productos</strong><span>Prueba con otra búsqueda o cambia los filtros.</span></td></tr>';
         return;
     }
 
@@ -150,13 +163,13 @@ const renderTabla = () => {
                 </span>
             </td>
             <td data-label="Editar">
-                <button type="button" class="btn-editar" data-index="${producto.originalIndex}">
-                    Editar
+                <button type="button" class="btn-editar" data-index="${producto.originalIndex}" title="Editar" aria-label="Editar">
+                    <i class="bx bx-pencil" aria-hidden="true"></i>
                 </button>
             </td>
             <td data-label="Eliminar">
-                <button type="button" class="btn-eliminar" data-index="${producto.originalIndex}">
-                    Eliminar
+                <button type="button" class="btn-eliminar" data-index="${producto.originalIndex}" title="Eliminar" aria-label="Eliminar">
+                    <i class="bx bx-trash-alt" aria-hidden="true"></i>
                 </button>
             </td>
         `;
@@ -206,7 +219,7 @@ const cerrarModal = () => {
 
 const exportToPDF = () => {
     if (!window.jspdf?.jsPDF) {
-        alert("No se pudo cargar el generador de PDF. Revisa tu conexión a Internet.");
+        window.Swal?.fire({ icon: "error", title: "No se pudo exportar", text: "Revisa tu conexión a Internet e inténtalo de nuevo." });
         return;
     }
 
@@ -251,6 +264,7 @@ const exportToPDF = () => {
     }
 
     doc.save("productos-marqueza.pdf");
+    window.Swal?.fire({ icon: "success", title: "Exportación lista", text: "El listado de productos se descargó correctamente.", timer: 1600, showConfirmButton: false });
 };
 
 form?.addEventListener("submit", event => {
@@ -264,7 +278,7 @@ form?.addEventListener("submit", event => {
 
     if (!codigo || !nombre || !Number.isFinite(cantidad) || cantidad < 0 ||
         !Number.isFinite(precio) || precio < 0 || !estado) {
-        alert("Completa todos los campos con valores válidos.");
+        window.Swal?.fire({ icon: "warning", title: "Datos incompletos", text: "Completa todos los campos con valores válidos." });
         return;
     }
 
@@ -278,7 +292,8 @@ form?.addEventListener("submit", event => {
         categoria: "General"
     };
 
-    if (editIndex >= 0) {
+    const editing = editIndex >= 0;
+    if (editing) {
         producto.categoria = productos[editIndex]?.categoria || "General";
         productos[editIndex] = producto;
     } else {
@@ -289,6 +304,7 @@ form?.addEventListener("submit", event => {
     actualizarCategorias();
     renderTabla();
     cerrarModal();
+    window.Swal?.fire({ icon: "success", title: editing ? "Producto actualizado" : "Producto guardado", text: "La información se guardó correctamente.", timer: 1600, showConfirmButton: false });
 });
 
 tbody?.addEventListener("click", event => {
@@ -304,12 +320,15 @@ tbody?.addEventListener("click", event => {
     }
 
     if (button.classList.contains("btn-eliminar")) {
-        if (confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+        const removeProduct = () => {
             productos.splice(index, 1);
             saveProductos(productos);
             actualizarCategorias();
             renderTabla();
-        }
+            window.Swal?.fire({ icon: "success", title: "Producto eliminado", text: "El producto se eliminó correctamente.", timer: 1600, showConfirmButton: false });
+        };
+        if (!window.Swal) return;
+        window.Swal.fire({ icon: "warning", title: "¿Eliminar producto?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#d4554d" }).then(result => { if (result.isConfirmed) removeProduct(); });
     }
 });
 

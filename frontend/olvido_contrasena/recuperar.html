@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar contraseña | MARQUEZA</title>
+    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="recuperar.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body class="password-recovery">
+    <main class="recovery-card">
+        <a class="back-link" href="../incio%20sesion/inicio%20sesion.html"><i class="bx bx-arrow-back"></i> Volver al inicio de sesión</a>
+        <div class="recovery-brand"><img src="../fondo/icono 3.png" alt="Logo MARQUEZA"><div><strong>MARQUEZA</strong><small>Confecciones que inspiran</small></div></div>
+        <div class="recovery-icon"><i class="bx bx-envelope"></i></div>
+        <span class="eyebrow">Acceso seguro</span>
+        <h1>Recupera tu contraseña</h1>
+        <p class="recovery-copy">Escribe el correo asociado a tu cuenta y te enviaremos un enlace para crear una nueva contraseña.</p>
+        <form id="recoveryForm" novalidate>
+            <label for="correo">Correo electrónico</label>
+            <div class="input-shell"><i class="bx bx-envelope"></i><input id="correo" type="email" autocomplete="email" placeholder="correo@ejemplo.com" required></div>
+            <button type="submit"><span>Enviar enlace</span><i class="bx bx-send"></i></button>
+        </form>
+        <p class="recovery-note"><i class="bx bx-lock-alt"></i> El enlace será de un solo uso y tendrá una vigencia limitada.</p>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="recuperar.js"></script>
+</body>
+</html>

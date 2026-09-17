@@ -41,9 +41,17 @@ class MarquezaCrudPage {
         localStorage.setItem(this.storageKey, JSON.stringify(records));
     }
 
+    notify(options) {
+        if (window.Swal) return window.Swal.fire(options);
+        return Promise.resolve();
+    }
+
     exportRecords() {
         const records = this.readRecords();
-        if (!records.length) return;
+        if (!records.length) {
+            this.notify({ icon: "info", title: "Sin registros", text: "No hay datos para exportar." });
+            return;
+        }
         const headers = this.columns.join(",");
         const rows = records.map((record) => this.columns.map((column) => {
             const value = String(record[column] ?? "").replaceAll('"', '""');
@@ -55,6 +63,7 @@ class MarquezaCrudPage {
         link.download = `${this.storageKey}.csv`;
         link.click();
         URL.revokeObjectURL(link.href);
+        this.notify({ icon: "success", title: "Exportación lista", text: "El archivo se descargó correctamente.", timer: 1600, showConfirmButton: false });
     }
 
     collectForm() {
@@ -84,10 +93,15 @@ class MarquezaCrudPage {
     createActionCell(label, className, index) {
         const cell = document.createElement("td");
         const button = document.createElement("button");
+        const icon = document.createElement("i");
         button.type = "button";
         button.className = className;
         button.dataset.index = String(index);
-        button.textContent = label;
+        button.title = label;
+        button.setAttribute("aria-label", label);
+        icon.className = className === "btn-editar" ? "bx bx-pencil" : "bx bx-trash-alt";
+        icon.setAttribute("aria-hidden", "true");
+        button.appendChild(icon);
         cell.appendChild(button);
         return cell;
     }
@@ -115,15 +129,20 @@ class MarquezaCrudPage {
         event.preventDefault();
         const records = this.readRecords();
         const record = this.collectForm();
-        if (Object.values(record).some((value) => !value)) return;
-        if (this.editIndex >= 0) records[this.editIndex] = record;
+        if (Object.values(record).some((value) => !value)) {
+            this.notify({ icon: "warning", title: "Campos incompletos", text: "Completa todos los campos antes de guardar." });
+            return;
+        }
+        const editing = this.editIndex >= 0;
+        if (editing) records[this.editIndex] = record;
         else records.push(record);
         this.writeRecords(records);
         this.closeModal();
         this.render(this.searchInput?.value || "");
+        this.notify({ icon: "success", title: editing ? "Registro actualizado" : "Registro guardado", text: editing ? "Los cambios se guardaron correctamente." : "El registro se agregó correctamente.", timer: 1600, showConfirmButton: false });
     }
 
-    handleRowAction(event) {
+    async handleRowAction(event) {
         const button = event.target.closest("button[data-index]");
         if (!button) return;
         const index = Number(button.dataset.index);
@@ -131,12 +150,15 @@ class MarquezaCrudPage {
             this.openModal(index);
             return;
         }
-        if (button.classList.contains("btn-eliminar") && confirm("¿Eliminar registro?")) {
-            const records = this.readRecords();
-            records.splice(index, 1);
-            this.writeRecords(records);
-            this.render(this.searchInput?.value || "");
-        }
+        if (!button.classList.contains("btn-eliminar")) return;
+        if (!window.Swal) return;
+        const result = await window.Swal.fire({ icon: "warning", title: "¿Eliminar registro?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#d4554d" });
+        if (!result.isConfirmed) return;
+        const records = this.readRecords();
+        records.splice(index, 1);
+        this.writeRecords(records);
+        this.render(this.searchInput?.value || "");
+        this.notify({ icon: "success", title: "Registro eliminado", text: "El registro se eliminó correctamente.", timer: 1600, showConfirmButton: false });
     }
 }
 

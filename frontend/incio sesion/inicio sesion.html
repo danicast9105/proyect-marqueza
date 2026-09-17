@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="estilo.css">
     <link rel="stylesheet" href="../shared/base.css">
-    <title>Login Marqueza.C</title>
+    <link rel="stylesheet" href="estilo.css">
+    <title>Iniciar sesión | MARQUEZA</title>
 </head>
 
 <body>
@@ -32,24 +32,30 @@
             
             <!-- subtitulo formulario -->
             <h2>Iniciar sesión</h2>
-            <p class="texto">Ingresa tus credenciales para acceder al sistema</p>
+            <p class="texto">Accede a tu espacio de trabajo y continúa gestionando MARQUEZA.</p>
             
             <!-- contenedor de nombre de usuario -->
-            <label>Nombre de usuario</label>
-            <input type="username" placeholder="Ingresa tu nombre de usuario" class="caja_inicio" required pattern="^[A-Za-z0-9]{3,20}$" title="El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras y números." id="usuario">
+            <div class="campo-login">
+                <label for="usuario">Nombre de usuario</label>
+                <div class="input-shell"><i class="bx bx-user" aria-hidden="true"></i><input type="text" placeholder="Ingresa tu nombre de usuario" class="caja_inicio" required pattern="^[A-Za-z0-9]{3,20}$" autocomplete="username" title="El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras y números." id="usuario"></div>
+            </div>
             
             <!-- contenedor de contraseña -->
-            <label>Contraseña</label>
-            <input type="password" placeholder="ingresa tu contraseña" class="caja_inicio" required id="contraseña">
+            <div class="campo-login">
+                <label for="contraseña">Contraseña</label>
+                <div class="input-shell"><i class="bx bx-lock-alt" aria-hidden="true"></i><input type="password" placeholder="Ingresa tu contraseña" class="caja_inicio" required autocomplete="current-password" id="contraseña"></div>
+            </div>
             
             <!-- recordar y olvidaste tu contraseña -->
             <div class="options">
                 <label><input type="checkbox" class="check-recordarme"> Recordarme</label>
-                <a href="#">¿Olvidaste tu contraseña?</a>
+                <a href="../olvido_contrasena/recuperar.html">¿Olvidaste tu contraseña?</a>
             </div>
             
             <!-- boton de iniciar sesión -->
-            <button type="submit">Iniciar sesión</button>
+            <button type="submit" class="login-submit"><span>Iniciar sesión</span><i class="bx bx-right-arrow-alt" aria-hidden="true"></i></button>
+
+            <p class="security-note"><i class="bx bx-shield-quarter"></i> Tus datos se utilizan únicamente para validar el acceso.</p>
             
             <!-- pie de contenedor -->
             <div class="footer">

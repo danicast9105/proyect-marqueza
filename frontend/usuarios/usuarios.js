@@ -230,18 +230,23 @@ const saveUsuarios = (usuarios) => {
 const renderTabla = (filtro = "") => {
     if (!tableBody) return;
     // Mapeamos los usuarios para conservar su índice original del localStorage
-    let usuarios = getUsuarios().map((u, i) => ({ ...u, originalIndex: i }));
+    const registros = getUsuarios();
+    let usuarios = registros.map((u, i) => ({ ...u, originalIndex: i }));
 
     // Lógica de filtrado
     if (filtro) {
         const termino = filtro.toLowerCase();
-        usuarios = usuarios.filter(u => 
-            u.nombre.toLowerCase().includes(termino) || 
-            u.correo.toLowerCase().includes(termino)
+        usuarios = usuarios.filter(u =>
+            String(u.nombre || "").toLowerCase().includes(termino) ||
+            String(u.correo || "").toLowerCase().includes(termino)
         );
     }
 
     tableBody.innerHTML = ""; 
+
+    const emptyState = document.querySelector(".empty-state");
+    if (emptyState) emptyState.style.display = usuarios.length ? "none" : "block";
+    updateSummary(registros, usuarios);
 
     usuarios.forEach((usuario) => {
         const tr = document.createElement("tr");
@@ -250,11 +255,26 @@ const renderTabla = (filtro = "") => {
             <td>${usuario.correo}</td>
             <td>${usuario.rol}</td>
             <td>********</td>
-            <td><button type="button" class="btn-editar" data-index="${usuario.originalIndex}">Editar</button></td>
-            <td><button type="button" class="btn-eliminar" data-index="${usuario.originalIndex}">Eliminar</button></td>
+            <td><button type="button" class="btn-editar" data-index="${usuario.originalIndex}" title="Editar" aria-label="Editar"><i class="bx bx-pencil" aria-hidden="true"></i></button></td>
+            <td><button type="button" class="btn-eliminar" data-index="${usuario.originalIndex}" title="Eliminar" aria-label="Eliminar"><i class="bx bx-trash-alt" aria-hidden="true"></i></button></td>
         `;
         tableBody.appendChild(tr);
     });
+};
+
+const updateSummary = (registros, visibles) => {
+    const setText = (id, value) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = value;
+    };
+    const administradores = registros.filter(usuario => usuario.rol === "Administrador").length;
+    const empleados = registros.filter(usuario => usuario.rol === "Empleado").length;
+    const correos = registros.filter(usuario => String(usuario.correo || "").trim()).length;
+    setText("totalUsuarios", registros.length);
+    setText("administradoresUsuarios", administradores);
+    setText("empleadosUsuarios", empleados);
+    setText("correosUsuarios", `${registros.length ? Math.round((correos / registros.length) * 100) : 0}%`);
+    setText("resultadosUsuarios", `${visibles.length} ${visibles.length === 1 ? "resultado" : "resultados"}`);
 };
 
 // --- Listeners para Búsqueda ---

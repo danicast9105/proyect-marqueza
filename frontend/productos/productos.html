@@ -127,35 +127,35 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1>Gestion de Productos</h1>
-        <div class="cont_busqueda">
-            <input type="text" id="searchInput" placeholder="Buscar producto...">
-            <button type="button" id="btnBuscar">Buscar</button>
-            <button type="button" class="agregar">Agregar Producto</button>
-            <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
-        </div>
-        <div class="cont_filtros">
-            <div class="filtro-grupo">
-                <label for="filtroCategoria">Filtrar por Categoría:</label>
-                <select id="filtroCategoria">
-                    <option value="">Todas</option>
-                    <!-- Las categorías se generan dinámicamente desde productos.js -->
-                </select>
+    <main class="cont_2">
+        <section class="page-heading">
+            <div>
+                <span class="eyebrow">Catálogo y producción</span>
+                <h1>Productos</h1>
+                <p>Administra tu catálogo, conoce el valor disponible y mantén cada referencia lista para vender.</p>
             </div>
-            <div class="filtro-estados">
-                <button type="button" class="estado-btn active" data-status="Todos">Todos</button>
-                <button type="button" class="estado-btn" data-status="Bajo">Bajo</button>
-                <button type="button" class="estado-btn" data-status="Medio">Medio</button>
-                <button type="button" class="estado-btn" data-status="Bueno">Bueno</button>
-            </div>
-        </div>
+            <button type="button" class="agregar heading-action"><i class='bx bx-plus'></i><span>Nuevo producto</span></button>
+        </section>
 
-        <!-- Contenedor de la Tabla de Datos -->
-        <div class="cont_tabla">
-<table><thead><tr><th>Código</th><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Estado</th><th>Editar</th><th>Eliminar</th></tr></thead>
-<tbody></tbody></table></div>
-    </div>
+        <section class="product-summary" aria-label="Resumen de productos">
+            <article class="summary-card"><div class="summary-icon"><i class='bx bxs-t-shirt'></i></div><div><span>Productos registrados</span><strong id="totalProductos">0</strong><small>Referencias en catálogo</small></div></article>
+            <article class="summary-card"><div class="summary-icon stock-warning"><i class='bx bx-error-alt'></i></div><div><span>Stock bajo</span><strong id="productosBajos">0</strong><small>Requieren producción</small></div></article>
+            <article class="summary-card"><div class="summary-icon stock-good"><i class='bx bx-check-shield'></i></div><div><span>Unidades disponibles</span><strong id="unidadesProductos">0</strong><small>Existencias actuales</small></div></article>
+            <article class="summary-card"><div class="summary-icon product-value"><i class='bx bx-wallet'></i></div><div><span>Valor del catálogo</span><strong id="valorProductos">$0</strong><small>Cantidad por precio</small></div></article>
+        </section>
+
+        <section class="workspace-panel">
+            <div class="workspace-header"><div><span class="eyebrow">Catálogo registrado</span><h2>Referencias de producto</h2></div><span class="record-count" id="resultadosProductos">0 resultados</span></div>
+            <div class="cont_busqueda">
+                <div class="search-field"><input type="text" id="searchInput" placeholder="Buscar por código, nombre o categoría..." aria-label="Buscar producto"></div>
+                <button type="button" id="btnBuscar" class="btn-secondary"><i class='bx bx-search'></i><span>Buscar</span></button>
+                <button type="button" id="btnExportPdf" class="btn-secondary btn-pdf"><i class='bx bx-download'></i><span>Exportar</span></button>
+            </div>
+            <div class="cont_filtros"><div class="filtro-grupo"><label for="filtroCategoria"><i class='bx bx-filter-alt'></i> Categoría</label><select id="filtroCategoria"><option value="">Todas las categorías</option></select></div><div class="filtro-estados" aria-label="Filtrar por nivel de stock"><span class="filter-label">Nivel de stock</span><button type="button" class="estado-btn active" data-status="Todos">Todos</button><button type="button" class="estado-btn" data-status="Bajo">Bajo</button><button type="button" class="estado-btn" data-status="Medio">Medio</button><button type="button" class="estado-btn" data-status="Bueno">Bueno</button></div></div>
+        </section>
+
+        <div class="cont_tabla"><div class="table-scroll"><table><thead><tr><th>Código</th><th>Nombre</th><th>Cantidad</th><th>Precio</th><th>Estado</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table></div></div>
+    </main>
 
     <!-- Ventana Modal para Agregar Insumo -->
     <div id="modalProducto" class="modal-container">
@@ -166,6 +166,7 @@
 </form></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../shared/navigation.js"></script>
 <script src="../shared/theme-persistence.js"></script>
 <script src="productos.js"></script></body></html>

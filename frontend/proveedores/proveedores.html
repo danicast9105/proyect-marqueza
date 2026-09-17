@@ -121,43 +121,32 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1>Gestion de Proveedores</h1>
-        <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar proveedor...">
-            <button type="button" id="btnBuscar">Buscar</button>
-            <button type="button" class="agregar">Agregar Proveedor</button>
-            <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
-        </div>
-        <div class="cont_filtros">
-            <div class="filtro-grupo">
-                <label for="filtroCategoria">Filtrar por Categoría:</label>
-                <select id="filtroCategoria">
-                    <option value="">Todas</option>
-                    <!-- Las categorías se generan dinámicamente desde proveedores.js -->
-                </select>
-            </div>
-            <div class="filtro-estados">
-                <button type="button" class="estado-btn active" data-status="Todos">Todos</button>
-                <button type="button" class="estado-btn" data-status="Bajo">Bajo</button>
-                <button type="button" class="estado-btn" data-status="Medio">Medio</button>
-                <button type="button" class="estado-btn" data-status="Bueno">Bueno</button>
-            </div>
-        </div>
-
-        <!-- Contenedor de la Tabla de Datos -->
-        <div class="cont_tabla">
-<table><thead><tr><th>Empresa</th><th>Contacto</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Editar</th><th>Eliminar</th></tr></thead>
-<tbody></tbody></table></div>
-    </div>
+    <main class="cont_2">
+        <section class="page-heading">
+            <div><span class="eyebrow">Relaciones comerciales</span><h1>Proveedores</h1><p>Administra tus aliados comerciales y encuentra rápidamente sus datos de contacto.</p></div>
+            <button type="button" class="agregar heading-action"><i class='bx bx-plus'></i><span>Nuevo proveedor</span></button>
+        </section>
+        <section class="provider-summary" aria-label="Resumen de proveedores">
+            <article class="summary-card"><div class="summary-icon"><i class='bx bx-package'></i></div><div><span>Proveedores registrados</span><strong id="totalProveedores">0</strong><small>Aliados en la base</small></div></article>
+            <article class="summary-card"><div class="summary-icon provider-contact"><i class='bx bx-user-voice'></i></div><div><span>Contactos disponibles</span><strong id="contactosProveedores">0</strong><small>Personas de contacto</small></div></article>
+            <article class="summary-card"><div class="summary-icon provider-phone"><i class='bx bx-phone'></i></div><div><span>Teléfonos registrados</span><strong id="telefonosProveedores">0</strong><small>Canales directos</small></div></article>
+            <article class="summary-card"><div class="summary-icon provider-complete"><i class='bx bx-check-shield'></i></div><div><span>Fichas completas</span><strong id="fichasProveedores">0%</strong><small>Información lista para usar</small></div></article>
+        </section>
+        <section class="workspace-panel">
+            <div class="workspace-header"><div><span class="eyebrow">Directorio de abastecimiento</span><h2>Registro de proveedores</h2></div><span class="record-count" id="resultadosProveedores">0 resultados</span></div>
+            <div class="cont_busqueda"><div class="search-field"><i class='bx bx-search'></i><input type="text" placeholder="Buscar por empresa, contacto, teléfono o correo..." aria-label="Buscar proveedor"></div><button type="button" id="btnBuscar" class="btn-secondary"><i class='bx bx-search'></i><span>Buscar</span></button><button type="button" id="btnExportPdf" class="btn-secondary btn-pdf"><i class='bx bx-download'></i><span>Exportar</span></button></div>
+        </section>
+        <div class="cont_tabla"><div class="table-scroll"><table><thead><tr><th>Empresa</th><th>Contacto</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table><p class="empty-state">Aún no hay proveedores registrados.</p></div></div>
+    </main>
 
     <!-- Ventana Modal para Agregar Proveedor -->
     <div id="modalProveedor" class="modal-container">
-<div class="modal-content"><header><h2>Agregar Proveedores</h2><i class='bx bx-x' id="cerrarModal"></i></header>
+<div class="modal-content"><header><div><span class="eyebrow">Directorio de abastecimiento</span><h2 id="modalProveedorTitle">Nuevo proveedor</h2></div><button type="button" class="modal-close" id="cerrarModal" aria-label="Cerrar"><i class='bx bx-x'></i></button></header>
 <form id="formProveedor">
 <div class="input-group"><label for="empresa">Empresa</label><input id="empresa" type="text" required placeholder="Nombre del proveedor"></div><div class="input-group"><label for="contacto">Contacto</label><input id="contacto" type="text" required placeholder="Persona de contacto"></div><div class="input-group"><label for="telefono">Teléfono</label><input id="telefono" type="tel" required placeholder="Teléfono"></div><div class="input-group"><label for="correo">Correo</label><input id="correo" type="email" required placeholder="correo@ejemplo.com"></div><div class="input-group"><label for="direccion">Dirección</label><input id="direccion" type="text" required placeholder="Dirección"></div>
-<div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
+<div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario"><i class='bx bx-save'></i> Guardar proveedor</button></div>
 </form></div></div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../shared/navigation.js"></script>
 <script src="../shared/theme-persistence.js"></script>
 <script src="../shared/app-shell.js"></script>

@@ -127,37 +127,47 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1>Gestion de Insumos</h1>
-        <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar insumo...">
-            <button type="button" id="btnBuscar">Buscar</button>
-            <button type="button" class="agregar">Agregar Insumo</button>
-            <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
-        </div>
-        <div class="cont_filtros">
-            <div class="filtro-grupo">
-                <label for="filtroCategoria">Filtrar por Categoría:</label>
-                <select id="filtroCategoria">
-                    <option value="">Todas</option>
-                    <!-- Las categorías se generan dinámicamente desde insumos.js -->
-                </select>
+    <main class="cont_2">
+        <section class="page-heading">
+            <div>
+                <span class="eyebrow">Control de abastecimiento</span>
+                <h1>Insumos</h1>
+                <p>Organiza materiales, controla existencias y toma decisiones de compra con información clara.</p>
             </div>
-            <div class="filtro-estados">
-                <button type="button" class="estado-btn active" data-status="Todos">Todos</button>
-                <button type="button" class="estado-btn" data-status="Bajo">Bajo</button>
-                <button type="button" class="estado-btn" data-status="Medio">Medio</button>
-                <button type="button" class="estado-btn" data-status="Bueno">Bueno</button>
-            </div>
-        </div>
+            <button type="button" class="agregar heading-action"><i class='bx bx-plus'></i><span>Nuevo insumo</span></button>
+        </section>
 
-        <!-- Contenedor de la Tabla de Datos -->
+        <section class="inventory-summary" aria-label="Resumen de insumos">
+            <article class="summary-card"><div class="summary-icon"><i class='bx bx-cube'></i></div><div><span>Total de insumos</span><strong id="totalInsumos">0</strong><small>Registros en inventario</small></div></article>
+            <article class="summary-card"><div class="summary-icon warning"><i class='bx bx-error-alt'></i></div><div><span>Stock bajo</span><strong id="insumosBajos">0</strong><small>Requieren reposición</small></div></article>
+            <article class="summary-card"><div class="summary-icon success"><i class='bx bx-check-shield'></i></div><div><span>Disponibles</span><strong id="insumosDisponibles">0</strong><small>Listos para producción</small></div></article>
+            <article class="summary-card"><div class="summary-icon cost"><i class='bx bx-wallet'></i></div><div><span>Valor estimado</span><strong id="valorInsumos">$0</strong><small>Cantidad por precio unitario</small></div></article>
+        </section>
+
+        <section class="workspace-panel">
+            <div class="workspace-header">
+                <div><span class="eyebrow">Inventario registrado</span><h2>Materiales y suministros</h2></div>
+                <span class="record-count" id="resultadosInsumos">0 resultados</span>
+            </div>
+            <div class="cont_busqueda">
+                <div class="search-field"><input type="text" placeholder="Buscar por nombre, categoría o unidad..." aria-label="Buscar insumo"></div>
+                <button type="button" id="btnBuscar" class="btn-secondary"><i class='bx bx-search'></i><span>Buscar</span></button>
+                <button type="button" id="btnExportPdf" class="btn-secondary btn-pdf"><i class='bx bx-download'></i><span>Exportar</span></button>
+            </div>
+            <div class="cont_filtros">
+                <div class="filtro-grupo"><label for="filtroCategoria"><i class='bx bx-filter-alt'></i> Categoría</label><select id="filtroCategoria"><option value="">Todas las categorías</option></select></div>
+                <div class="filtro-estados" aria-label="Filtrar por nivel de stock"><span class="filter-label">Nivel de stock</span><button type="button" class="estado-btn active" data-status="Todos">Todos</button><button type="button" class="estado-btn" data-status="Bajo">Bajo</button><button type="button" class="estado-btn" data-status="Medio">Medio</button><button type="button" class="estado-btn" data-status="Bueno">Bueno</button></div>
+            </div>
+        </section>
+
         <div class="cont_tabla">
+            <div class="table-scroll">
             <table>
                 <thead>
                     <tr>
                         <th>Nombre</th>
                         <th>Categoria</th>
+                        <th>Proveedor</th>
                         <th>Cantidad</th>
                         <th>Unidad</th>
                         <th>Precio Unitario</th>
@@ -170,8 +180,9 @@
                     <!-- El contenido se genera automáticamente desde insumos.js -->
                 </tbody>
             </table>
+            </div>
         </div>
-    </div>
+    </main>
 
     <!-- Ventana Modal para Agregar Insumo -->
     <div id="modalInsumo" class="modal-container">
@@ -188,6 +199,12 @@
                 <div class="input-group">
                     <label for="categoria">Categoría</label>
                     <input type="text" id="categoria" required placeholder="Ej. Tela, Hilo, Botones">
+                </div>
+                <div class="input-group">
+                    <label for="proveedor">Proveedor</label>
+                    <select id="proveedor" required>
+                        <option value="">Selecciona un proveedor</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="cantidad">Cantidad</label>
@@ -233,6 +250,12 @@
                 <div class="input-group">
                     <label for="editCategoria">Categoría</label>
                     <input type="text" id="editCategoria" required placeholder="Ej. Tela, Hilo, Botones">
+                </div>
+                <div class="input-group">
+                    <label for="editProveedor">Proveedor</label>
+                    <select id="editProveedor" required>
+                        <option value="">Selecciona un proveedor</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="editCantidad">Cantidad</label>

@@ -21,7 +21,7 @@
 .sidebar-standard.close .texto { opacity: 0; pointer-events: none; }
 .sidebar-standard .texto_titulo { display: flex; flex-direction: column; }
 .sidebar-standard .texto_titulo .subtitulo { font-size: 12px; font-weight: 400; }
-.sidebar-standard .toggle { position: absolute; right: -25px; top: 50%; z-index: 1001; display: flex; align-items: center; justify-content: center; width: 25px; height: 25px; transform: translateY(-50%) rotate(180deg); border-radius: 50%; background: var(--primary-color, #695cfe); color: #fff; font-size: 22px; cursor: pointer; }
+.sidebar-standard .toggle { position: absolute; right: -25px; top: 50%; z-index: 1001; display: flex; align-items: center; justify-content: center; width: 25px; height: 25px; transform: translateY(-50%) rotate(180deg); border-radius: 50%; background: var(--primary-color, #27b7f5); color: #fff; font-size: 22px; cursor: pointer; }
 .sidebar-standard.close .toggle { transform: translateY(-50%); }
 .sidebar-standard .barra_menu { height: calc(100% - 80px); display: flex; flex-direction: column; justify-content: space-between; }
 .sidebar-standard .menu, .sidebar-standard .links_menu, .sidebar-standard .boton-contenido { width: 100%; margin: 0; padding: 0; }

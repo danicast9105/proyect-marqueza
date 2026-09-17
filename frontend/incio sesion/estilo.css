@@ -391,3 +391,78 @@ button:hover {
         font-size: 12px;
     }
 }
+
+/* =========================================================
+   EXPERIENCIA RENOVADA DE INICIO DE SESION
+   ========================================================= */
+body:has(#formulario) {
+    min-height: 100vh;
+    padding: 28px;
+    background-color: #f4f8fb;
+    background-image: linear-gradient(135deg, rgba(18, 48, 74, .76), rgba(39, 183, 245, .24)), url('../fondo/background 4.png');
+    font-family: 'Manrope', sans-serif;
+}
+
+body:has(#formulario) .contenedor {
+    width: min(1080px, 100%);
+    min-height: 620px;
+    border: 1px solid rgba(255, 255, 255, .65);
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 28px 70px rgba(18, 48, 74, .24);
+}
+
+body:has(#formulario) .fondo.left {
+    width: 47%;
+    min-height: 620px;
+    padding: 34px;
+    border-radius: 0;
+    background: linear-gradient(145deg, #12304a 0%, #176b86 58%, #27b7f5 100%);
+}
+
+body:has(#formulario) .fondo.left img { width: 88%; max-width: 380px; filter: drop-shadow(0 18px 25px rgba(18, 48, 74, .22)); }
+body:has(#formulario) .formulario.right { width: 53%; padding: 58px 68px; }
+body:has(#formulario) .cabecera_titulo { margin: 0 0 42px; gap: 13px; }
+body:has(#formulario) .Icono { width: 48px; height: 48px; border-radius: 12px; }
+body:has(#formulario) .contenedor_titulo { margin: 0; }
+body:has(#formulario) .titulo { color: #12304a; font-size: 22px; letter-spacing: .08em; }
+body:has(#formulario) .subtitulo { margin: 0; color: #718096; font-size: 11px; letter-spacing: .02em; }
+body:has(#formulario) .formulario.right h2 { margin-bottom: 8px; color: #12304a; font-size: 30px; letter-spacing: -.02em; }
+body:has(#formulario) .texto { margin-bottom: 26px; color: #718096; font-size: 14px; }
+body:has(#formulario) .campo-login { margin-bottom: 17px; }
+body:has(#formulario) .campo-login > label { display: block; margin: 0 0 7px; color: #263746; font-size: 12px; font-weight: 800; }
+body:has(#formulario) .input-shell { position: relative; display: flex; align-items: center; min-height: 48px; border: 1px solid #dce4ec; border-radius: 11px; background: #f9fbfd; transition: border-color .2s ease, box-shadow .2s ease, background .2s ease; }
+body:has(#formulario) .input-shell:focus-within { border-color: #9fb8c7; background: #fff; box-shadow: none; }
+body:has(#formulario) .input-shell > i { margin-left: 14px; color: #718096; font-size: 19px; }
+body:has(#formulario) .input-shell input { flex: 1; width: auto; min-width: 0; margin: 0; padding: 12px 13px; border: 0; border-radius: 11px; outline: 0; background: transparent; color: #263746; font-size: 13px; }
+body:has(#formulario) .input-shell input:focus { border: 0; outline: 0; box-shadow: none; }
+body:has(#formulario) .input-shell input::placeholder { color: #9aa8b4; }
+body:has(#formulario) .options { margin: 2px 0 25px; color: #718096; font-size: 12px; }
+body:has(#formulario) .options label { display: flex; align-items: center; gap: 7px; margin: 0; font-weight: 600; }
+body:has(#formulario) .options input { width: 15px; height: 15px; margin: 0; accent-color: #27b7f5; }
+body:has(#formulario) .options a { color: #277da1; font-weight: 700; }
+body:has(#formulario) .login-submit { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; padding: 12px 18px; border: 0; border-radius: 11px; background: linear-gradient(135deg, #27b7f5, #177e9e); color: #fff; font-size: 14px; font-weight: 800; box-shadow: 0 12px 22px rgba(39, 183, 245, .2); }
+body:has(#formulario) .login-submit:hover { background: linear-gradient(135deg, #1685b5, #12304a); transform: translateY(-2px); }
+body:has(#formulario) .login-submit i { font-size: 20px; }
+body:has(#formulario) .security-note { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 18px 0 0; color: #8a98a5; font-size: 11px; text-align: center; }
+body:has(#formulario) .security-note i { color: #27b7f5; font-size: 16px; }
+body:has(#formulario) .footer { margin-top: 32px; color: #9aa8b4; font-size: 10px; }
+
+body.dark:has(#formulario) { background-color: #17232d; }
+body.dark:has(#formulario) .contenedor { background: #1f303d; border-color: rgba(237, 245, 248, .12); }
+body.dark:has(#formulario) .formulario.right h2, body.dark:has(#formulario) .campo-login > label { color: #edf5f8; }
+body.dark:has(#formulario) .titulo { color: #edf5f8; }
+body.dark:has(#formulario) .input-shell { border-color: #46546b; background: #182231; }
+body.dark:has(#formulario) .input-shell:focus-within { border-color: #6d8799; background: #1f303d; box-shadow: none; }
+body.dark:has(#formulario) .input-shell input { color: #edf5f8; }
+body.dark:has(#formulario) .options, body.dark:has(#formulario) .texto, body.dark:has(#formulario) .subtitulo { color: #b9c2ce; }
+
+@media (max-width: 768px) {
+    body:has(#formulario) { align-items: flex-start; padding: 0; }
+    body:has(#formulario) .contenedor { min-height: 100vh; border: 0; border-radius: 0; }
+    body:has(#formulario) .fondo.left { width: 100%; min-height: 230px; padding: 24px; }
+    body:has(#formulario) .fondo.left img { width: 70%; max-width: 220px; }
+    body:has(#formulario) .formulario.right { width: 100%; padding: 34px 24px 28px; }
+    body:has(#formulario) .cabecera_titulo { margin-bottom: 30px; }
+    body:has(#formulario) .formulario.right h2 { font-size: 26px; }
+}

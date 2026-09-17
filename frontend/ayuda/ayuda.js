@@ -143,6 +143,8 @@ sidebar?.addEventListener("mouseleave", () => {
 
 const searchInput = document.querySelector('.cont_busqueda input');
 const searchButton = document.getElementById('btnBuscar');
+const clearButton = document.getElementById('btnLimpiarAyuda');
+const helpCount = document.getElementById('helpCount');
 const filterButtons = Array.from(document.querySelectorAll('.estado-btn'));
 const helpCards = Array.from(document.querySelectorAll('.caja_ayuda'));
 const noResultsMessage = document.createElement('p');
@@ -178,6 +180,9 @@ function filterHelpCards() {
     if (noResultsMessage) {
         noResultsMessage.style.display = visibleCount === 0 ? 'block' : 'none';
     }
+    if (helpCount) {
+        helpCount.textContent = `${visibleCount} ${visibleCount === 1 ? 'resultado' : 'resultados'}`;
+    }
 }
 
 filterButtons.forEach((button) => {
@@ -195,11 +200,24 @@ if (searchInput) {
             event.preventDefault();
             filterHelpCards();
         }
+        if (event.key === 'Escape') {
+            searchInput.value = '';
+            filterHelpCards();
+        }
     });
 }
 
 if (searchButton) {
     searchButton.addEventListener('click', filterHelpCards);
+}
+
+if (clearButton) {
+    clearButton.addEventListener('click', () => {
+        searchInput.value = '';
+        filterButtons.forEach((button) => button.classList.toggle('active', button.dataset.filter === 'Todos'));
+        filterHelpCards();
+        searchInput.focus();
+    });
 }
 
 filterHelpCards();

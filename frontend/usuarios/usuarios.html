@@ -127,49 +127,30 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1 class="titulo_seccion">Gestion de Usuarios</h1>
-        <div class="cont_busqueda">
-            <div class="campo_busqueda">
-                <i class="bx bx-search" aria-hidden="true"></i>
-                <input id="buscarUsuario" type="search" placeholder="Buscar por nombre o correo..." aria-label="Buscar usuarios">
-            </div>
-            <button type="button" id="btnBuscar" class="btn-buscar">
-                <i class="bx bx-search" aria-hidden="true"></i>
-                <span>Buscar</span>
-            </button>
-            <button type="button" class="agregar">
-                <i class="bx bx-user-plus" aria-hidden="true"></i>
-                <span>Agregar Usuario</span>
-            </button>
-        </div>
-
-        <!-- Contenedor de la Tabla de Datos -->
-        <div class="cont_tabla">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Correo</th>
-                        <th>Rol</th>
-                        <th>Contraseña</th>
-                        <th>Editar</th>
-                        <th>Eliminar</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- El contenido se genera automáticamente desde usuarios.js -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <main class="cont_2">
+        <section class="page-heading">
+            <div><span class="eyebrow">Control de acceso</span><h1>Usuarios</h1><p>Administra las cuentas del equipo y mantén claros sus roles y permisos de acceso.</p></div>
+            <button type="button" class="agregar heading-action"><i class="bx bx-user-plus" aria-hidden="true"></i><span>Nuevo usuario</span></button>
+        </section>
+        <section class="user-summary" aria-label="Resumen de usuarios">
+            <article class="summary-card"><div class="summary-icon"><i class="bx bx-group"></i></div><div><span>Usuarios registrados</span><strong id="totalUsuarios">0</strong><small>Cuentas en el sistema</small></div></article>
+            <article class="summary-card"><div class="summary-icon user-admin"><i class="bx bx-shield-quarter"></i></div><div><span>Administradores</span><strong id="administradoresUsuarios">0</strong><small>Acceso de gestión</small></div></article>
+            <article class="summary-card"><div class="summary-icon user-employee"><i class="bx bx-briefcase"></i></div><div><span>Empleados</span><strong id="empleadosUsuarios">0</strong><small>Acceso operativo</small></div></article>
+            <article class="summary-card"><div class="summary-icon user-reach"><i class="bx bx-envelope"></i></div><div><span>Correos registrados</span><strong id="correosUsuarios">0%</strong><small>Datos de contacto disponibles</small></div></article>
+        </section>
+        <section class="workspace-panel">
+            <div class="workspace-header"><div><span class="eyebrow">Directorio interno</span><h2>Equipo y accesos</h2></div><span class="record-count" id="resultadosUsuarios">0 resultados</span></div>
+            <div class="cont_busqueda"><div class="campo_busqueda"><i class="bx bx-search" aria-hidden="true"></i><input id="buscarUsuario" type="search" placeholder="Buscar por nombre o correo..." aria-label="Buscar usuarios"></div><button type="button" id="btnBuscar" class="btn-buscar"><i class="bx bx-search" aria-hidden="true"></i><span>Buscar</span></button></div>
+        </section>
+        <div class="cont_tabla"><div class="table-scroll"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Contraseña</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table><p class="empty-state">No encontramos usuarios con esa búsqueda.</p></div></div>
+    </main>
 
     <!-- Ventana Modal para Agregar Usuario -->
     <div id="modalUsuario" class="modal-container">
         <div class="modal-content">
             <header>
-                <h2>Agregar Usuario</h2>
-                <i class='bx bx-x' id="cerrarModal" aria-label="Cerrar"></i>
+                <div><span class="eyebrow">Directorio interno</span><h2>Nuevo usuario</h2></div>
+                <button type="button" class="modal-close" id="cerrarModal" aria-label="Cerrar"><i class='bx bx-x'></i></button>
             </header>
             <form id="formUsuario">
                 <div class="input-group">
@@ -207,8 +188,8 @@
     <div id="modalEditarUsuario" class="modal-container">
         <div class="modal-content">
             <header>
-                <h2>Editar Usuario</h2>
-                <i class='bx bx-x' id="cerrarEditModal" aria-label="Cerrar"></i>
+                <div><span class="eyebrow">Directorio interno</span><h2>Editar usuario</h2></div>
+                <button type="button" class="modal-close" id="cerrarEditModal" aria-label="Cerrar"><i class='bx bx-x'></i></button>
             </header>
             <form id="formEditarUsuario">
                 <input type="hidden" id="editIndex">

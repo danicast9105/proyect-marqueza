@@ -121,35 +121,17 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <h1>Gestion de Clientes</h1>
-        <div class="cont_busqueda">
-            <input type="text" placeholder="Buscar cliente...">
-            <button type="button" id="btnBuscar">Buscar</button>
-            <button type="button" class="agregar">Agregar Cliente</button>
-            <button type="button" id="btnExportPdf" class="btn-pdf">Exportar PDF</button>
-        </div>
-        <div class="cont_filtros">
-            <div class="filtro-grupo">
-                <label for="filtroCategoria">Filtrar por Categoría:</label>
-                <select id="filtroCategoria">
-                    <option value="">Todas</option>
-                    <!-- Las categorías se generan dinámicamente desde clientes.js -->
-                </select>
-            </div>
-            <div class="filtro-estados">
-                <button type="button" class="estado-btn active" data-status="Todos">Todos</button>
-                <button type="button" class="estado-btn" data-status="Bajo">Bajo</button>
-                <button type="button" class="estado-btn" data-status="Medio">Medio</button>
-                <button type="button" class="estado-btn" data-status="Bueno">Bueno</button>
-            </div>
-        </div>
-
-        <!-- Contenedor de la Tabla de Datos -->
-        <div class="cont_tabla">
-<table><thead><tr><th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Correo</th><th>Editar</th><th>Eliminar</th></tr></thead>
-<tbody></tbody></table></div>
-    </div>
+    <main class="cont_2">
+        <section class="page-heading"><div><span class="eyebrow">Relaciones comerciales</span><h1>Clientes</h1><p>Centraliza la información de tus clientes y encuentra cada contacto cuando lo necesites.</p></div><button type="button" class="agregar heading-action"><i class='bx bx-plus'></i><span>Nuevo cliente</span></button></section>
+        <section class="client-summary" aria-label="Resumen de clientes">
+            <article class="summary-card"><div class="summary-icon"><i class='bx bx-group'></i></div><div><span>Clientes registrados</span><strong id="totalClientes">0</strong><small>Contactos en la base</small></div></article>
+            <article class="summary-card"><div class="summary-icon client-email"><i class='bx bx-envelope'></i></div><div><span>Correos registrados</span><strong id="correosClientes">0</strong><small>Canales digitales disponibles</small></div></article>
+            <article class="summary-card"><div class="summary-icon client-phone"><i class='bx bx-phone'></i></div><div><span>Teléfonos registrados</span><strong id="telefonosClientes">0</strong><small>Contactos directos</small></div></article>
+            <article class="summary-card"><div class="summary-icon client-reach"><i class='bx bx-user-check'></i></div><div><span>Cobertura de contacto</span><strong id="coberturaClientes">0%</strong><small>Clientes con datos completos</small></div></article>
+        </section>
+        <section class="workspace-panel"><div class="workspace-header"><div><span class="eyebrow">Directorio comercial</span><h2>Contactos de clientes</h2></div><span class="record-count" id="resultadosClientes">0 resultados</span></div><div class="cont_busqueda"><div class="search-field"><input type="text" placeholder="Buscar por nombre, documento, teléfono o correo..." aria-label="Buscar cliente"></div><button type="button" id="btnBuscar" class="btn-secondary"><i class='bx bx-search'></i><span>Buscar</span></button><button type="button" id="btnExportPdf" class="btn-secondary btn-pdf"><i class='bx bx-download'></i><span>Exportar</span></button></div></section>
+        <div class="cont_tabla"><div class="table-scroll"><table><thead><tr><th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Correo</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table></div></div>
+    </main>
 
     <!-- Ventana Modal para Agregar Cliente -->
     <div id="modalCliente" class="modal-container">
@@ -158,6 +140,7 @@
 <div class="input-group"><label for="nombre">Nombre</label><input id="nombre" type="text" required placeholder="Nombre completo"></div><div class="input-group"><label for="documento">Documento</label><input id="documento" type="text" required placeholder="Documento"></div><div class="input-group"><label for="telefono">Teléfono</label><input id="telefono" type="tel" required placeholder="Teléfono"></div><div class="input-group"><label for="correo">Correo</label><input id="correo" type="email" required placeholder="correo@ejemplo.com"></div>
 <div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
 </form></div></div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../shared/navigation.js"></script>
 <script src="../shared/theme-persistence.js"></script>
 <script src="../shared/app-shell.js"></script>

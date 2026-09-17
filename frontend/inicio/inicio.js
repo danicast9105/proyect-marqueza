@@ -1,589 +1,132 @@
-/* ============================================================
-   inicio.js  —  MARQUEZA
-   Maneja:
-     • Toggle lateral (desktop ≥ 1025 px): Expande/colapsa la barra lateral.
-     • Hamburger + menú desplegable (tablet / móvil ≤ 1024 px): Controla la barra superior responsive.
-     • Drag lateral (solo desktop): Permite arrastrar la barra lateral para colapsarla.
-     • Modo oscuro / claro: Cambia el tema visual de la aplicación.
-     • Inicialización y redimensionamiento de gráficas ECharts.
-   ============================================================ */
-
-// Selecciona el elemento <body> del documento
-const body = document.querySelector("body");
-// Selecciona la barra lateral de navegación
-const sidebar = body.querySelector(".barra_lateral");
-// Selecciona el botón de toggle (flecha) para desktop
-const toggle = body.querySelector(".toggle");
-// Selecciona el botón de hamburguesa para el menú responsive
-const hamburger = document.getElementById("hamburger");
-// Selecciona el interruptor de modo oscuro/claro
-const modeSwitch = body.querySelector(".toggle_switch");
-// Selecciona el texto que indica el modo actual (Oscuro/Claro)
-const modeText = body.querySelector(".modo_texto");
-
-// Array para almacenar todas las instancias de gráficas ECharts y gestionarlas
-let charts = [];
-
-/* ─── Función de utilidad: detecta si la vista actual es de tablet/móvil (modo topbar) ─── */
-const isTopbar = () => window.innerWidth <= 1024;
-
-/* ─────────────────────────────────────────────────────────
-   MODO OSCURO / CLARO
-   ───────────────────────────────────────────────────────── */
-// Agrega un event listener al interruptor de modo
-modeSwitch.addEventListener("click", () => {
-    // Alterna la clase 'dark' en el body para aplicar los estilos del modo oscuro
-    body.classList.toggle("dark");
-    // Actualiza el texto del modo según la clase 'dark'
-    modeText.innerText = body.classList.contains("dark") ? "Claro" : "Oscuro";
-    
-    // Pequeño delay para asegurar que los colores CSS se apliquen antes de reinicializar las gráficas
-    setTimeout(() => initCharts(), 100); 
-});
-
-// Función para redimensionar todas las gráficas
-function resizeCharts() {
-    // Ajuste inmediato de todas las gráficas para cambios bruscos de tamaño
-    charts.forEach(chart => chart.resize());
-
-    // Ajuste retardado para asegurar que las gráficas se redimensionen correctamente después de animaciones CSS
-    setTimeout(() => {
-        charts.forEach(chart => chart.resize());
-    }, 600);
-}
-
-// Función para actualizar el layout del body (padding-left/padding-top) según el estado de la barra lateral
-function updateLayout() {
-    // Si estamos en modo topbar (tablet/móvil)
-    if (isTopbar()) {
-        // Elimina la clase 'sidebar-collapsed' y el padding-left
-        body.classList.remove("sidebar-collapsed");
-        body.style.paddingLeft = "0";
-        // Usa requestAnimationFrame para leer el alto de la barra lateral DESPUÉS de que el DOM se haya actualizado
-        requestAnimationFrame(() => {
-            // Ajusta el padding-top del body al alto de la barra lateral
-            body.style.paddingTop = `${sidebar.getBoundingClientRect().height}px`;
-            resizeCharts();
-        });
-    // Si estamos en modo desktop
-    } else {
-        // Elimina el padding-top
-        body.style.paddingTop = "0";
-        // Si la barra lateral está colapsada
-        if (sidebar.classList.contains("close")) {
-            // Añade la clase 'sidebar-collapsed' y ajusta el padding-left
-            body.classList.add("sidebar-collapsed");
-            body.style.paddingLeft = "88px";
-        // Si la barra lateral está expandida
-        } else {
-            // Elimina la clase 'sidebar-collapsed' y ajusta el padding-left
-            body.classList.remove("sidebar-collapsed");
-            body.style.paddingLeft = "250px";
-        }
-        resizeCharts();
+const body = document.body;
+const sidebar = document.querySelector(".barra_lateral");
+const charts = [];
+const read = (key) => {
+    try {
+        const value = JSON.parse(localStorage.getItem(key) || "[]");
+        return Array.isArray(value) ? value : [];
+    } catch {
+        return [];
     }
-}
-
-// Llama a updateLayout al cargar la página para establecer el estado inicial
-updateLayout();
-
-/* ─────────────────────────────────────────────────────────
-   DESKTOP — toggle lateral (flecha)
-   ───────────────────────────────────────────────────────── */
-// Agrega un event listener al botón de toggle (flecha)
-toggle.addEventListener("click", () => {
-    if (isTopbar()) return; // Si estamos en modo topbar, la flecha está oculta, así que ignoramos el click
-    // Alterna la clase 'close' en la barra lateral
-    sidebar.classList.toggle("close");
-    // Actualiza el layout
-    updateLayout();
-});
-
-/* ─────────────────────────────────────────────────────────
-   TABLET / MÓVIL — hamburger → despliega/colapsa topbar
-   ───────────────────────────────────────────────────────── */
-// Función para alternar el menú móvil
-function toggleMobileMenu() {
-    // Alterna la clase 'open' en la barra lateral y guarda el estado
-    const isOpen = sidebar.classList.toggle("open");
-
-    /* Al abrir el menú móvil, se quita la clase 'close' para evitar conflictos con estilos de desktop.
-       Al cerrar, se restaura la clase 'close' para mantener la consistencia. */
-    if (isOpen) {
-        sidebar.classList.remove("close");
-    } else {
-        sidebar.classList.add("close");
-    }
-
-    // Actualiza el layout
-    updateLayout();
-
-    // Recalcular paddingTop después de que termine la animación CSS (tran-04 = 0.4s) para asegurar la posición correcta
-    setTimeout(() => {
-        if (isTopbar()) {
-            body.style.paddingTop = `${sidebar.getBoundingClientRect().height}px`;
-            resizeCharts();
-        }
-    }, 450);
-}
-
-// Agrega un event listener al botón de hamburguesa para alternar el menú móvil
-hamburger.addEventListener("click", toggleMobileMenu);
-
-// Accesibilidad: permite activar el menú con las teclas Enter o Espacio
-hamburger.addEventListener("keydown", (e) => {
-    // Previene el comportamiento por defecto del navegador para estas teclas
-    if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toggleMobileMenu();
-    }
-});
-
-/* Cerrar menú al hacer click en un link (útil en móvil) */
-// Itera sobre todos los enlaces de navegación
-sidebar.querySelectorAll(".nav_links a").forEach(link => {
-    link.addEventListener("click", () => {
-        // Si estamos en modo topbar y el menú está abierto, lo cierra
-        if (isTopbar() && sidebar.classList.contains("open")) {
-            toggleMobileMenu();
-        }
-    });
-});
-
-/* ─────────────────────────────────────────────────────────
-   RESIZE — sincronizar estado al cambiar tamaño de ventana
-   ───────────────────────────────────────────────────────── */
-let resizeTimer;
-// Agrega un event listener para el evento 'resize' de la ventana
-window.addEventListener("resize", () => {
-    // Limpia cualquier temporizador de redimensionamiento anterior para evitar ejecuciones excesivas
-    clearTimeout(resizeTimer);
-    // Establece un nuevo temporizador para ejecutar updateLayout después de un breve retraso
-    resizeTimer = setTimeout(() => {
-        if (!isTopbar()) {
-            /* Si volvemos a modo desktop: limpiar clases del topbar */
-            sidebar.classList.remove("open");
-            /* Restaurar el estado colapsado por defecto en desktop si no lo está */
-            if (!sidebar.classList.contains("close")) {
-                sidebar.classList.add("close");
-            }
-            sidebar.style.left = ""; // Limpiar cualquier posición residual del drag
-        }
-        updateLayout();
-    }, 100);
-});
-
-/* ─────────────────────────────────────────────────────────
-   DESKTOP — arrastrar barra lateral con el mouse
-   ───────────────────────────────────────────────────────── */
-let isDragging = false;
-// Variables para controlar el arrastre de la barra lateral
-let dragStartX = 0; // Posición inicial X del mouse al empezar a arrastrar
-let sidebarStartLeft = 0; // Posición inicial 'left' de la barra lateral
-
-// Agrega un event listener para el evento 'mousedown' en la barra lateral
-sidebar.addEventListener("mousedown", (event) => {
-    if (isTopbar()) return; // Desactivar el arrastre en modo topbar
-    if (event.target.closest(".toggle")) return; // Ignorar si el click es en el botón de toggle
-    // Si el click es en el header de la barra lateral
-    if (event.target.closest("header")) {
-        isDragging = true;
-        dragStartX = event.clientX;
-        sidebarStartLeft = sidebar.getBoundingClientRect().left;
-        sidebar.classList.add("dragging");
-    }
-});
-// Agrega un event listener para el evento 'mousemove' en todo el documento
-document.addEventListener("mousemove", (event) => {
-    if (!isDragging) return;
-
-    // Calcula el desplazamiento del mouse
-    const deltaX = event.clientX - dragStartX;
-    let nextLeft = sidebarStartLeft + deltaX;
-    
-    // Define los límites de arrastre para la barra lateral
-    const sidebarWidth = sidebar.offsetWidth;
-    const minLeft = -sidebarWidth + 40;
-    const maxLeft = 0;
-
-    nextLeft = Math.max(minLeft, Math.min(maxLeft, nextLeft));
-    sidebar.style.left = `${nextLeft}px`;
-});
-
-// Agrega un event listener para el evento 'mouseup' en todo el documento
-document.addEventListener("mouseup", () => {
-    if (!isDragging) return;
-    isDragging = false;
-    sidebar.classList.remove("dragging");
-
-    // Decide si la barra lateral debe colapsarse o expandirse según la posición final
-    if (sidebar.getBoundingClientRect().left < -sidebar.offsetWidth / 2) {
-        sidebar.classList.add("close");
-    } else {
-        sidebar.classList.remove("close");
-    }
-
-    // Restablece la posición 'left' a 0 y actualiza el layout
-    sidebar.style.left = "0";
-    updateLayout();
-});
-
-sidebar.addEventListener("mouseleave", () => {
-    if (isDragging) {
-        isDragging = false;
-        sidebar.classList.remove("dragging");
-        sidebar.style.left = "0";
-    }
-});
-
-
-
-/* ─────────────────────────────────────────────────────────
-   CONFIGURACIÓN DE GRÁFICAS (ECharts)
-   ───────────────────────────────────────────────────────── */
-
-// Opciones para la Gráfica 1 (Área apilada)
-const getOptionsGrafica1 = () => ({
-    color: ['#27B7F5', '#695cfe', '#67F9D8', '#FF917C'],
-  title: {
-    textStyle: { color: body.classList.contains("dark") ? '#ccc' : '#333' }
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross',
-      label: {
-        backgroundColor: '#6a7985'
-      }
-    }
-  },
-  legend: {
-    data: ['Camisas', 'Pantalones', 'Chaquetas', 'Accesorios'] // Leyenda de las series
-  },
-  toolbox: {
-    feature: { // Herramientas disponibles (ej. guardar como imagen)
-      saveAsImage: {}
-    }
-  },
-  xAxis: [
-    {
-      type: 'category',
-      boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] // Datos del eje X
-    }
-  ],
-  yAxis: [
-    { type: 'value', axisLabel: { color: body.classList.contains("dark") ? '#ccc' : '#666' } } // Eje Y de valores
-  ],
-  series: [
-    {
-      name: 'Camisas',
-      type: 'line',
-      stack: 'Total',
-      smooth: true,
-      lineStyle: {
-        width: 0
-      },
-      showSymbol: false,
-      areaStyle: {
-        opacity: 0.8,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgb(128, 255, 165)'
-          },
-          {
-            offset: 1,
-            color: 'rgb(1, 191, 236)'
-          }
-        ])
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: [140, 232, 101, 264, 90, 340, 250]
-    },
-    {
-      name: 'Pantalones',
-      type: 'line',
-      stack: 'Total',
-      smooth: true,
-      lineStyle: {
-        width: 0
-      },
-      showSymbol: false,
-      areaStyle: {
-        opacity: 0.8,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgb(0, 221, 255)'
-          },
-          {
-            offset: 1,
-            color: 'rgb(77, 119, 255)'
-          }
-        ])
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: [120, 282, 111, 234, 220, 340, 310]
-    },
-    {
-      name: 'Chaquetas',
-      type: 'line',
-      stack: 'Total',
-      smooth: true,
-      lineStyle: {
-        width: 0
-      },
-      showSymbol: false,
-      areaStyle: {
-        opacity: 0.8,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgb(55, 162, 255)'
-          },
-          {
-            offset: 1,
-            color: 'rgb(116, 21, 219)'
-          }
-        ])
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: [320, 132, 201, 334, 190, 130, 220]
-    },
-    {
-      name: 'Accesorios',
-      type: 'line',
-      stack: 'Total',
-      smooth: true,
-      lineStyle: {
-        width: 0
-      },
-      showSymbol: false,
-      areaStyle: {
-        opacity: 0.8,
-        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-          {
-            offset: 0,
-            color: 'rgb(255, 0, 135)'
-          },
-          {
-            offset: 1,
-            color: 'rgb(135, 0, 157)'
-          }
-        ])
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: [220, 302, 181, 234, 210, 290, 150]
-    }
-  ]
-});
-
-// Opciones para la Gráfica 2 (Barras horizontales)
-const getOptionsGrafica2 = () => ({
-    title: {
-        textStyle: { color: body.classList.contains("dark") ? '#ccc' : '#333' }
-    },
-    tooltip: {
-    trigger: 'axis',
-    axisPointer: { type: 'shadow' }
-  },
-  legend: {
-    textStyle: { color: body.classList.contains("dark") ? '#ccc' : '#666' }, // Estilo del texto de la leyenda
-    top: '10%' // Posición de la leyenda
-  },
-  xAxis: { 
-    type: 'value',
-    axisLabel: { color: body.classList.contains("dark") ? '#ccc' : '#666' } // Estilo de las etiquetas del eje X
-  },
-  yAxis: {
-    type: 'category',
-    data: ['Telas', 'Hilos', 'Botones', 'Cierres', 'Etiquetas'], // Categorías del eje Y
-    axisLabel: { color: body.classList.contains("dark") ? '#ccc' : '#666' } // Estilo de las etiquetas del eje Y
-  },
-  series: [
-    {
-      name: 'Stock Actual',
-      type: 'bar',
-      color: '#27B7F5',
-      label: {
-        show: true // Mostrar etiquetas de valor en las barras
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: [320, 302, 301, 334, 390, 330, 320]
-    },
-    {
-      name: 'Demanda Estimada',
-      type: 'bar',
-      color: '#695cfe',
-      label: {
-        show: true // Mostrar etiquetas de valor en las barras
-      },
-      emphasis: {
-        focus: 'series'
-      },
-      data: [220, 182, 191, 234, 290]
-    }
-  ]
-});
-
-/* Gráfica 3: Configurada como un Donut Chart minimalista. Se han quitado tooltips y etiquetas para un diseño más limpio. */
-const getOptionsGrafica3 = () => ({
-    title: {
-        left: 'center',
-        textStyle: {
-            color: body.classList.contains("dark") ? '#ccc' : '#333',
-            fontSize: 18
-        }
-    },
-    tooltip: { show: false }, // Tooltip deshabilitado
-    legend: {
-        bottom: '5%',
-        left: 'center',
-        textStyle: {
-            color: body.classList.contains("dark") ? '#ccc' : '#666' // Color del texto de la leyenda
-        }
-    },
-    series: [
-        {
-            name: 'Insumos',
-            type: 'pie',
-            radius: ['40%', '70%'],
-            avoidLabelOverlap: true, // Evita que las etiquetas se superpongan
-            itemStyle: {
-                borderRadius: 10,
-                borderColor: body.classList.contains("dark") ? '#18191a' : '#fff', // Borde entre las secciones
-                borderWidth: 2
-            },
-            label: {
-                show: false,
-                color: body.classList.contains("dark") ? '#ccc' : '#444'
-            },
-            emphasis: {
-                label: {
-                    show: true,
-                    fontSize: 16,
-                    fontWeight: 'bold'
-                },
-                itemStyle: {
-                    shadowBlur: 10,
-                    shadowOffsetX: 0,
-                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                }
-            },
-            data: [
-                { value: 1048, name: 'Telas Algodón', itemStyle: { color: '#27B7F5' } },
-                { value: 735, name: 'Hilos Poliéster', itemStyle: { color: '#695cfe' } },
-                { value: 580, name: 'Botones Lujo', itemStyle: { color: '#67F9D8' } },
-                { value: 484, name: 'Cierres Metálicos', itemStyle: { color: '#FFE434' } },
-                { value: 300, name: 'Otros', itemStyle: { color: '#FF917C' } }
-            ]
-        }
-    ]
-});
-
-// Opciones para la Gráfica 4 (Radar Chart)
-const getOptionsGrafica4 = () => ({
-    color: ['#695cfe'],
-  title: {
-    left: 'center',
-    textStyle: { color: body.classList.contains("dark") ? '#ccc' : '#333' }
-  },
-  radar: {
-    indicator: [ // Indicadores del radar (ejes)
-      { text: 'Calidad', max: 100 },
-      { text: 'Velocidad', max: 100 },
-      { text: 'Eficiencia', max: 100 },
-      { text: 'Desperdicio', max: 100 },
-      { text: 'Puntualidad', max: 100 }
-    ],
-    center: ['50%', '50%'], // Centro del radar
-    radius: 80,
-    axisName: {
-      color: body.classList.contains("dark") ? '#ccc' : '#666'
-    },
-    splitArea: {
-      areaStyle: {
-        color: body.classList.contains("dark") ? ['#242526', '#18191a'] : ['#f6f5ff', '#fff'],
-        shadowColor: 'rgba(0, 0, 0, 0.2)', // Sombra del área
-        shadowBlur: 10
-      }
-    },
-    splitLine: { lineStyle: { color: body.classList.contains("dark") ? '#3a3b3c' : '#ddd' } } // Estilo de las líneas de división
-  },
-  series: [
-    {
-      type: 'radar',
-      data: [
-        {
-          value: [80, 90, 70, 85, 75],
-          name: 'Datos Actuales'
-        }
-      ]
-    }
-  ]
-});
-
-/* Generador de opciones para mini-gráficas (Sparklines) que se muestran en las tarjetas superiores (cont_info) */
-const getOptionsMini = (color) => ({
-    grid: { left: 0, right: 0, top: 5, bottom: 5 }, // Ajusta el grid para ocupar el mínimo espacio
-    xAxis: { type: 'category', show: false }, // Oculta el eje X
-    yAxis: { type: 'value', show: false }, // Oculta el eje Y
-    series: [{
-        data: [15, 23, 18, 35, 28, 45, 40, 55], // Datos de ejemplo para la mini-gráfica
-        type: 'line', // Tipo de gráfica de línea
-        smooth: true, // Línea suavizada
-        showSymbol: false, // No muestra los puntos de datos
-        lineStyle: { width: 2, color: color }, // Estilo de la línea
-        areaStyle: { opacity: 0.1, color: color }, // Área sombreada debajo de la línea
-        animationDuration: 2000 // Duración de la animación al cargar
-    }]
-});
-
-/* Inicialización principal de todas las gráficas del dashboard */
-const initCharts = () => {
-    // Eliminar instancias previas para evitar duplicados y fugas de memoria
-    charts.forEach(chart => chart.dispose());
-    charts = []; // Reinicia el array de instancias de gráficas
-
-    // Define los contenedores de las gráficas y sus opciones correspondientes
-    const containers = [
-        { id: "grafica_1", options: getOptionsGrafica1 },
-        { id: "grafica_2", options: getOptionsGrafica2 },
-        { id: "grafica_3", options: getOptionsGrafica3 },
-        { id: "grafica_4", options: getOptionsGrafica4 },
-        // Mini-gráficas (sparklines) para las tarjetas de información (cont_info)
-        { id: "mini_1", options: () => getOptionsMini('#27B7F5') },
-        { id: "mini_2", options: () => getOptionsMini('#695cfe') },
-        { id: "mini_3", options: () => getOptionsMini('#67F9D8') },
-        { id: "mini_4", options: () => getOptionsMini('#FF917C') }
-    ];
-
-    // Itera sobre los contenedores para inicializar cada gráfica
-    containers.forEach(container => {
-        const el = document.getElementById(container.id);
-        if (el) {
-            const chart = echarts.init(el);
-            chart.setOption(container.options());
-            charts.push(chart);
-
-            // Utiliza ResizeObserver para redimensionar la gráfica automáticamente cuando su contenedor cambia de tamaño
-            new ResizeObserver(() => chart.resize()).observe(el);
-        }
-    });
 };
 
-// Agrega un event listener para inicializar todas las gráficas cuando la página ha cargado completamente
-window.addEventListener("load", () => {
-    initCharts();
-});
+const number = (value) => Number(value || 0).toLocaleString("es-CO");
+const money = (value) => Number(value || 0).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+const sum = (records, field) => records.reduce((total, record) => total + Number(record[field] || 0), 0);
+const isTopbar = () => window.innerWidth <= 1024;
+
+function updateLayout() {
+    if (isTopbar()) {
+        body.classList.remove("sidebar-collapsed");
+        body.style.paddingLeft = "0";
+        requestAnimationFrame(() => { body.style.paddingTop = `${sidebar.getBoundingClientRect().height}px`; resizeCharts(); });
+        return;
+    }
+    body.style.paddingTop = "0";
+    const collapsed = sidebar.classList.contains("close");
+    body.classList.toggle("sidebar-collapsed", collapsed);
+    body.style.paddingLeft = collapsed ? "88px" : "250px";
+    resizeCharts();
+}
+
+function getDashboardData() {
+    const insumos = read("marqueza_insumos");
+    const productos = read("marqueza_productos");
+    const ventas = read("marqueza_ventas");
+    const clientes = read("marqueza_clientes");
+    const proveedores = read("marqueza_proveedores");
+    const usuarios = read("marqueza_usuarios");
+    const cotizaciones = read("marqueza_cotizaciones");
+    const stock = sum(productos, "cantidad");
+    const inventoryValue = productos.reduce((total, item) => total + Number(item.cantidad || 0) * Number(item.precio || 0), 0);
+    const supplyValue = insumos.reduce((total, item) => total + Number(item.cantidad || 0) * Number(item.precioUnitario || 0), 0);
+    return { insumos, productos, ventas, clientes, proveedores, usuarios, cotizaciones, stock, inventoryValue, supplyValue };
+}
+
+function updateMetrics(data) {
+    const openQuotes = data.cotizaciones.filter(item => item.estado !== "Rechazada").length;
+    document.getElementById("metricStock").textContent = number(data.stock);
+    document.getElementById("metricStockDetail").textContent = `${number(data.productos.length)} productos registrados`;
+    document.getElementById("metricInventory").textContent = money(data.inventoryValue + data.supplyValue);
+    document.getElementById("metricInventoryDetail").textContent = `${money(data.supplyValue)} en insumos`;
+    document.getElementById("metricSales").textContent = money(sum(data.ventas, "total"));
+    document.getElementById("metricSalesDetail").textContent = `${number(data.ventas.length)} operaciones registradas`;
+    document.getElementById("metricClients").textContent = number(data.clientes.length);
+    document.getElementById("metricClientsDetail").textContent = `${number(openQuotes)} cotizaciones abiertas`;
+    document.getElementById("ultimaActualizacion").textContent = new Date().toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" });
+}
+
+function monthData(records, field) {
+    const labels = Array.from({ length: 6 }, (_, index) => {
+        const date = new Date();
+        date.setMonth(date.getMonth() - (5 - index));
+        return date.toLocaleDateString("es-CO", { month: "short" }).replace(".", "");
+    });
+    const values = labels.map(() => 0);
+    records.forEach(record => {
+        const date = new Date(record.fecha);
+        if (Number.isNaN(date.getTime())) return;
+        const now = new Date();
+        const age = (now.getFullYear() - date.getFullYear()) * 12 + now.getMonth() - date.getMonth();
+        if (age >= 0 && age < 6) values[5 - age] += Number(record[field] || 0);
+    });
+    return { labels, values };
+}
+
+const palette = ["#1f7a8c", "#f28f6b", "#efc45b", "#6c9f8d", "#56758f", "#c96b54"];
+const textColor = () => body.classList.contains("dark") ? "#dceaf1" : "#526474";
+const axis = () => ({ axisLabel: { color: textColor() }, axisLine: { lineStyle: { color: body.classList.contains("dark") ? "#405361" : "#d8e1e6" } }, splitLine: { lineStyle: { color: body.classList.contains("dark") ? "#2d414e" : "#edf1f3" } } });
+
+function chartOptions(data) {
+    const sales = monthData(data.ventas, "total");
+    const quotes = monthData(data.cotizaciones.filter(item => item.estado !== "Rechazada"), "total");
+    const categories = [...data.insumos, ...data.productos].reduce((result, item) => {
+        const category = item.categoria || "Sin categoría";
+        result[category] = (result[category] || 0) + Number(item.cantidad || 0);
+        return result;
+    }, {});
+    const categoryNames = Object.keys(categories).slice(0, 7);
+    const activity = [data.insumos.length, data.productos.length, data.ventas.length, data.cotizaciones.length, data.clientes.length, data.proveedores.length, data.usuarios.length];
+    const activityNames = ["Insumos", "Productos", "Ventas", "Cotizaciones", "Clientes", "Proveedores", "Usuarios"];
+    const quoteStatuses = ["Pendiente", "Enviada", "Aprobada", "Rechazada"].map(status => ({ name: status, value: data.cotizaciones.filter(item => item.estado === status).length }));
+    return [
+        { color: [palette[0], palette[1]], tooltip: { trigger: "axis", valueFormatter: value => money(value) }, legend: { data: ["Ventas", "Cotizaciones"], textStyle: { color: textColor() } }, grid: { left: 48, right: 24, top: 35, bottom: 30 }, xAxis: { type: "category", data: sales.labels, ...axis() }, yAxis: { type: "value", ...axis() }, series: [{ name: "Ventas", type: "line", smooth: true, symbol: "circle", data: sales.values, areaStyle: { opacity: .12 }, lineStyle: { width: 3 } }, { name: "Cotizaciones", type: "line", smooth: true, data: quotes.values, lineStyle: { width: 3, type: "dashed" } }] },
+        { color: [palette[0]], tooltip: { trigger: "axis" }, grid: { left: 45, right: 20, top: 20, bottom: 35 }, xAxis: { type: "category", data: categoryNames.length ? categoryNames : ["Sin datos"], axisLabel: { color: textColor(), rotate: categoryNames.length > 4 ? 25 : 0 } }, yAxis: { type: "value", ...axis() }, series: [{ type: "bar", barMaxWidth: 32, data: categoryNames.length ? categoryNames.map(name => categories[name]) : [0], itemStyle: { borderRadius: [6, 6, 0, 0] }, label: { show: true, position: "top", color: textColor() } }] },
+        { tooltip: { trigger: "item", valueFormatter: value => money(value) }, color: [palette[0], palette[1]], series: [{ type: "pie", radius: ["45%", "72%"], center: ["50%", "48%"], label: { color: textColor(), formatter: "{b}\n{d}%" }, data: [{ value: data.inventoryValue, name: "Productos" }, { value: data.supplyValue, name: "Insumos" }] }] },
+        { tooltip: { trigger: "axis" }, grid: { left: 68, right: 20, top: 15, bottom: 25 }, xAxis: { type: "value", ...axis() }, yAxis: { type: "category", data: activityNames, axisLabel: { color: textColor() } }, series: [{ type: "bar", data: activity, barMaxWidth: 18, itemStyle: { color: palette[1], borderRadius: [0, 6, 6, 0] }, label: { show: true, position: "right", color: textColor() } }] },
+        { tooltip: { trigger: "item" }, color: ["#2a9d8f", "#27b7f5", "#1f7a8c", "#e76f51"], series: [{ type: "pie", radius: ["42%", "70%"], center: ["50%", "50%"], label: { color: textColor(), formatter: "{b}\n{c}" }, data: quoteStatuses }] }
+    ];
+}
+
+function initCharts() {
+    charts.splice(0).forEach(chart => chart.dispose());
+    const data = getDashboardData();
+    updateMetrics(data);
+    const options = chartOptions(data);
+    ["grafica_1", "grafica_2", "grafica_3", "grafica_4", "grafica_5"].forEach((id, index) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        const chart = echarts.init(element);
+        chart.setOption(options[index]);
+        charts.push(chart);
+    });
+    ["mini_1", "mini_2", "mini_3", "mini_4"].forEach((id, index) => {
+        const element = document.getElementById(id);
+        if (!element) return;
+        const chart = echarts.init(element);
+        const values = [data.stock, data.inventoryValue, sum(data.ventas, "total"), data.clientes.length];
+        chart.setOption({ grid: { left: 0, right: 0, top: 4, bottom: 0 }, xAxis: { show: false, type: "category", data: [1, 2, 3, 4, 5] }, yAxis: { show: false, type: "value" }, series: [{ type: "line", smooth: true, showSymbol: false, data: [0, values[index] * .55, values[index] * .76, values[index] * .9, values[index]], lineStyle: { color: palette[index], width: 2 }, areaStyle: { color: palette[index], opacity: .12 } }] });
+        charts.push(chart);
+    });
+}
+
+function resizeCharts() { charts.forEach(chart => chart.resize()); }
+
+document.querySelector(".toggle_switch")?.addEventListener("click", () => setTimeout(initCharts, 120));
+document.querySelector(".toggle")?.addEventListener("click", () => setTimeout(resizeCharts, 550));
+document.getElementById("hamburger")?.addEventListener("click", () => setTimeout(resizeCharts, 450));
+document.addEventListener("DOMContentLoaded", () => new MarquezaAppShell().init());
+updateLayout();
+window.addEventListener("resize", () => { clearTimeout(window.dashboardResize); window.dashboardResize = setTimeout(updateLayout, 120); });
+window.addEventListener("storage", initCharts);
+window.addEventListener("load", initCharts);

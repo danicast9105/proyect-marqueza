@@ -738,6 +738,195 @@ body.dark .caja_ayuda li {
     }
 }
 
+/* =========================================================
+   CENTRO DE AYUDA RENOVADO
+   ========================================================= */
+.module-ayuda {
+    --help-ink: #263746;
+    --help-muted: #718096;
+    --help-accent: #2b6cb0;
+    --help-cyan: #27b7f5;
+    --help-soft: #eef7fb;
+    background: #f7f9fc;
+}
+
+.module-ayuda .cont_2 {
+    max-width: 1500px;
+    min-height: 100vh;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 38px 48px 48px;
+    color: var(--help-ink);
+}
+
+.module-ayuda .page-heading,
+.module-ayuda .controls-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.module-ayuda .page-heading h1 {
+    margin: 6px 0 8px;
+    color: var(--help-ink);
+    font-size: clamp(30px, 4vw, 44px);
+    font-weight: 700;
+}
+
+.module-ayuda .page-heading p {
+    max-width: 720px;
+    color: var(--help-muted);
+    font-size: 14px;
+}
+
+.module-ayuda .eyebrow {
+    color: var(--help-accent);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+}
+
+.module-ayuda .help-heading-icon {
+    display: grid;
+    width: 64px;
+    height: 64px;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 18px;
+    background: var(--help-soft);
+    color: var(--help-accent);
+    font-size: 34px;
+}
+
+.module-ayuda .quick-access {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.module-ayuda .quick-access a {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid #e2ebf0;
+    border-radius: 14px;
+    background: #fff;
+    color: var(--help-ink);
+    text-decoration: none;
+    box-shadow: 0 10px 24px rgba(42, 55, 72, .05);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+}
+
+.module-ayuda .quick-access a:hover {
+    border-color: var(--help-cyan);
+    box-shadow: 0 12px 26px rgba(39, 183, 245, .13);
+    transform: translateY(-2px);
+}
+
+.module-ayuda .quick-access a > i:first-child {
+    display: grid;
+    width: 36px;
+    height: 36px;
+    place-items: center;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--help-soft);
+    color: var(--help-accent);
+    font-size: 20px;
+}
+
+.module-ayuda .quick-access span { display: grid; min-width: 0; gap: 2px; flex: 1; }
+.module-ayuda .quick-access strong { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.module-ayuda .quick-access small { color: var(--help-muted); font-size: 10px; }
+.module-ayuda .quick-access a > i:last-child { color: var(--help-muted); font-size: 19px; }
+
+.module-ayuda .help-controls,
+.module-ayuda .cont_filtros,
+.module-ayuda .caja_ayuda {
+    border: 1px solid #e2ebf0;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 12px 28px rgba(42, 55, 72, .06);
+}
+
+.module-ayuda .help-controls { padding: 22px 24px; }
+.module-ayuda .controls-heading { align-items: center; margin-bottom: 18px; }
+.module-ayuda .controls-heading h2 { margin-top: 5px; color: var(--help-ink); font-size: 20px; }
+.module-ayuda .help-count { color: var(--help-muted); font-size: 13px; font-weight: 700; }
+
+.module-ayuda .cont_busqueda {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+}
+
+.module-ayuda .help-search { position: relative; flex: 1; }
+.module-ayuda .help-search > i { position: absolute; top: 50%; left: 14px; transform: translateY(-50%); color: var(--help-muted); font-size: 19px; }
+.module-ayuda .cont_busqueda input { width: 100%; min-height: 44px; padding: 11px 14px 11px 42px; border: 1px solid #dce4ec; border-radius: 10px; background: #f9fbfd; color: var(--help-ink); }
+.module-ayuda .cont_busqueda input:focus { border-color: var(--help-cyan); box-shadow: 0 0 0 3px rgba(39, 183, 245, .13); }
+.module-ayuda .cont_busqueda button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 11px 17px; border: 1px solid var(--help-accent); border-radius: 10px; background: var(--help-accent); color: #fff; font-weight: 700; }
+.module-ayuda .cont_busqueda button:hover { background: #1f568e; transform: translateY(-2px); }
+.module-ayuda .cont_busqueda .btn-clear { border-color: #dce4ec; background: #fff; color: var(--help-ink); }
+.module-ayuda .cont_busqueda .btn-clear:hover { border-color: var(--help-cyan); background: var(--help-soft); color: var(--help-accent); }
+
+.module-ayuda .cont_filtros { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0; padding: 14px 18px; background: var(--help-soft); box-shadow: none; }
+.module-ayuda .cont_filtros h4 { display: flex; align-items: center; gap: 7px; color: var(--help-ink); font-size: 12px; }
+.module-ayuda .cont_filtros h4 i { color: var(--help-accent); font-size: 18px; }
+.module-ayuda .filtro-estados { gap: 7px; }
+.module-ayuda .estado-btn { padding: 8px 13px; border: 1px solid transparent; background: #fff; color: var(--help-accent); font-size: 11px; }
+.module-ayuda .estado-btn:hover,
+.module-ayuda .estado-btn.active { background: var(--help-accent); color: #fff; }
+
+.module-ayuda .cont_ayuda { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.module-ayuda .caja_ayuda { padding: 20px; box-shadow: 0 10px 24px rgba(42, 55, 72, .05); }
+.module-ayuda .caja_ayuda:hover { border-color: rgba(39, 183, 245, .55); transform: translateY(-2px); transition: transform .2s ease, border-color .2s ease; }
+.module-ayuda .caja_ayuda h3 { color: var(--help-accent); font-size: 16px; }
+.module-ayuda .caja_ayuda h3 i { color: var(--help-cyan); }
+.module-ayuda .caja_ayuda p,
+.module-ayuda .caja_ayuda li { color: var(--help-muted); font-size: 13px; line-height: 1.65; }
+.module-ayuda .caja_ayuda ul { gap: 7px; }
+.module-ayuda .caja_ayuda .pasos { display: grid; gap: 9px; margin: 0; padding: 0; list-style: none; counter-reset: help-step; }
+.module-ayuda .caja_ayuda .pasos li { display: grid; grid-template-columns: 24px 1fr; align-items: start; gap: 8px; }
+.module-ayuda .caja_ayuda .pasos li::before { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 50%; background: var(--help-soft); color: var(--help-accent); content: counter(help-step); counter-increment: help-step; font-size: 11px; font-weight: 800; }
+.module-ayuda .caja_ayuda .pasos strong { color: var(--help-ink); }
+.module-ayuda .sin-resultados { grid-column: 1 / -1; margin: 0; padding: 28px; border: 1px dashed #cbd9e2; border-radius: 14px; color: var(--help-muted) !important; text-align: center; }
+
+body.dark.module-ayuda { background: #18191a; --help-ink: #edf1f7; --help-muted: #b9c2ce; --help-soft: #263544; }
+body.dark.module-ayuda .quick-access a, body.dark.module-ayuda .help-controls, body.dark.module-ayuda .cont_filtros, body.dark.module-ayuda .caja_ayuda { background: #222d3d; border-color: #344257; }
+body.dark.module-ayuda .cont_busqueda input { background: #182231; border-color: #46546b; color: #edf1f7; }
+body.dark.module-ayuda .cont_busqueda .btn-clear { background: #222d3d; border-color: #46546b; color: #edf1f7; }
+body.dark.module-ayuda .estado-btn { background: #182231; color: #b9c2ce; }
+body.dark.module-ayuda .estado-btn.active, body.dark.module-ayuda .estado-btn:hover { background: var(--help-accent); color: #fff; }
+
+@media (max-width: 1000px) {
+    .module-ayuda .quick-access { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .module-ayuda .cont_ayuda { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+    .module-ayuda .cont_2 { padding: 28px 18px 36px; }
+    .module-ayuda .page-heading { align-items: flex-start; }
+    .module-ayuda .help-heading-icon { width: 48px; height: 48px; font-size: 26px; }
+    .module-ayuda .quick-access, .module-ayuda .cont_ayuda { grid-template-columns: 1fr; }
+    .module-ayuda .help-controls { padding: 18px; }
+    .module-ayuda .controls-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+    .module-ayuda .cont_busqueda { align-items: stretch; flex-direction: column; }
+    .module-ayuda .cont_busqueda button { width: 100%; }
+    .module-ayuda .cont_filtros { align-items: stretch; flex-direction: column; padding: 14px; }
+    .module-ayuda .filtro-estados { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .module-ayuda .estado-btn { width: 100%; }
+}
+
 @media (max-width: 360px) {
     .barra_lateral {
         padding: 0 8px;

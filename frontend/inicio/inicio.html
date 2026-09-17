@@ -11,13 +11,14 @@
     <!-- Enlaza la hoja de estilos CSS principal -->
     <link rel="stylesheet" href="estilos3.css">
     <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/sidebar.css">
     <!-- Enlaza la biblioteca de iconos Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body class="module-inicio">
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
-    <nav class="barra_lateral close">
+    <nav class="barra_lateral sidebar-standard close">
         <header>
             <!-- Contenedor para el logo y el texto del título -->
             <div class="imagen_texto">
@@ -131,81 +132,39 @@
             </div>
         </div>
     </nav>
-    <div class="cont_2">
-        <!-- Tarjeta de información: Unidades en Stock -->
-        <div class="cont_info">
-            <!-- Icono representativo de la métrica -->
-            <i class='bx bx-package icono'></i> 
-            <!-- Título de la métrica -->
-            <div class="titulo">Unidades en Stock</div>
-            <!-- Valor numérico de la métrica -->
-            <div class="valor">3.450</div>
-            <!-- Contenedor para la mini-gráfica (sparkline) -->
-            <div id="mini_1" class="mini_grafica"></div>
-        </div>
-        <!-- Tarjeta de información: Valor de Inventario -->
-        <div class="cont_info">
-            <!-- Icono representativo de la métrica -->
-            <i class='bx bx-dollar-circle icono'></i> 
-            <!-- Título de la métrica -->
-            <div class="titulo">Valor de Inventario</div>
-            <!-- Valor numérico de la métrica -->
-            <div class="valor">$35.256</div>
-            <!-- Contenedor para la mini-gráfica (sparkline) -->
-            <div id="mini_2" class="mini_grafica"></div>
-        </div>
-        <!-- Tarjeta de información: Precio Promedio -->
-        <div class="cont_info">
-            <!-- Icono representativo de la métrica -->
-            <i class='bx bx-tag icono'></i> 
-            <!-- Título de la métrica -->
-            <div class="titulo">Precio Promedio</div>
-            <!-- Valor numérico de la métrica -->
-            <div class="valor">$35.256</div>
-            <!-- Contenedor para la mini-gráfica (sparkline) -->
-            <div id="mini_3" class="mini_grafica"></div>
-        </div>
-        <!-- Tarjeta de información: Operaciones -->
-        <div class="cont_info">
-            <!-- Icono representativo de la métrica -->
-            <i class='bx bx-trending-up icono'></i> 
-            <!-- Título de la métrica -->
-            <div class="titulo">Operaciones</div>
-            <!-- Valor numérico de la métrica -->
-            <div class="valor">15.893</div>
-            <!-- Contenedor para la mini-gráfica (sparkline) -->
-            <div id="mini_4" class="mini_grafica"></div>
-        </div>
-    </div>
+    <main class="dashboard">
+        <section class="dashboard-hero">
+            <div>
+                <span class="eyebrow">Panel de control</span>
+                <h1>Una vista clara para hacer crecer Marqueza</h1>
+                <p>Inventario, producción y oportunidades comerciales reunidos en un solo lugar.</p>
+            </div>
+            <div class="hero-status"><span></span><strong>Datos actualizados</strong><small id="ultimaActualizacion"></small></div>
+        </section>
 
-    <!-- Contenedor principal para las gráficas grandes -->
-    <div class="contenido">
-        <!-- Contenedor que organiza las gráficas en un grid -->
-        <div class="graficas">
-            <div class="cont_grafica">
-                <h2>Tendencia de Producción Mensual</h2>
-                <div id="grafica_1"></div>
-            </div>
-            <div class="cont_grafica">
-                <h2>Stock de Insumos vs Demanda</h2>
-                <div id="grafica_2"></div>
-            </div>
-            <div class="cont_grafica">
-                <h2>Distribución de Insumos</h2>
-                <div id="grafica_3"></div>
-            </div>
-            <div class="cont_grafica">
-                <h2>Rendimiento Operativo</h2>
-                <div id="grafica_4"></div>
-            </div>
-        </div>
-    </div>
-    </div>
+        <section class="cont_2" aria-label="Indicadores principales">
+            <article class="cont_info"><div class="metric-head"><i class='bx bx-package icono'></i><span class="metric-trend">Inventario</span></div><div class="titulo">Unidades en stock</div><div id="metricStock" class="valor">0</div><small id="metricStockDetail">Productos registrados</small><div id="mini_1" class="mini_grafica"></div></article>
+            <article class="cont_info"><div class="metric-head"><i class='bx bx-wallet icono'></i><span class="metric-trend">Valor total</span></div><div class="titulo">Valor del inventario</div><div id="metricInventory" class="valor">$0</div><small id="metricInventoryDetail">Costo estimado</small><div id="mini_2" class="mini_grafica"></div></article>
+            <article class="cont_info"><div class="metric-head"><i class='bx bx-line-chart icono'></i><span class="metric-trend">Ventas</span></div><div class="titulo">Ingresos registrados</div><div id="metricSales" class="valor">$0</div><small id="metricSalesDetail">0 operaciones</small><div id="mini_3" class="mini_grafica"></div></article>
+            <article class="cont_info"><div class="metric-head"><i class='bx bx-user-pin icono'></i><span class="metric-trend">Relaciones</span></div><div class="titulo">Clientes activos</div><div id="metricClients" class="valor">0</div><small id="metricClientsDetail">0 cotizaciones abiertas</small><div id="mini_4" class="mini_grafica"></div></article>
+        </section>
+
+        <section class="dashboard-section-heading"><div><span class="eyebrow">Lectura operativa</span><h2>El pulso del negocio</h2></div><span class="section-note">Basado en tus registros guardados</span></section>
+        <section class="graficas" aria-label="Análisis del negocio">
+            <article class="cont_grafica chart-wide"><div class="chart-heading"><div><h2>Ingresos y cotizaciones</h2><p>Comparación mensual de ventas cerradas y oportunidades abiertas</p></div><i class='bx bx-bar-chart-alt-2'></i></div><div id="grafica_1"></div></article>
+            <article class="cont_grafica"><div class="chart-heading"><div><h2>Inventario por categoría</h2><p>Unidades disponibles por familia</p></div><i class='bx bx-package'></i></div><div id="grafica_2"></div></article>
+            <article class="cont_grafica"><div class="chart-heading"><div><h2>Composición del inventario</h2><p>Valor estimado de productos e insumos</p></div><i class='bx bx-pie-chart-alt-2'></i></div><div id="grafica_3"></div></article>
+            <article class="cont_grafica"><div class="chart-heading"><div><h2>Resumen de actividad</h2><p>Registros disponibles en cada módulo</p></div><i class='bx bx-grid-alt'></i></div><div id="grafica_4"></div></article>
+            <article class="cont_grafica"><div class="chart-heading"><div><h2>Estado de cotizaciones</h2><p>Distribución de tus propuestas comerciales</p></div><i class='bx bx-pie-chart-alt-2'></i></div><div id="grafica_5"></div></article>
+        </section>
+    </main>
     <!-- Enlaza la biblioteca ECharts para la visualización de datos -->
     <script src="https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
     <script src="../shared/navigation.js"></script>
     <script src="../shared/theme-persistence.js"></script>
+    <script src="../shared/app-shell.js"></script>
     <script src="inicio.js"></script>
 </body>
 

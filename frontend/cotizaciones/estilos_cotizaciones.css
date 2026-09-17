@@ -73,6 +73,33 @@ body.dark.module-cotizaciones .btn-secondary { background: #222d3d; border-color
 @media (max-width: 1100px) { .module-cotizaciones .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .module-cotizaciones .analysis-grid { grid-template-columns: 1fr; } }
 @media (max-width: 700px) { .module-cotizaciones .cotizaciones-page { width: 100%; padding: 28px 18px; } .module-cotizaciones .page-header { align-items: stretch; flex-direction: column; } .module-cotizaciones .page-header .btn-primary { width: 100%; } .module-cotizaciones .metric-grid { grid-template-columns: 1fr; } .module-cotizaciones .panel { min-width: 0; padding: 18px; } .module-cotizaciones .panel-heading { flex-direction: column; } .module-cotizaciones .quote-tools, .module-cotizaciones .quote-tools input, .module-cotizaciones .quote-tools select { width: 100%; } .module-cotizaciones .form-grid { grid-template-columns: 1fr; } .module-cotizaciones table { min-width: 0; table-layout: fixed; } .module-cotizaciones th, .module-cotizaciones td { padding: 10px 6px; overflow-wrap: anywhere; white-space: normal; font-size: 12px; } .module-cotizaciones th:nth-child(1), .module-cotizaciones td:nth-child(1) { display: none; } .module-cotizaciones th:nth-child(7), .module-cotizaciones td:nth-child(7) { width: 52px; } }
 
+@media (max-width: 700px) {
+	.module-cotizaciones .table-wrap { overflow: visible; }
+	.module-cotizaciones table,
+	.module-cotizaciones tbody,
+	.module-cotizaciones tr,
+	.module-cotizaciones td { display: block; width: 100%; }
+	.module-cotizaciones thead { display: none; }
+	.module-cotizaciones tbody { display: grid; gap: 12px; }
+	.module-cotizaciones tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; padding: 12px 14px; border: 1px solid #e8e9f0; border-radius: 12px; background: #fff; }
+	.module-cotizaciones td { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; min-width: 0; padding: 9px 0; border-bottom: 1px solid #edf0f4; text-align: right; }
+	.module-cotizaciones td::before { flex: 0 0 auto; color: var(--quote-muted); content: ""; font-size: 10px; font-weight: 700; letter-spacing: .05em; text-align: left; text-transform: uppercase; }
+	.module-cotizaciones td:nth-child(1) { display: none; }
+	.module-cotizaciones td:nth-child(2)::before { content: "Cliente"; }
+	.module-cotizaciones td:nth-child(3) { grid-column: 1 / -1; }
+	.module-cotizaciones td:nth-child(3)::before { content: "Producto"; }
+	.module-cotizaciones td:nth-child(4)::before { content: "Cantidad"; }
+	.module-cotizaciones td:nth-child(5)::before { content: "Total"; }
+	.module-cotizaciones td:nth-child(6)::before { content: "Estado"; }
+	.module-cotizaciones td:nth-child(6) { border-bottom: 0; }
+	.module-cotizaciones td:nth-child(7) { grid-column: 1 / -1; align-items: center; justify-content: space-between; border-bottom: 0; padding-top: 12px; }
+	.module-cotizaciones td:nth-child(7)::before { content: "Acciones"; }
+	.module-cotizaciones .row-actions { justify-content: flex-end; gap: 9px; }
+	.module-cotizaciones .row-actions button { width: 34px; height: 34px; }
+	body.dark.module-cotizaciones tbody tr { border-color: #344257; background: #222d3d; }
+	body.dark.module-cotizaciones td { border-color: #344257; }
+}
+
 @media (max-width: 1024px) {
 	body.module-cotizaciones { padding-left: 0; }
 }

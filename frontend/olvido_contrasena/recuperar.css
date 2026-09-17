@@ -1,0 +1,29 @@
+* { box-sizing: border-box; }
+body.password-recovery { display: grid; min-height: 100vh; place-items: center; padding: 24px; background: linear-gradient(135deg, rgba(18, 48, 74, .84), rgba(39, 183, 245, .3)), url('../fondo/background 4.png') center/cover; color: #263746; font-family: 'Manrope', sans-serif; }
+.recovery-card { width: min(470px, 100%); padding: 34px; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; background: #fff; box-shadow: 0 28px 70px rgba(18,48,74,.25); }
+.back-link { display: inline-flex; align-items: center; gap: 6px; color: #277da1; font-size: 12px; font-weight: 700; text-decoration: none; }
+.recovery-brand { display: flex; align-items: center; gap: 10px; margin: 34px 0 28px; }
+.recovery-brand img { width: 44px; height: 44px; border-radius: 11px; }
+.recovery-brand strong, .recovery-brand small { display: block; }
+.recovery-brand strong { color: #12304a; font-size: 19px; letter-spacing: .08em; }
+.recovery-brand small { margin-top: 2px; color: #718096; font-size: 10px; }
+.recovery-icon { display: grid; width: 52px; height: 52px; margin-bottom: 20px; place-items: center; border-radius: 15px; background: #eaf6fb; color: #1685b5; font-size: 27px; }
+.eyebrow { color: #277da1; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+h1 { margin: 7px 0 9px; color: #12304a; font-size: 29px; letter-spacing: -.02em; }
+.recovery-copy { margin: 0 0 25px; color: #718096; font-size: 13px; line-height: 1.6; }
+#recoveryForm label { display: block; margin-bottom: 7px; color: #263746; font-size: 12px; font-weight: 800; }
+.input-shell { display: flex; align-items: center; min-height: 48px; margin-bottom: 16px; border: 1px solid #dce4ec; border-radius: 11px; background: #f9fbfd; }
+.input-shell:focus-within { border-color: #9fb8c7; }
+.input-shell i { margin-left: 14px; color: #718096; font-size: 19px; }
+.input-shell input { width: 100%; min-width: 0; padding: 12px 13px; border: 0; outline: 0; background: transparent; color: #263746; font: inherit; font-size: 13px; }
+#recoveryForm button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 48px; border: 0; border-radius: 11px; background: linear-gradient(135deg, #27b7f5, #177e9e); color: #fff; font-weight: 800; cursor: pointer; box-shadow: 0 12px 22px rgba(39,183,245,.2); }
+#recoveryForm button:hover { background: linear-gradient(135deg, #1685b5, #12304a); transform: translateY(-2px); }
+.recovery-note { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 19px 0 0; color: #8a98a5; font-size: 10px; text-align: center; }
+.recovery-note i { color: #27b7f5; font-size: 15px; }
+body.dark.password-recovery { background: #17232d; }
+body.dark .recovery-card { background: #1f303d; border-color: rgba(237,245,248,.12); color: #edf5f8; }
+body.dark .recovery-brand strong, body.dark h1, body.dark #recoveryForm label { color: #edf5f8; }
+body.dark .recovery-copy, body.dark .recovery-brand small, body.dark .recovery-note { color: #b9c2ce; }
+body.dark .input-shell { border-color: #46546b; background: #182231; }
+body.dark .input-shell input { color: #edf5f8; }
+@media (max-width: 520px) { body.password-recovery { align-items: start; padding: 16px; } .recovery-card { padding: 25px 21px; } .recovery-brand { margin-top: 28px; } h1 { font-size: 25px; } }

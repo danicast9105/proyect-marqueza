@@ -50,8 +50,8 @@ body[class*="module-"] {
 }
 
 .module-usuarios {
-    --module-accent: #6c5ce7;
-    --module-accent-soft: rgba(108, 92, 231, 0.14);
+    --module-accent: #277da1;
+    --module-accent-soft: rgba(39, 125, 161, 0.14);
 }
 
 .module-ayuda {
@@ -80,6 +80,46 @@ body.dark {
     background-image: radial-gradient(circle at 88% 4%, rgba(39, 183, 245, 0.12), transparent 28rem),
         radial-gradient(circle at 8% 92%, rgba(255, 127, 102, 0.08), transparent 24rem);
     color: #edf5f8;
+}
+
+body[class*="module-"]:not(.dark) {
+    background-color: #fff;
+    background-image: none;
+}
+
+@media (min-width: 1025px) and (max-height: 760px) {
+    body[class*="module-"] {
+        overflow-x: hidden;
+    }
+
+    body[class*="module-"] .barra_lateral,
+    body[class*="module-"] .sidebar-standard {
+        padding-top: 7px;
+        padding-bottom: 7px;
+    }
+
+    body[class*="module-"] .barra_lateral .imagen_texto img,
+    body[class*="module-"] .sidebar-standard .imagen_texto img {
+        width: 44px;
+    }
+
+    body[class*="module-"] .barra_lateral li,
+    body[class*="module-"] .sidebar-standard li {
+        height: 44px;
+        margin-top: 5px;
+    }
+
+    body[class*="module-"] .barra_lateral li .icon,
+    body[class*="module-"] .sidebar-standard li .icon {
+        min-width: 52px;
+        flex-basis: 52px;
+        font-size: 18px;
+    }
+
+    body[class*="module-"] .barra_lateral .barra_menu,
+    body[class*="module-"] .sidebar-standard .barra_menu {
+        height: calc(100% - 68px);
+    }
 }
 
 button,
@@ -271,9 +311,80 @@ body.dark .toggle_switch .switch {
     color: #f7fcff !important;
 }
 
+/* Acciones CRUD consistentes en todos los modulos. */
+.cont_tabla .btn-editar,
+.cont_tabla .btn-eliminar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    font-size: 0;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+.cont_tabla .btn-editar i,
+.cont_tabla .btn-eliminar i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.cont_tabla .btn-editar {
+    background: #e8f7f0;
+    color: #168a75;
+}
+
+.cont_tabla .btn-eliminar {
+    margin-left: 6px;
+    background: #fff0ef;
+    color: #d4554d;
+}
+
+.cont_tabla .btn-editar:hover,
+.cont_tabla .btn-eliminar:hover {
+    filter: brightness(.96);
+    transform: translateY(-2px);
+}
+
+body.dark .cont_tabla .btn-editar {
+    background: #1e4b43;
+    color: #7de0c0;
+}
+
+body.dark .cont_tabla .btn-eliminar {
+    background: #512f35;
+    color: #ffaaa0;
+}
+
 body.dark .barra_lateral .boton-contenido .modo .texto.modo_texto,
 body.dark .barra_lateral .boton-contenido .modo .sol_luna .icon {
     color: #f7fcff !important;
+}
+
+.barra_lateral .modo {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    padding-right: 64px;
+}
+
+.barra_lateral .modo .modo_texto {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.barra_lateral.close .modo {
+    padding-right: 0;
+}
+
+.barra_lateral.close .modo .modo_texto {
+    display: none;
 }
 
 body.dark .cont_2 h1,
@@ -429,7 +540,6 @@ body.dark:has(.formulario) .formulario select {
     color: var(--module-accent);
 }
 
-.module-inicio .cont_info,
 .module-insumos .cont_filtros,
 .module-productos .cont_filtros,
 .module-clientes .cont_filtros,
@@ -439,6 +549,11 @@ body.dark:has(.formulario) .formulario select {
 .module-ayuda .caja_ayuda {
     border-top: 3px solid var(--module-accent);
     background: var(--module-accent-soft);
+}
+
+.module-inicio .cont_info {
+    border-top: 3px solid var(--module-accent);
+    background: #fff;
 }
 
 @keyframes marqueza-enter {
