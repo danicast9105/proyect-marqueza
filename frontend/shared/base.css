@@ -134,63 +134,98 @@ button {
     transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
-body[class*="module-"] .barra_lateral {
-    background: linear-gradient(165deg, #12304a 0%, #176b86 58%, var(--module-accent, #27b7f5) 140%);
+body[class*="module-"] .barra_lateral,
+body[class*="module-"] .sidebar-standard {
+    background: linear-gradient(165deg, #12304a 0%, #176b86 58%, var(--module-accent, #27b7f5) 140%) !important;
     box-shadow: 10px 0 30px rgba(18, 48, 74, 0.14);
 }
 
-body[class*="module-"] .barra_lateral .toggle {
-    background: var(--module-accent, var(--marqueza-cyan));
-    box-shadow: 0 7px 18px rgba(18, 48, 74, 0.24);
-}
-
-body[class*="module-"] .barra_lateral li a[aria-current="page"] {
-    background: rgba(255, 255, 255, 0.16);
-    box-shadow: inset 3px 0 0 #fff;
-}
-
-body[class*="module-"] .barra_lateral li a:hover {
-    transform: translateX(3px);
-}
-
-body.dark[class*="module-"] .barra_lateral,
-body.dark[class*="module-"] .barra_lateral header,
-body.dark[class*="module-"] .barra_lateral .barra_menu {
+body[class*="module-"] .barra_lateral,
+body[class*="module-"] .sidebar-standard,
+body[class*="module-"] .barra_lateral header,
+body[class*="module-"] .sidebar-standard header,
+body[class*="module-"] .barra_lateral .barra_menu,
+body[class*="module-"] .sidebar-standard .barra_menu {
     color: #f7fcff;
 }
 
-body.dark[class*="module-"] .barra_lateral .texto,
-body.dark[class*="module-"] .barra_lateral .nav_texto,
-body.dark[class*="module-"] .barra_lateral .icon,
-body.dark[class*="module-"] .barra_lateral .titulo,
-body.dark[class*="module-"] .barra_lateral .subtitulo {
-    color: #f7fcff !important;
-}
-
-body.dark[class*="module-"] .barra_lateral .modo,
-body.dark[class*="module-"] .barra_lateral .toggle_switch {
-    background: rgba(255, 255, 255, 0.13);
-}
-
-body.dark[class*="module-"] .barra_lateral .modo_texto,
-body.dark[class*="module-"] .barra_lateral .modo i {
-    color: #f7fcff !important;
-}
-
-body.dark .barra_lateral .modo_texto,
-body.dark .barra_lateral .modo i,
-body.dark .barra_lateral .modo .icon {
-    color: #f7fcff !important;
-}
-
-body.dark[class*="module-"] .barra_lateral li a:hover,
-body.dark[class*="module-"] .barra_lateral li a[aria-current="page"] {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-body.dark[class*="module-"] .barra_lateral li a:hover .icon,
-body.dark[class*="module-"] .barra_lateral li a:hover .texto {
+body[class*="module-"] .barra_lateral .toggle,
+body[class*="module-"] .sidebar-standard .toggle {
+    background: var(--module-accent, var(--marqueza-cyan)) !important;
+    box-shadow: 0 7px 18px rgba(18, 48, 74, 0.24);
     color: #ffffff !important;
+}
+
+body[class*="module-"] .barra_lateral .texto,
+body[class*="module-"] .sidebar-standard .texto,
+body[class*="module-"] .barra_lateral .nav_texto,
+body[class*="module-"] .sidebar-standard .nav_texto,
+body[class*="module-"] .barra_lateral .icon,
+body[class*="module-"] .sidebar-standard .icon,
+body[class*="module-"] .barra_lateral .titulo,
+body[class*="module-"] .sidebar-standard .titulo,
+body[class*="module-"] .barra_lateral .subtitulo,
+body[class*="module-"] .sidebar-standard .subtitulo {
+    color: #f7fcff !important;
+}
+
+body[class*="module-"] .barra_lateral .subtitulo,
+body[class*="module-"] .sidebar-standard .subtitulo {
+    color: rgba(247, 252, 255, 0.75) !important;
+}
+
+body[class*="module-"] .barra_lateral .modo,
+body[class*="module-"] .sidebar-standard .modo {
+    background: rgba(255, 255, 255, 0.13) !important;
+}
+
+body[class*="module-"] .barra_lateral .toggle_switch,
+body[class*="module-"] .sidebar-standard .toggle_switch {
+    background: transparent !important;
+}
+
+body[class*="module-"] .barra_lateral .modo_texto,
+body[class*="module-"] .sidebar-standard .modo_texto,
+body[class*="module-"] .barra_lateral .modo i,
+body[class*="module-"] .sidebar-standard .modo i,
+body[class*="module-"] .barra_lateral .modo .icon,
+body[class*="module-"] .sidebar-standard .modo .icon,
+.barra_lateral .modo_texto,
+.sidebar-standard .modo_texto,
+.barra_lateral .modo i,
+.sidebar-standard .modo i,
+.barra_lateral .modo .icon,
+.sidebar-standard .modo .icon {
+    color: #f7fcff !important;
+}
+
+body[class*="module-"] .barra_lateral li a[aria-current="page"],
+body[class*="module-"] .sidebar-standard li a[aria-current="page"] {
+    background: rgba(255, 255, 255, 0.16) !important;
+    box-shadow: inset 3px 0 0 #fff;
+}
+
+body[class*="module-"] .barra_lateral li a:hover,
+body[class*="module-"] .sidebar-standard li a:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: translateX(3px);
+}
+
+body[class*="module-"] .barra_lateral li a:hover .icon,
+body[class*="module-"] .sidebar-standard li a:hover .icon,
+body[class*="module-"] .barra_lateral li a:hover .texto,
+body[class*="module-"] .sidebar-standard li a:hover .texto {
+    color: #ffffff !important;
+}
+
+body[class*="module-"] .barra_lateral .toggle_switch .switch,
+body[class*="module-"] .sidebar-standard .toggle_switch .switch {
+    background: rgba(255, 255, 255, 0.35) !important;
+}
+
+body[class*="module-"] .barra_lateral .toggle_switch .switch::before,
+body[class*="module-"] .sidebar-standard .toggle_switch .switch::before {
+    background: #ffffff !important;
 }
 
 :where(button, a, input, select, textarea, [tabindex]):focus-visible {
@@ -361,30 +396,90 @@ body.dark .cont_tabla .btn-eliminar {
     color: #ffaaa0;
 }
 
-body.dark .barra_lateral .boton-contenido .modo .texto.modo_texto,
-body.dark .barra_lateral .boton-contenido .modo .sol_luna .icon {
+.barra_lateral .boton-contenido .modo .texto.modo_texto,
+.barra_lateral .boton-contenido .modo .sol_luna .icon,
+.sidebar-standard .boton-contenido .modo .texto.modo_texto,
+.sidebar-standard .boton-contenido .modo .sol_luna .icon {
     color: #f7fcff !important;
 }
 
-.barra_lateral .modo {
+.barra_lateral .modo,
+.sidebar-standard .modo {
     display: flex;
     align-items: center;
     min-width: 0;
     padding-right: 64px;
 }
 
-.barra_lateral .modo .modo_texto {
+.barra_lateral .modo .sol_luna,
+.sidebar-standard .modo .sol_luna {
+    position: relative;
+    width: 60px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.barra_lateral .modo .sol_luna i,
+.sidebar-standard .modo .sol_luna i,
+.barra_lateral .modo .sol_luna .icon,
+.sidebar-standard .modo .sol_luna .icon {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease;
+}
+
+.barra_lateral .modo i.sol,
+.sidebar-standard .modo i.sol {
+    opacity: 0;
+}
+
+body.dark .barra_lateral .modo i.sol,
+body.dark .sidebar-standard .modo i.sol {
+    opacity: 1 !important;
+}
+
+body.dark .barra_lateral .modo i.luna,
+body.dark .sidebar-standard .modo i.luna {
+    opacity: 0 !important;
+}
+
+.barra_lateral .modo .modo_texto,
+.sidebar-standard .modo .modo_texto {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.barra_lateral.close .modo {
-    padding-right: 0;
+.barra_lateral.close .modo,
+.sidebar-standard.close .modo {
+    padding-right: 0 !important;
+    justify-content: center !important;
 }
 
-.barra_lateral.close .modo .modo_texto {
-    display: none;
+.barra_lateral.close .modo .sol_luna,
+.sidebar-standard.close .modo .sol_luna {
+    display: none !important;
+}
+
+.barra_lateral.close .modo .modo_texto,
+.sidebar-standard.close .modo .modo_texto {
+    display: none !important;
+}
+
+.barra_lateral.close .modo .toggle_switch,
+.sidebar-standard.close .modo .toggle_switch {
+    position: static !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 body.dark .cont_2 h1,
