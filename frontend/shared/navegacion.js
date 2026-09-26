@@ -52,3 +52,7 @@ class MarquezaNavigation {
 }
 
 new MarquezaNavigation().init();
+
+const assistantScript = document.createElement("script");
+assistantScript.src = new URL("asistente.js", document.currentScript.src).href;
+document.head.appendChild(assistantScript);
