@@ -7,11 +7,12 @@
     <title>Usuarios — MARQUEZA</title>
     <!-- Estilos específicos para la sección de usuarios y componentes responsivos -->
     <link rel="stylesheet" href="estilos4.css">
-    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/estilos-base.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body class="module-usuarios">
+    <script src="../shared/persistencia-tema.js"></script>
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
@@ -92,7 +93,7 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="../ayuda/ayuda.html">
+                        <a href="../log_errores/registro_actividad.html">
                             <i class='bx bx-help-circle icon'></i>
                             <span class="texto nav_texto">Ayuda</span>
                         </a>
@@ -221,9 +222,10 @@
     </div>
 
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
+    <script src="../shared/auditoria.js"></script>
+    <script src="../shared/actualizacion-tiempo-real.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../shared/navigation.js"></script>
-    <script src="../shared/theme-persistence.js"></script>
+    <script src="../shared/navegacion.js"></script>
     <script src="usuarios.js"></script>
 </body>
 

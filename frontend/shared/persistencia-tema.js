@@ -6,6 +6,7 @@ class MarquezaThemePersistence {
     }
 
     init() {
+        this.modeText = document.querySelector(".modo_texto");
         this.restore();
         document.addEventListener("click", (event) => {
             if (!event.target.closest(".toggle_switch")) return;
@@ -31,6 +32,6 @@ class MarquezaThemePersistence {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    new MarquezaThemePersistence().init();
-});
+const marquezaTheme = new MarquezaThemePersistence();
+marquezaTheme.restore();
+document.addEventListener("DOMContentLoaded", () => marquezaTheme.init());

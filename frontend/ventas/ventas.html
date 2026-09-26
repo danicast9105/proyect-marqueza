@@ -7,11 +7,12 @@
     <title>Ventas — MARQUEZA</title>
     <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
     <link rel="stylesheet" href="estilos_ventas.css">
-    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/estilos-base.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body class="module-ventas">
+<script src="../shared/persistencia-tema.js"></script>
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
@@ -92,7 +93,7 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="../ayuda/ayuda.html">
+                        <a href="../log_errores/registro_actividad.html">
                             <i class='bx bx-help-circle icon'></i>
                             <span class="texto nav_texto">Ayuda</span>
                         </a>
@@ -146,10 +147,11 @@
 <div class="input-group"><label for="fecha">Fecha</label><input id="fecha" type="date" required placeholder=""></div><div class="input-group"><label for="cliente">Cliente</label><select id="cliente" required><option value="">Selecciona un cliente</option></select></div><div class="input-group"><label for="producto">Producto</label><select id="producto" required><option value="">Selecciona un producto</option></select></div><div class="input-group"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" min="1" required placeholder="Cantidad"></div><div class="input-group"><label for="total">Total</label><input id="total" type="number" required placeholder="Se calcula automáticamente" readonly></div>
 <div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
 </form></div></div>
+<script src="../shared/auditoria.js"></script>
+<script src="../shared/actualizacion-tiempo-real.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../shared/navigation.js"></script>
-<script src="../shared/theme-persistence.js"></script>
-<script src="../shared/app-shell.js"></script>
-<script src="../shared/crud-page.js"></script>
+<script src="../shared/navegacion.js"></script>
+<script src="../shared/contenedor-aplicacion.js"></script>
+<script src="../shared/pagina-crud.js"></script>
 <script src="ventas.js"></script>
 </body></html>

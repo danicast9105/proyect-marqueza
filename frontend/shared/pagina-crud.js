@@ -26,6 +26,9 @@ class MarquezaCrudPage {
         this.modal.addEventListener("click", (event) => {
             if (event.target === this.modal) this.closeModal();
         });
+        window.MarquezaRealtime?.subscribe(({ key }) => {
+            if (key === this.storageKey) this.render(this.searchInput?.value || "");
+        });
         this.render();
     }
 
@@ -136,6 +139,7 @@ class MarquezaCrudPage {
         const editing = this.editIndex >= 0;
         if (editing) records[this.editIndex] = record;
         else records.push(record);
+        window.MarquezaAudit?.recordChange(editing ? "update" : "create", this.storageKey, record);
         this.writeRecords(records);
         this.closeModal();
         this.render(this.searchInput?.value || "");
@@ -155,7 +159,8 @@ class MarquezaCrudPage {
         const result = await window.Swal.fire({ icon: "warning", title: "¿Eliminar registro?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#d4554d" });
         if (!result.isConfirmed) return;
         const records = this.readRecords();
-        records.splice(index, 1);
+        const [record] = records.splice(index, 1);
+        window.MarquezaAudit?.recordChange("delete", this.storageKey, record);
         this.writeRecords(records);
         this.render(this.searchInput?.value || "");
         this.notify({ icon: "success", title: "Registro eliminado", text: "El registro se eliminó correctamente.", timer: 1600, showConfirmButton: false });

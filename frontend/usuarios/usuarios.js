@@ -377,6 +377,7 @@ formUsuario?.addEventListener("submit", (e) => {
     }
 
     usuarios.push({ nombre, correo, rol, contrasena });
+    window.MarquezaAudit?.recordChange("create", STORAGE_KEY, usuarios[usuarios.length - 1]);
     saveUsuarios(usuarios);
     renderTabla(searchInput.value);
     cerrarModal();
@@ -431,6 +432,7 @@ formEditarUsuario?.addEventListener("submit", (e) => {
         contrasena: nuevaPass || usuarioActual.contrasena
     };
 
+    window.MarquezaAudit?.recordChange("update", STORAGE_KEY, usuarios[index]);
     saveUsuarios(usuarios);
     renderTabla(searchInput.value);
     cerrarEditModal();
@@ -468,7 +470,8 @@ window.eliminarUsuario = (index) => {
     }).then((result) => {
         if (result.isConfirmed) {
             const usuarios = getUsuarios();
-            usuarios.splice(index, 1);
+            const [usuario] = usuarios.splice(index, 1);
+            window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, usuario);
             saveUsuarios(usuarios);
             renderTabla(searchInput.value);
             Swal.fire('¡Eliminado!', 'El usuario ha sido removido.', 'success');
@@ -478,3 +481,6 @@ window.eliminarUsuario = (index) => {
 
 // Inicializar la tabla al cargar el script
 renderTabla();
+window.MarquezaRealtime?.subscribe(({ key }) => {
+    if (key === STORAGE_KEY) renderTabla(searchInput.value);
+});

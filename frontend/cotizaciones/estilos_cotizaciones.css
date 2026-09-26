@@ -63,8 +63,15 @@
 .module-cotizaciones .form-grid input, .module-cotizaciones .form-grid select, .module-cotizaciones .form-grid textarea { width: 100%; padding: 11px 12px; border: 1px solid #dfe2ea; border-radius: 8px; outline: 0; color: var(--quote-ink); background: #fff; }
 .module-cotizaciones .form-grid input:focus, .module-cotizaciones .form-grid select:focus, .module-cotizaciones .form-grid textarea:focus { border-color: var(--quote-accent); box-shadow: 0 0 0 3px var(--quote-soft); }
 .module-cotizaciones .full-field { grid-column: 1; }
+.module-cotizaciones .product-lines { min-width: 0; padding: 0; border: 0; }
+.module-cotizaciones .product-lines legend { padding: 0; color: var(--quote-muted); font-size: 13px; font-weight: 600; }
+.module-cotizaciones .product-line { display: grid; grid-template-columns: minmax(0, 1.8fr) 90px 130px 34px; gap: 8px; align-items: end; margin-top: 10px; }
+.module-cotizaciones .product-line label { font-size: 11px; }
+.module-cotizaciones .product-line .remove-product { height: 42px; border: 1px solid #f0b4aa; border-radius: 8px; background: #fff7f5; color: #d4554d; font-size: 20px; }
+.module-cotizaciones .add-product { margin-top: 10px; }
+.module-cotizaciones .quote-total { display: block; margin-top: 14px; color: var(--quote-ink); font: 700 17px 'Space Grotesk', sans-serif; text-align: right; }
 .module-cotizaciones .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
-body.dark.module-cotizaciones { --body-color: #18191a; --sidebar-color: #242526; --primary-color: #3a3b3c; --primary-color-light: #3a3b3c; --toggle-color: #fff; --quote-accent: #27b7f5; --quote-soft: #3a3b3c; --quote-ink: #edf1f7; --quote-muted: #ccc; background: #18191a; }
+body.dark.module-cotizaciones { --body-color: #18191a; --sidebar-color: #242526; --primary-color: #3a3b3c; --primary-color-light: #3a3b3c; --toggle-color: #fff; --quote-accent: #27b7f5; --quote-soft: #3a3b3c; --quote-ink: #edf1f7; --quote-muted: #ccc; }
 body.dark.module-cotizaciones .metric-card, body.dark.module-cotizaciones .panel, body.dark.module-cotizaciones .modal-content { background: #222d3d; border-color: #344257; }
 body.dark.module-cotizaciones .metric-card strong, body.dark.module-cotizaciones td, body.dark.module-cotizaciones .balance-list strong { color: #edf1f7; }
 body.dark.module-cotizaciones .balance-list div, body.dark.module-cotizaciones th, body.dark.module-cotizaciones td { border-color: #344257; }
@@ -102,4 +109,9 @@ body.dark.module-cotizaciones .btn-secondary { background: #222d3d; border-color
 
 @media (max-width: 1024px) {
 	body.module-cotizaciones { padding-left: 0; }
+}
+
+@media (min-width: 1025px) and (max-height: 760px) {
+	.module-cotizaciones .cotizaciones-page { padding: 24px 34px; }
+	.module-cotizaciones .metric-card { min-height: 104px; padding: 14px; }
 }

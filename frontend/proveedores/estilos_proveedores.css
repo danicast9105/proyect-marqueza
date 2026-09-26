@@ -1224,7 +1224,7 @@ body.dark .btn-secundario {
 .module-proveedores .btn-primario { background: var(--provider-accent); color: #fff; }
 .module-proveedores .btn-secundario { background: #edf2f6; color: var(--provider-ink); }
 
-body.dark.module-proveedores { background: #18191a; --provider-ink: #edf1f7; --provider-muted: #b9c2ce; --provider-soft: #263544; }
+body.dark.module-proveedores { --provider-ink: #edf1f7; --provider-muted: #b9c2ce; --provider-soft: #263544; }
 body.dark.module-proveedores .summary-card, body.dark.module-proveedores .workspace-panel, body.dark.module-proveedores .cont_tabla, body.dark.module-proveedores .modal-content { background: #222d3d; border-color: #344257; }
 body.dark.module-proveedores .cont_busqueda input, body.dark.module-proveedores .input-group input { background: #182231; border-color: #46546b; color: #edf1f7; }
 body.dark.module-proveedores .btn-secondary { background: #222d3d; border-color: #46546b; color: #edf1f7; }

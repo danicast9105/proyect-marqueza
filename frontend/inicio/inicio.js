@@ -128,5 +128,5 @@ document.getElementById("hamburger")?.addEventListener("click", () => setTimeout
 document.addEventListener("DOMContentLoaded", () => new MarquezaAppShell().init());
 updateLayout();
 window.addEventListener("resize", () => { clearTimeout(window.dashboardResize); window.dashboardResize = setTimeout(updateLayout, 120); });
-window.addEventListener("storage", initCharts);
+window.MarquezaRealtime?.subscribe(() => initCharts());
 window.addEventListener("load", initCharts);

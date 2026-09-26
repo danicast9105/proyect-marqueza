@@ -437,6 +437,7 @@ formInsumo?.addEventListener("submit", (e) => {
     }
 
     insumos.push({ nombre, categoria, proveedor, cantidad, unidad, precioUnitario, estado });
+    window.MarquezaAudit?.recordChange("create", STORAGE_KEY, insumos[insumos.length - 1]);
     saveInsumos(insumos);
     actualizarCategorias();
     renderTabla();
@@ -471,6 +472,7 @@ formEditarInsumo?.addEventListener("submit", (e) => {
     }
 
     insumos[index] = { nombre, categoria, proveedor, cantidad, unidad, precioUnitario, estado };
+    window.MarquezaAudit?.recordChange("update", STORAGE_KEY, insumos[index]);
     saveInsumos(insumos);
     actualizarCategorias();
     renderTabla();
@@ -509,7 +511,8 @@ window.eliminarInsumo = (index) => {
     }).then((result) => {
         if (result.isConfirmed) {
             const insumos = getInsumos();
-            insumos.splice(index, 1);
+            const [insumo] = insumos.splice(index, 1);
+            window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, insumo);
             saveInsumos(insumos);
             actualizarCategorias();
             renderTabla();
@@ -520,7 +523,11 @@ window.eliminarInsumo = (index) => {
 
 cargarProveedores();
 actualizarCategorias();
-window.addEventListener("storage", (event) => {
-    if (event.key === "marqueza_proveedores") cargarProveedores();
+window.MarquezaRealtime?.subscribe(({ key }) => {
+    if (key === "marqueza_proveedores") cargarProveedores();
+    if (key === STORAGE_KEY) {
+        actualizarCategorias();
+        renderTabla(searchInput?.value || "");
+    }
 });
 renderTabla();

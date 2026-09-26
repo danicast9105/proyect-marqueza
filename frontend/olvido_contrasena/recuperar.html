@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar contraseña | MARQUEZA</title>
-    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/estilos-base.css">
     <link rel="stylesheet" href="recuperar.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
@@ -15,13 +15,13 @@
         <div class="recovery-icon"><i class="bx bx-envelope"></i></div>
         <span class="eyebrow">Acceso seguro</span>
         <h1>Recupera tu contraseña</h1>
-        <p class="recovery-copy">Escribe el correo asociado a tu cuenta y te enviaremos un enlace para crear una nueva contraseña.</p>
+        <p class="recovery-copy">Escribe el correo asociado a tu cuenta para registrar una solicitud de recuperación local.</p>
         <form id="recoveryForm" novalidate>
             <label for="correo">Correo electrónico</label>
             <div class="input-shell"><i class="bx bx-envelope"></i><input id="correo" type="email" autocomplete="email" placeholder="correo@ejemplo.com" required></div>
             <button type="submit"><span>Enviar enlace</span><i class="bx bx-send"></i></button>
         </form>
-        <p class="recovery-note"><i class="bx bx-lock-alt"></i> El enlace será de un solo uso y tendrá una vigencia limitada.</p>
+        <p class="recovery-note"><i class="bx bx-lock-alt"></i> La solicitud quedará guardada en este dispositivo para revisión del administrador.</p>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="recuperar.js"></script>

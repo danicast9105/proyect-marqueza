@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotizaciones | MARQUEZA</title>
     <link rel="stylesheet" href="estilos_cotizaciones.css">
-    <link rel="stylesheet" href="../shared/base.css">
-    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/estilos-base.css">
+    <link rel="stylesheet" href="../shared/barra-lateral.css">
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 <body class="module-cotizaciones">
+    <script src="../shared/persistencia-tema.js"></script>
     <nav class="barra_lateral sidebar-standard close">
         <header>
             <div class="imagen_texto">
@@ -81,16 +82,17 @@
 
     <div class="modal-container" id="modalCotizacion" aria-hidden="true">
         <div class="modal-content"><header><div><p class="eyebrow">Registro comercial</p><h2 id="modalTitle">Nueva cotización</h2></div><button type="button" class="icon-button" id="btnCerrarModal" aria-label="Cerrar"><i class="bx bx-x"></i></button></header>
-            <form id="formCotizacion"><input type="hidden" id="quoteIndex" value="-1"><div class="form-grid"><label>Fecha<input id="quoteFecha" type="date" required></label><label>Cliente<select id="quoteCliente" required><option value="">Selecciona un cliente</option></select></label><label>Producto<select id="quoteProducto" required><option value="">Selecciona un producto</option></select></label><label>Cantidad<input id="quoteCantidad" type="number" min="1" required></label><label>Precio unitario<input id="quotePrecio" type="number" min="0" step="0.01" required></label><label>Estado<select id="quoteEstado"><option>Pendiente</option><option>Enviada</option><option>Aprobada</option><option>Rechazada</option></select></label><label class="full-field">Notas<textarea id="quoteNotas" rows="3" placeholder="Condiciones o detalles de la propuesta"></textarea></label></div><div class="modal-actions"><button type="button" class="btn-secondary" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primary"><i class="bx bx-save"></i> Guardar cotización</button></div></form>
+            <form id="formCotizacion"><input type="hidden" id="quoteIndex" value="-1"><div class="form-grid"><label>Fecha<input id="quoteFecha" type="date" required></label><label>Cliente<select id="quoteCliente" required><option value="">Selecciona un cliente</option></select></label><fieldset class="full-field product-lines"><legend>Productos</legend><div id="quoteItems"></div><button type="button" class="btn-secondary add-product" id="btnAgregarProducto"><i class="bx bx-plus"></i> Agregar producto</button><output class="quote-total" id="quoteTotal">Total: $0</output></fieldset><label>Estado<select id="quoteEstado"><option>Pendiente</option><option>Enviada</option><option>Aprobada</option><option>Rechazada</option></select></label><label class="full-field">Notas<textarea id="quoteNotas" rows="3" placeholder="Condiciones o detalles de la propuesta"></textarea></label></div><div class="modal-actions"><button type="button" class="btn-secondary" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primary"><i class="bx bx-save"></i> Guardar cotización</button></div></form>
         </div>
     </div>
 
+    <script src="../shared/auditoria.js"></script>
+    <script src="../shared/actualizacion-tiempo-real.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../shared/navigation.js"></script>
-    <script src="../shared/theme-persistence.js"></script>
-    <script src="../shared/app-shell.js"></script>
-    <script src="../shared/sidebar.js"></script>
+    <script src="../shared/navegacion.js"></script>
+    <script src="../shared/contenedor-aplicacion.js"></script>
+    <script src="../shared/barra-lateral.js"></script>
     <script src="cotizaciones.js"></script>
 </body>
 </html>

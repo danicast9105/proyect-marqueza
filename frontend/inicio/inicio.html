@@ -10,13 +10,14 @@
     <title>Inicio — MARQUEZA</title>
     <!-- Enlaza la hoja de estilos CSS principal -->
     <link rel="stylesheet" href="estilos3.css">
-    <link rel="stylesheet" href="../shared/base.css">
-    <link rel="stylesheet" href="../shared/sidebar.css">
+    <link rel="stylesheet" href="../shared/estilos-base.css">
+    <link rel="stylesheet" href="../shared/barra-lateral.css">
     <!-- Enlaza la biblioteca de iconos Boxicons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body class="module-inicio">
+    <script src="../shared/persistencia-tema.js"></script>
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral sidebar-standard close">
         <header>
@@ -97,7 +98,7 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="../ayuda/ayuda.html">
+                        <a href="../log_errores/registro_actividad.html">
                             <i class='bx bx-help-circle icon'></i>
                             <span class="texto nav_texto">Ayuda</span>
                         </a>
@@ -159,12 +160,13 @@
         </section>
     </main>
     <!-- Enlaza la biblioteca ECharts para la visualización de datos -->
+    <script src="../shared/auditoria.js"></script>
+    <script src="../shared/actualizacion-tiempo-real.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@6.1.0/dist/echarts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
-    <script src="../shared/navigation.js"></script>
-    <script src="../shared/theme-persistence.js"></script>
-    <script src="../shared/app-shell.js"></script>
+    <script src="../shared/navegacion.js"></script>
+    <script src="../shared/contenedor-aplicacion.js"></script>
     <script src="inicio.js"></script>
 </body>
 

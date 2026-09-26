@@ -8,7 +8,8 @@ class CotizacionesPage {
         this.search = document.getElementById("buscarCotizacion");
         this.statusFilter = document.getElementById("filtroEstado");
         this.clientSelect = document.getElementById("quoteCliente");
-        this.productSelect = document.getElementById("quoteProducto");
+        this.itemsContainer = document.getElementById("quoteItems");
+        this.products = [];
     }
 
     init() {
@@ -51,23 +52,57 @@ class CotizacionesPage {
         this.clientSelect.value = selectedClient;
     }
 
-    loadProducts(selectedProduct = "") {
-        const products = this.read("marqueza_productos");
-        this.productSelect.replaceChildren(new Option("Selecciona un producto", ""));
-        products.forEach(product => {
+    loadProducts() {
+        this.products = this.read("marqueza_productos");
+    }
+
+    productOptions(selected = "") {
+        const options = [new Option("Selecciona un producto", "")];
+        this.products.forEach(product => {
             const value = String(product.nombre || product.codigo || "").trim();
             if (!value) return;
             const label = product.codigo ? `${product.codigo} - ${value}` : value;
             const option = new Option(label, value);
             option.dataset.price = String(Number(product.precio || 0));
-            this.productSelect.appendChild(option);
+            option.dataset.code = String(product.codigo || "");
+            options.push(option);
         });
-        this.productSelect.value = selectedProduct;
+        options.forEach(option => { if (option.value === selected) option.selected = true; });
+        return options;
     }
 
-    updateProductPrice() {
-        const price = this.productSelect.selectedOptions[0]?.dataset.price;
-        if (price !== undefined) document.getElementById("quotePrecio").value = price;
+    addProductLine(item = {}) {
+        const line = document.createElement("div");
+        line.className = "product-line";
+        const select = document.createElement("select");
+        select.required = true;
+        select.append(...this.productOptions(item.nombre));
+        const quantity = document.createElement("input");
+        quantity.type = "number"; quantity.min = "1"; quantity.value = item.cantidad || 1; quantity.required = true;
+        const price = document.createElement("input");
+        price.type = "number"; price.min = "0"; price.step = "0.01"; price.value = item.precio ?? ""; price.required = true;
+        select.addEventListener("change", () => {
+            const selected = select.selectedOptions[0];
+            if (selected?.dataset.price !== undefined) price.value = selected.dataset.price;
+            this.updateQuoteTotal();
+        });
+        quantity.addEventListener("input", () => this.updateQuoteTotal());
+        price.addEventListener("input", () => this.updateQuoteTotal());
+        const fields = [["Producto", select], ["Cantidad", quantity], ["Precio unitario", price]];
+        fields.forEach(([label, control]) => { const wrapper = document.createElement("label"); wrapper.append(label, control); line.appendChild(wrapper); });
+        const remove = document.createElement("button");
+        remove.type = "button"; remove.className = "remove-product"; remove.title = "Quitar producto"; remove.setAttribute("aria-label", "Quitar producto"); remove.innerHTML = "<i class=\"bx bx-trash\"></i>";
+        remove.addEventListener("click", () => { if (this.itemsContainer.children.length > 1) { line.remove(); this.updateQuoteTotal(); } });
+        line.appendChild(remove);
+        this.itemsContainer.appendChild(line);
+        this.updateQuoteTotal();
+    }
+
+    updateQuoteTotal() {
+        const total = [...this.itemsContainer.querySelectorAll(".product-line")].reduce((sum, line) => {
+            return sum + Number(line.querySelectorAll("input")[0].value || 0) * Number(line.querySelectorAll("input")[1].value || 0);
+        }, 0);
+        document.getElementById("quoteTotal").textContent = `Total: ${this.money(total)}`;
     }
 
     updateDashboard() {
@@ -118,7 +153,37 @@ class CotizacionesPage {
 
     escape(value) { const element = document.createElement("span"); element.textContent = value || ""; return element.innerHTML; }
 
-    downloadPdf(index) {
+    async loadLogoDataUrl() {
+        const image = new Image();
+        image.src = "../fondo/icono 3.png";
+        await new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; });
+        const canvas = document.createElement("canvas");
+        canvas.width = image.naturalWidth;
+        canvas.height = image.naturalHeight;
+        canvas.getContext("2d").drawImage(image, 0, 0);
+        return canvas.toDataURL("image/png");
+    }
+
+    getQuoteItems(quote) {
+        const source = Array.isArray(quote.productos) && quote.productos.length
+            ? quote.productos
+            : [{ nombre: quote.producto, cantidad: quote.cantidad, precio: quote.precioUnitario }];
+        const grouped = new Map();
+        source.forEach(item => {
+            const name = String(item.nombre || "Producto").trim();
+            const code = String(item.codigo || "").trim();
+            const key = code || name.toLowerCase();
+            const quantity = Number(item.cantidad || 0);
+            const price = Number(item.precio || 0);
+            const current = grouped.get(key) || { codigo: code, nombre: name, cantidad: 0, total: 0 };
+            current.cantidad += quantity;
+            current.total += quantity * price;
+            grouped.set(key, current);
+        });
+        return [...grouped.values()].map(item => ({ ...item, precio: item.cantidad ? item.total / item.cantidad : 0 }));
+    }
+
+    async downloadPdf(index) {
         const quote = this.readQuotes()[index];
         const pdfConstructor = window.jspdf?.jsPDF;
         if (!quote || !pdfConstructor) {
@@ -134,6 +199,8 @@ class CotizacionesPage {
         const money = value => this.money(value);
         const safe = value => String(value || "No especificado");
         const quoteNumber = String(index + 1).padStart(4, "0");
+        const items = this.getQuoteItems(quote);
+        const logoDataUrl = await this.loadLogoDataUrl().catch(() => null);
         let y = 48;
 
         const footer = () => {
@@ -154,13 +221,14 @@ class CotizacionesPage {
             doc.rect(0, 0, pageWidth, 35, "F");
             doc.setFillColor(...colors.teal);
             doc.rect(0, 35, pageWidth, 2, "F");
+            if (logoDataUrl) doc.addImage(logoDataUrl, "PNG", margin, 6, 18, 24);
             doc.setTextColor(255, 255, 255);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(21);
-            doc.text("MARQUEZA", margin, 16);
+            doc.text("MARQUEZA", margin + 23, 16);
             doc.setFont("helvetica", "normal");
             doc.setFontSize(9);
-            doc.text("CONFECCIONES QUE INSPIRAN", margin, 24);
+            doc.text("CONFECCIONES QUE INSPIRAN", margin + 23, 24);
             doc.setFont("helvetica", "bold");
             doc.setFontSize(11);
             doc.text("COTIZACIÓN", pageWidth - margin, 14, { align: "right" });
@@ -197,7 +265,7 @@ class CotizacionesPage {
         doc.setTextColor(...colors.muted);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
-        const paragraph = `A continuación presentamos la cotización solicitada para ${safe(quote.cliente)}, correspondiente a ${safe(quote.producto)}. Esta propuesta resume las condiciones económicas registradas y sirve como base para la revisión y conversación comercial entre las partes.`;
+        const paragraph = `A continuación presentamos la cotización solicitada para ${safe(quote.cliente)}, con ${items.length} producto${items.length === 1 ? "" : "s"} seleccionado${items.length === 1 ? "" : "s"}. Esta propuesta resume las condiciones económicas registradas y sirve como base para la revisión y conversación comercial entre las partes.`;
         const paragraphLines = doc.splitTextToSize(paragraph, contentWidth);
         doc.text(paragraphLines, margin, y);
         y += paragraphLines.length * 5 + 12;
@@ -218,7 +286,7 @@ class CotizacionesPage {
         y += 36;
 
         sectionTitle("Detalle de la propuesta");
-        ensureSpace(49);
+        ensureSpace(39 + items.length * 18);
         const tableTop = y;
         doc.setFillColor(...colors.navy);
         doc.roundedRect(margin, tableTop, contentWidth, 10, 2, 2, "F");
@@ -229,18 +297,23 @@ class CotizacionesPage {
         doc.text("CANT.", pageWidth - 78, tableTop + 6.5, { align: "right" });
         doc.text("VALOR UNITARIO", pageWidth - 49, tableTop + 6.5, { align: "right" });
         doc.text("TOTAL", pageWidth - margin - 5, tableTop + 6.5, { align: "right" });
-        doc.setFillColor(255, 255, 255);
-        doc.setDrawColor(...colors.line);
-        doc.rect(margin, tableTop + 10, contentWidth, 18, "FD");
-        doc.setTextColor(...colors.ink);
-        doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        doc.text(doc.splitTextToSize(safe(quote.producto), 57), margin + 6, tableTop + 17);
-        doc.text(this.number(quote.cantidad), pageWidth - 78, tableTop + 18, { align: "right" });
-        doc.text(money(quote.precioUnitario), pageWidth - 49, tableTop + 18, { align: "right" });
-        doc.setFont("helvetica", "bold");
-        doc.text(money(quote.total), pageWidth - margin - 5, tableTop + 18, { align: "right" });
-        y = tableTop + 35;
+        let rowTop = tableTop + 10;
+        items.forEach(item => {
+            const rowHeight = 18;
+            doc.setFillColor(255, 255, 255);
+            doc.setDrawColor(...colors.line);
+            doc.rect(margin, rowTop, contentWidth, rowHeight, "FD");
+            doc.setTextColor(...colors.ink);
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(9);
+            doc.text(doc.splitTextToSize(safe(item.nombre), 57), margin + 6, rowTop + 8);
+            doc.text(this.number(item.cantidad), pageWidth - 78, rowTop + 11, { align: "right" });
+            doc.text(money(item.precio), pageWidth - 49, rowTop + 11, { align: "right" });
+            doc.setFont("helvetica", "bold");
+            doc.text(money(item.total), pageWidth - margin - 5, rowTop + 11, { align: "right" });
+            rowTop += rowHeight;
+        });
+        y = rowTop + 7;
         doc.setTextColor(...colors.muted);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8);
@@ -285,9 +358,9 @@ class CotizacionesPage {
         document.getElementById("modalTitle").textContent = quote ? "Editar cotización" : "Nueva cotización";
         document.getElementById("quoteFecha").value = quote?.fecha || new Date().toISOString().slice(0, 10);
         this.loadClients(quote?.cliente || "");
-        this.loadProducts(quote?.producto || "");
-        document.getElementById("quoteCantidad").value = quote?.cantidad || "";
-        document.getElementById("quotePrecio").value = quote?.precioUnitario || "";
+        this.itemsContainer.replaceChildren();
+        const items = quote?.productos?.length ? quote.productos : [{ nombre: quote?.producto || "", cantidad: quote?.cantidad || 1, precio: quote?.precioUnitario || "" }];
+        items.forEach(item => this.addProductLine(item));
         document.getElementById("quoteEstado").value = quote?.estado || "Pendiente";
         document.getElementById("quoteNotas").value = quote?.notas || "";
         this.modal.classList.add("active");
@@ -301,16 +374,20 @@ class CotizacionesPage {
 
     submit(event) {
         event.preventDefault();
-        const quantity = Number(document.getElementById("quoteCantidad").value);
-        const unitPrice = Number(document.getElementById("quotePrecio").value);
-        if (!Number.isFinite(quantity) || quantity < 1 || !Number.isFinite(unitPrice) || unitPrice < 0) {
-            window.Swal?.fire({ icon: "warning", title: "Datos inválidos", text: "Ingresa una cantidad y un precio unitario válidos." });
+        const products = [...this.itemsContainer.querySelectorAll(".product-line")].map(line => {
+            const select = line.querySelector("select");
+            const inputs = line.querySelectorAll("input");
+            return { codigo: select.selectedOptions[0]?.dataset.code || "", nombre: select.value, cantidad: Number(inputs[0].value), precio: Number(inputs[1].value) };
+        });
+        if (!products.length || products.some(item => !item.nombre || !Number.isFinite(item.cantidad) || item.cantidad < 1 || !Number.isFinite(item.precio) || item.precio < 0)) {
+            window.Swal?.fire({ icon: "warning", title: "Datos inválidos", text: "Selecciona productos e ingresa cantidades y precios válidos." });
             return;
         }
-        const quote = { fecha: document.getElementById("quoteFecha").value, cliente: document.getElementById("quoteCliente").value.trim(), producto: document.getElementById("quoteProducto").value.trim(), cantidad: quantity, precioUnitario: unitPrice, total: quantity * unitPrice, estado: document.getElementById("quoteEstado").value, notas: document.getElementById("quoteNotas").value.trim() };
+        const quote = { fecha: document.getElementById("quoteFecha").value, cliente: document.getElementById("quoteCliente").value.trim(), producto: products.map(item => item.nombre).join(", "), cantidad: products.reduce((sum, item) => sum + item.cantidad, 0), precioUnitario: products[0].precio, total: products.reduce((sum, item) => sum + item.cantidad * item.precio, 0), productos: products, estado: document.getElementById("quoteEstado").value, notas: document.getElementById("quoteNotas").value.trim() };
         const index = Number(document.getElementById("quoteIndex").value);
         const quotes = this.readQuotes();
         if (index >= 0) quotes[index] = quote; else quotes.unshift(quote);
+        window.MarquezaAudit?.recordChange(index >= 0 ? "update" : "create", this.storageKey, quote);
         this.saveQuotes(quotes);
         this.closeModal();
         this.updateDashboard();
@@ -326,7 +403,7 @@ class CotizacionesPage {
         this.form.addEventListener("submit", event => this.submit(event));
         this.search.addEventListener("input", () => this.renderQuotes());
         this.statusFilter.addEventListener("change", () => this.renderQuotes());
-        this.productSelect.addEventListener("change", () => this.updateProductPrice());
+        document.getElementById("btnAgregarProducto").addEventListener("click", () => this.addProductLine());
         this.body.addEventListener("click", event => {
             const button = event.target.closest("button[data-action]");
             if (!button) return;
@@ -334,14 +411,21 @@ class CotizacionesPage {
             if (button.dataset.action === "download") { this.downloadPdf(index); return; }
             if (button.dataset.action === "edit") this.openModal(index);
             if (button.dataset.action === "delete") {
-                const removeQuote = () => { const quotes = this.readQuotes(); quotes.splice(index, 1); this.saveQuotes(quotes); this.updateDashboard(); this.renderQuotes(); window.Swal?.fire({ icon: "success", title: "Cotización eliminada", text: "La cotización se eliminó correctamente.", timer: 1600, showConfirmButton: false }); };
+                const removeQuote = () => { const quotes = this.readQuotes(); const [quote] = quotes.splice(index, 1); window.MarquezaAudit?.recordChange("delete", this.storageKey, quote); this.saveQuotes(quotes); this.updateDashboard(); this.renderQuotes(); window.Swal?.fire({ icon: "success", title: "Cotización eliminada", text: "La cotización se eliminó correctamente.", timer: 1600, showConfirmButton: false }); };
                 if (window.Swal) window.Swal.fire({ icon: "warning", title: "¿Eliminar cotización?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#d4554d" }).then(result => { if (result.isConfirmed) removeQuote(); });
             }
         });
         this.modal.addEventListener("click", event => { if (event.target === this.modal) this.closeModal(); });
-        window.addEventListener("storage", event => {
-            if (event.key === "marqueza_productos") this.loadProducts(this.productSelect.value);
-            if (event.key === "marqueza_clientes") this.loadClients(this.clientSelect.value);
+        window.MarquezaRealtime?.subscribe(({ key }) => {
+            if (key === "marqueza_productos") {
+                this.loadProducts();
+                this.itemsContainer.querySelectorAll(".product-line select").forEach(select => {
+                    const selected = select.value;
+                    select.replaceChildren(...this.productOptions(selected));
+                });
+            }
+            if (key === "marqueza_clientes") this.loadClients(this.clientSelect.value);
+            if (key === this.storageKey) { this.updateDashboard(); this.renderQuotes(); }
         });
     }
 }

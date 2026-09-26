@@ -1089,7 +1089,7 @@ body.dark.module-usuarios .campo_busqueda input { background: transparent; }
 .module-usuarios .btn-primario { background: var(--user-accent); color: #fff; }
 .module-usuarios .btn-secundario { background: #edf0f5; color: var(--user-ink); }
 
-body.dark.module-usuarios { background: #18191a; --user-ink: #edf1f7; --user-muted: #b9c2ce; --user-soft: #263544; }
+body.dark.module-usuarios { --user-ink: #edf1f7; --user-muted: #b9c2ce; --user-soft: #263544; }
 body.dark.module-usuarios .summary-card, body.dark.module-usuarios .workspace-panel, body.dark.module-usuarios .cont_tabla, body.dark.module-usuarios .modal-content { background: #222d3d; border-color: #344257; }
 body.dark.module-usuarios .cont_busqueda input, body.dark.module-usuarios .input-group input, body.dark.module-usuarios .input-group select { background: #182231; border-color: #46546b; color: #edf1f7; }
 body.dark.module-usuarios thead { background: #303044; }

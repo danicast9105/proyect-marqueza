@@ -16,20 +16,27 @@ class PasswordRecoveryForm {
         button.disabled = true;
         button.classList.add('is-loading');
         try {
-            const response = await fetch('http://localhost:5000/auth/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ correo })
-            });
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok) throw new Error(data.message || 'No fue posible enviar el correo.');
-            await Swal.fire({ icon: 'success', title: 'Correo enviado', text: 'Revisa tu bandeja de entrada y sigue el enlace para cambiar tu contraseña.', confirmButtonText: 'Entendido' });
-            this.form.reset();
-        } catch (error) {
-            Swal.fire({ icon: 'error', title: 'No se pudo enviar', text: error.message || 'Verifica que el servidor esté activo e inténtalo de nuevo.' });
+            const users = this.readUsers();
+            const user = users.find(item => String(item.correo || '').trim().toLowerCase() === correo.toLowerCase());
+            if (!user) {
+                Swal.fire({ icon: 'error', title: 'Correo no encontrado', text: 'No existe una cuenta local asociada a ese correo.' });
+            } else {
+                localStorage.setItem('marqueza_recuperacion', JSON.stringify({ correo, creadoEn: new Date().toISOString() }));
+                await Swal.fire({ icon: 'success', title: 'Solicitud registrada', text: 'La recuperación se guardó localmente. Contacta al administrador para restablecer la contraseña.', confirmButtonText: 'Entendido' });
+                this.form.reset();
+            }
         } finally {
             button.disabled = false;
             button.classList.remove('is-loading');
+        }
+    }
+
+    readUsers() {
+        try {
+            const users = JSON.parse(localStorage.getItem('marqueza_usuarios') || '[]');
+            return Array.isArray(users) ? users : [];
+        } catch {
+            return [];
         }
     }
 }

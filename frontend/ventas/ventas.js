@@ -98,8 +98,9 @@ document.addEventListener("DOMContentLoaded", () => {
     new MarquezaAppShell().init();
     const ventasPage = new VentasPage();
     ventasPage.init();
-    window.addEventListener("storage", event => {
-        if (event.key === "marqueza_clientes") ventasPage.loadClients(document.getElementById("cliente")?.value || "");
-        if (event.key === "marqueza_productos") ventasPage.loadProducts(document.getElementById("producto")?.value || "");
+    window.MarquezaRealtime?.subscribe(({ key }) => {
+        if (key === "marqueza_clientes") ventasPage.loadClients(document.getElementById("cliente")?.value || "");
+        if (key === "marqueza_productos") ventasPage.loadProducts(document.getElementById("producto")?.value || "");
+        if (key === ventasPage.storageKey) ventasPage.render(ventasPage.searchInput?.value || "");
     });
 });

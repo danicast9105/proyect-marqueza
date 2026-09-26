@@ -300,6 +300,7 @@ form?.addEventListener("submit", event => {
         productos.push(producto);
     }
 
+    window.MarquezaAudit?.recordChange(editing ? "update" : "create", STORAGE_KEY, producto);
     saveProductos(productos);
     actualizarCategorias();
     renderTabla();
@@ -321,7 +322,8 @@ tbody?.addEventListener("click", event => {
 
     if (button.classList.contains("btn-eliminar")) {
         const removeProduct = () => {
-            productos.splice(index, 1);
+            const [producto] = productos.splice(index, 1);
+            window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, producto);
             saveProductos(productos);
             actualizarCategorias();
             renderTabla();
@@ -518,3 +520,9 @@ sidebar?.addEventListener("mouseleave", () => {
 updateLayout();
 actualizarCategorias();
 renderTabla();
+window.MarquezaRealtime?.subscribe(({ key }) => {
+    if (key === STORAGE_KEY) {
+        actualizarCategorias();
+        renderTabla();
+    }
+});

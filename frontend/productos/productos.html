@@ -7,11 +7,12 @@
     <title>Productos — MARQUEZA</title>
     <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
     <link rel="stylesheet" href="estilos_productos.css">
-    <link rel="stylesheet" href="../shared/base.css">
+    <link rel="stylesheet" href="../shared/estilos-base.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
 <body class="module-productos">
+<script src="../shared/persistencia-tema.js"></script>
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
         <header>
@@ -92,7 +93,7 @@
                         </a>
                     </li>
                     <li class="nav_links">
-                        <a href="../ayuda/ayuda.html">
+                        <a href="../log_errores/registro_actividad.html">
                             <i class='bx bx-help-circle icon'></i>
                             <span class="texto nav_texto">Ayuda</span>
                         </a>
@@ -164,9 +165,10 @@
 <div class="input-group"><label for="codigo">Código</label><input id="codigo" type="text" required placeholder="Código del producto"></div><div class="input-group"><label for="nombre">Nombre</label><input id="nombre" type="text" required placeholder="Nombre del producto"></div><div class="input-group"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" required placeholder="Cantidad"></div><div class="input-group"><label for="precio">Precio</label><input id="precio" type="number" required placeholder="Precio"></div><div class="input-group"><label for="estado">Estado</label><input id="estado" type="text" required placeholder="Activo / Inactivo"></div>
 <div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
 </form></div></div>
+<script src="../shared/auditoria.js"></script>
+<script src="../shared/actualizacion-tiempo-real.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../shared/navigation.js"></script>
-<script src="../shared/theme-persistence.js"></script>
+<script src="../shared/navegacion.js"></script>
 <script src="productos.js"></script></body></html>
