@@ -1216,6 +1216,8 @@ body.dark .audit-table tbody tr:hover { background: #203131; }
 .audit-table td { border-bottom-color: #edf1f4; }
 .audit-table tbody tr:hover { background: #fbfaff; }
 .audit-badge { padding: 5px 9px; border-radius: 6px; background: #e8f7f0; color: #168a75; }
+.audit-badge-denied { background: #fff0df; color: #b66a1c; }
+.audit-badge-error { background: #fff0ef; color: #d4554d; }
 .audit-note { padding: 14px 16px; border: 1px solid var(--help-border); border-radius: 10px; background: #fff; }
 
 body.dark.module-ayuda {
