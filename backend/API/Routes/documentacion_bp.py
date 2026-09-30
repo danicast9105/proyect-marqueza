@@ -1,30 +1,24 @@
-from flask import Blueprint, render_template_string, send_from_directory
+from flask import Blueprint
+from Controllers.documentacion_controller import documentacion_controller
 
-documentacion_bp = Blueprint('documentacion', __name__)
+documentacion_bp = Blueprint('documentacion_bp', __name__)
 
-@documentacion_bp.route('/swagger.json')
-def swagger_json():
-    return send_from_directory('.', 'swagger.json')
+@documentacion_bp.route('/', methods=['GET'])
+def listDocumentacion():
+    x = documentacion_controller.cntListDocumentacion()
+    return x
 
-@documentacion_bp.route("/")
-def swagger_ui():
-    return render_template_string("""
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <title>CCCCC</title>
-      <link href="/static/swagger-ui/swagger-ui.css" rel="stylesheet" />
-    </head>
-    <body>
-      <div id="swagger-ui"></div>
-      <script src="/static/swagger-ui/swagger-ui-bundle.js"></script>
-      <script>
-        const ui = SwaggerUIBundle({
-          url: "./swagger.json",
-          dom_id: '#swagger-ui',
-        });
-      </script>
-    </body>
-    </html>
-    """)
- 
+@documentacion_bp.route('/', methods=['POST'])
+def addDocumentacion():
+    x = documentacion_controller.cntAddDocumentacion()
+    return x
+
+@documentacion_bp.route('/<id>', methods=['PUT'])
+def updateDocumentacion(id):
+    x = documentacion_controller.cntModDocumentacion(id)
+    return x
+
+@documentacion_bp.route('/<id>', methods=['DELETE'])
+def deleteDocumentacion(id):
+    x = documentacion_controller.cntDelDocumentacion(id)
+    return x

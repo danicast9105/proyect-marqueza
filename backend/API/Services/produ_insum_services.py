@@ -4,7 +4,7 @@ import uuid as uuid_lib
 
 class produ_insum_services:
     def servListProduInsum():
-        sql = "SELECT * FROM T_PRODU_INSUM"
+        sql = "SELECT PROINSU_ID, PROINSU_UUID, PROINSU_CANTIDAD, PROINSU_PROD_ID, PROINSU_INS_ID FROM T_PRODU_INSUM"
 
         c   = current_app.mysql.connection.cursor() 
         c.execute(sql)

@@ -10,15 +10,15 @@ def listProductos():
 
 @productos_bp.route('/', methods=['POST'])
 def createProductos():
-    x = cntAddProductos
+    x = cntAddProductos()
     return x
 
-@productos_bp.route('/', methods=['PUT'])
-def updateProductos():
-    x = cntModProductos
+@productos_bp.route('/<id>', methods=['PUT'])
+def updateProductos(id):
+    x = cntModProductos(id)
     return x
 
-@productos_bp.route('/', methods=['DELETE'])
-def deleteProductos():
-    x = cntDelProductos
+@productos_bp.route('/<id>', methods=['DELETE'])
+def deleteProductos(id):
+    x = cntDelProductos(id)
     return x

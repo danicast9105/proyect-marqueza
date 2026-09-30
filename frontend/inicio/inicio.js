@@ -122,6 +122,14 @@ function initCharts() {
 
 function resizeCharts() { charts.forEach(chart => chart.resize()); }
 
+function refreshDashboardFromApi() {
+    return Promise.all([
+        "insumos", "productos", "ventas", "clientes", "proveedores", "usuarios", "cotizaciones"
+    ].map(resource => window.MarquezaApi.load(resource)))
+        .then(initCharts)
+        .catch(error => window.MarquezaApi.notifyError(error, "No se pudieron actualizar los indicadores"));
+}
+
 document.querySelector(".toggle_switch")?.addEventListener("click", () => setTimeout(initCharts, 120));
 document.querySelector(".toggle")?.addEventListener("click", () => setTimeout(resizeCharts, 550));
 document.getElementById("hamburger")?.addEventListener("click", () => setTimeout(resizeCharts, 450));
@@ -130,3 +138,4 @@ updateLayout();
 window.addEventListener("resize", () => { clearTimeout(window.dashboardResize); window.dashboardResize = setTimeout(updateLayout, 120); });
 window.MarquezaRealtime?.subscribe(() => initCharts());
 window.addEventListener("load", initCharts);
+window.addEventListener("load", refreshDashboardFromApi);

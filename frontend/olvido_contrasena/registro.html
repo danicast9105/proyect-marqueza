@@ -39,8 +39,9 @@
             <label>Rol</label>
             <select name="ROL" id="rol" class="caja_inicio" required>
                 <option value="Ninguno">No seleccionado</option>
-                <option value="administrador">Administrador</option>
-                <option value="trabajador">Trabajador</option>
+                <option value="ADMINISTRADOR">Administrador</option>
+                <option value="VENDEDOR">Vendedor</option>
+                <option value="AUXILIAR">Auxiliar</option>
             </select>
 
             <label>Contraseña</label>
@@ -50,6 +51,11 @@
             <input id="confirmar_contrasena" type="password" placeholder="Confirma tu contraseña" class="caja_inicio" required>
             <!-- boton de registrar -->
             <button type="submit">Registrarse</button>
+
+            <p style="text-align: center; margin-top: 16px; font-size: 0.9rem;">
+                ¿Ya tienes una cuenta? <a href="../inicio_sesion/inicio_sesion.html" style="color: #27b7f5; font-weight: 600; text-decoration: none;">Inicia sesión</a>
+            </p>
+
             <!-- pie de contenedor -->
             <div class="footer">
                 © 2026 Marqueza.C - Todos los derechos reservados
@@ -57,6 +63,7 @@
         </form>
 
     </div>
+<script src="../shared/api.js"></script>
 <script src="../shared/actualizacion-tiempo-real.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="registro.js"></script>

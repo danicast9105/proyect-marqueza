@@ -1,19 +1,23 @@
 from flask import jsonify, request
-from Services.proveedor_services import servListProveedor, addProveedor, deleteProveedor, updateProveedor
+
+from Services.proveedor_services import (addProveedor, deleteProveedor,
+                                         servListProveedor, updateProveedor)
+
 
 def cntListProveedor():
-    data = servListProveedor()
-    return jsonify(data), 200
+    return jsonify(servListProveedor()), 200
+
 
 def cntAddProveedor():
-    data = addProveedor()
-    return jsonify(data), 200
+    payload, status = addProveedor(request.get_json(silent=True) or {})
+    return jsonify(payload), status
 
-def cntDelProveedor():
-    data = deleteProveedor()
-    return jsonify(data), 200
 
-def cntModProveedor():
-    data = updateProveedor()
-    return jsonify(data), 201
+def cntDelProveedor(id):
+    payload, status = deleteProveedor(id)
+    return jsonify(payload), status
 
+
+def cntModProveedor(id):
+    payload, status = updateProveedor(id, request.get_json(silent=True) or {})
+    return jsonify(payload), status

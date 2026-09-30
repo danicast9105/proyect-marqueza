@@ -7,11 +7,10 @@ class produ_insum_controller:
         return jsonify(data), 200
 
     def cntAddProduInsum():
-        data =  request.get_json(silent=True)
-
-        cantidad =  data["cantidad"]
-        producto_id = data["producto_id"]
-        insumo_id = data["insumo_id"]
+        data = request.get_json(silent=True) or {}
+        cantidad = data.get("cantidad")
+        producto_id = data.get("producto_id")
+        insumo_id = data.get("insumo_id")
         x = produ_insum_services.addProduInsum(cantidad, producto_id, insumo_id)
         return jsonify(x), 200
 
@@ -20,11 +19,9 @@ class produ_insum_controller:
         return jsonify(data), 200
 
     def cntModProduInsum(id):
-        data =  request.get_json(silent=True)
-
-        cantidad =  data["cantidad"]
-        producto_id = data["producto_id"]
-        insumo_id = data["insumo_id"]
+        data = request.get_json(silent=True) or {}
+        cantidad = data.get("cantidad")
+        producto_id = data.get("producto_id")
+        insumo_id = data.get("insumo_id")
         x = produ_insum_services.updateProduInsum(id, cantidad, producto_id, insumo_id)
         return jsonify(x), 200
-

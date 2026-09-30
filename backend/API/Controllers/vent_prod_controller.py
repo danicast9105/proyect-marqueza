@@ -9,11 +9,10 @@ def cntAddVentProd():
     data = addVentProd()
     return jsonify(data), 200
 
-def cntDelVentProd():
-    data = deleteVentProd()
+def cntDelVentProd(id):
+    data = deleteVentProd(id)
     return jsonify(data), 200
 
-def cntModVentProd():
-    data = updateVentProd()
+def cntModVentProd(id):
+    data = updateVentProd(id)
     return jsonify(data), 201
-

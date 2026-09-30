@@ -1,40 +1,27 @@
 from flask import jsonify, request
-from Services.cotizaciones_services import cotizaciones_services
+
+from Services.cotizaciones_services import (addCotizaciones,
+                                            deleteCotizaciones,
+                                            servListCotizaciones,
+                                            updateCotizaciones)
+
 
 class cotizaciones_controller:
+    @staticmethod
     def cntListCotizaciones():
-        data = cotizaciones_services.servListCotizaciones()
-        return jsonify(data), 200
+        return jsonify(servListCotizaciones()), 200
 
+    @staticmethod
     def cntAddCotizaciones():
-        data = request.get_json(silent=True)
+        payload, status = addCotizaciones(request.get_json(silent=True) or {})
+        return jsonify(payload), status
 
-        pro_codigo = data["pro_codigo"]
-        pro_nombre = data["pro_nombre"]
-        pro_cantidad = data["pro_cantidad"]
-        pro_precio = data["pro_precio"]
-        total_pagar = data["total_pagar"]
-        usuario_id = data["usuario_id"]
-        cliente_id = data["cliente_id"]
-
-        x = cotizaciones_services.addCotizaciones(pro_codigo, pro_nombre, pro_cantidad, pro_precio, total_pagar, usuario_id, cliente_id)
-        return jsonify(x), 200
-
+    @staticmethod
     def cntDelCotizaciones(id):
-        data = cotizaciones_services.deleteCotizaciones(id)
-        return jsonify(data), 200
+        payload, status = deleteCotizaciones(id)
+        return jsonify(payload), status
 
+    @staticmethod
     def cntModCotizaciones(id):
-        data = request.get_json(silent=True)
-        
-        pro_codigo = data["pro_codigo"]
-        pro_nombre = data["pro_nombre"]
-        pro_cantidad = data["pro_cantidad"]
-        pro_precio = data["pro_precio"]
-        total_pagar = data["total_pagar"]
-        usuario_id = data["usuario_id"]
-        cliente_id = data["cliente_id"]
-
-        x = cotizaciones_services.updateCotizaciones(id, pro_codigo, pro_nombre, pro_cantidad, pro_precio, total_pagar, usuario_id, cliente_id)
-        return jsonify(x), 200
-
+        payload, status = updateCotizaciones(id, request.get_json(silent=True) or {})
+        return jsonify(payload), status

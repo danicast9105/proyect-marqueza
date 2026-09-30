@@ -19,6 +19,16 @@ class CotizacionesPage {
         this.setDefaultDate();
         this.updateDashboard();
         this.renderQuotes();
+        Promise.all([
+            window.MarquezaApi.load("clientes"),
+            window.MarquezaApi.load("productos"),
+            window.MarquezaApi.load("cotizaciones", this.storageKey)
+        ]).then(() => {
+            this.loadClients(this.clientSelect.value);
+            this.loadProducts();
+            this.updateDashboard();
+            this.renderQuotes();
+        }).catch(error => window.MarquezaApi.notifyError(error, "No se pudieron cargar las cotizaciones"));
     }
 
     read(key, fallback = []) {
@@ -30,7 +40,12 @@ class CotizacionesPage {
         }
     }
 
-    readQuotes() { return this.read(this.storageKey); }
+    readQuotes() {
+        return this.read(this.storageKey).map(quote => ({
+            ...quote,
+            productos: Array.isArray(quote.productos) ? quote.productos : (quote.items || [])
+        }));
+    }
 
     saveQuotes(quotes) { localStorage.setItem(this.storageKey, JSON.stringify(quotes)); }
 
@@ -372,7 +387,7 @@ class CotizacionesPage {
 
     setDefaultDate() { document.getElementById("quoteFecha").value = new Date().toISOString().slice(0, 10); }
 
-    submit(event) {
+    async submit(event) {
         event.preventDefault();
         const products = [...this.itemsContainer.querySelectorAll(".product-line")].map(line => {
             const select = line.querySelector("select");
@@ -383,15 +398,29 @@ class CotizacionesPage {
             window.Swal?.fire({ icon: "warning", title: "Datos inválidos", text: "Selecciona productos e ingresa cantidades y precios válidos." });
             return;
         }
-        const quote = { fecha: document.getElementById("quoteFecha").value, cliente: document.getElementById("quoteCliente").value.trim(), producto: products.map(item => item.nombre).join(", "), cantidad: products.reduce((sum, item) => sum + item.cantidad, 0), precioUnitario: products[0].precio, total: products.reduce((sum, item) => sum + item.cantidad * item.precio, 0), productos: products, estado: document.getElementById("quoteEstado").value, notas: document.getElementById("quoteNotas").value.trim() };
+        const quote = { fecha: document.getElementById("quoteFecha").value, cliente: document.getElementById("quoteCliente").value.trim(), producto: products.map(item => item.nombre).join(", "), cantidad: products.reduce((sum, item) => sum + item.cantidad, 0), precioUnitario: products[0].precio, total: products.reduce((sum, item) => sum + item.cantidad * item.precio, 0), productos: products, items: products, estado: document.getElementById("quoteEstado").value, notas: document.getElementById("quoteNotas").value.trim() };
         const index = Number(document.getElementById("quoteIndex").value);
         const quotes = this.readQuotes();
-        if (index >= 0) quotes[index] = quote; else quotes.unshift(quote);
+        try {
+            if (index >= 0 && quotes[index].id !== undefined && quotes[index].id !== null) {
+                await window.MarquezaApi.update("cotizaciones", quotes[index].id, quote);
+            } else {
+                await window.MarquezaApi.create("cotizaciones", quote);
+                if (index >= 0) window.MarquezaApi.consumeLegacy(this.storageKey, quotes[index].__localKey);
+            }
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "No se pudo guardar la cotización");
+            return;
+        }
         window.MarquezaAudit?.recordChange(index >= 0 ? "update" : "create", this.storageKey, quote);
-        this.saveQuotes(quotes);
         this.closeModal();
-        this.updateDashboard();
-        this.renderQuotes();
+        try {
+            await window.MarquezaApi.load("cotizaciones", this.storageKey);
+            this.updateDashboard();
+            this.renderQuotes();
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "La cotización se guardó, pero no se pudo actualizar la lista");
+        }
         window.Swal?.fire({ icon: "success", title: index >= 0 ? "Cotización actualizada" : "Cotización guardada", text: "La información se guardó correctamente.", timer: 1600, showConfirmButton: false });
     }
 
@@ -411,7 +440,23 @@ class CotizacionesPage {
             if (button.dataset.action === "download") { this.downloadPdf(index); return; }
             if (button.dataset.action === "edit") this.openModal(index);
             if (button.dataset.action === "delete") {
-                const removeQuote = () => { const quotes = this.readQuotes(); const [quote] = quotes.splice(index, 1); window.MarquezaAudit?.recordChange("delete", this.storageKey, quote); this.saveQuotes(quotes); this.updateDashboard(); this.renderQuotes(); window.Swal?.fire({ icon: "success", title: "Cotización eliminada", text: "La cotización se eliminó correctamente.", timer: 1600, showConfirmButton: false }); };
+                const removeQuote = async () => {
+                    const quote = this.readQuotes()[index];
+                    try {
+                        if (quote.id === undefined || quote.id === null) {
+                            window.MarquezaApi.consumeLegacy(this.storageKey, quote.__localKey);
+                        } else {
+                            await window.MarquezaApi.remove("cotizaciones", quote.id);
+                        }
+                        window.MarquezaAudit?.recordChange("delete", this.storageKey, quote);
+                        await window.MarquezaApi.load("cotizaciones", this.storageKey);
+                        this.updateDashboard();
+                        this.renderQuotes();
+                        window.Swal?.fire({ icon: "success", title: "Cotización eliminada", text: "La cotización se eliminó correctamente.", timer: 1600, showConfirmButton: false });
+                    } catch (error) {
+                        window.MarquezaApi.notifyError(error, "No se pudo eliminar la cotización");
+                    }
+                };
                 if (window.Swal) window.Swal.fire({ icon: "warning", title: "¿Eliminar cotización?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#d4554d" }).then(result => { if (result.isConfirmed) removeQuote(); });
             }
         });

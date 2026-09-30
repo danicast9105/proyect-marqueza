@@ -10,15 +10,15 @@ def listVentProd():
 
 @vent_prod_bp.route('/', methods=['POST'])
 def createVentProd():
-    x = cntAddVentProd
+    x = cntAddVentProd()
     return x
 
-@vent_prod_bp.route('/', methods=['PUT'])
-def updateVentProd():
-    x = cntModVentProd
+@vent_prod_bp.route('/<id>', methods=['PUT'])
+def updateVentProd(id):
+    x = cntModVentProd(id)
     return x
 
-@vent_prod_bp.route('/', methods=['DELETE'])
-def deleteVentProd():
-    x = cntDelVentProd
+@vent_prod_bp.route('/<id>', methods=['DELETE'])
+def deleteVentProd(id):
+    x = cntDelVentProd(id)
     return x

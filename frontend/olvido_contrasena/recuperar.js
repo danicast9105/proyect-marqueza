@@ -16,29 +16,20 @@ class PasswordRecoveryForm {
         button.disabled = true;
         button.classList.add('is-loading');
         try {
-            const users = this.readUsers();
-            const user = users.find(item => String(item.correo || '').trim().toLowerCase() === correo.toLowerCase());
-            if (!user) {
-                Swal.fire({ icon: 'error', title: 'Correo no encontrado', text: 'No existe una cuenta local asociada a ese correo.' });
-            } else {
-                localStorage.setItem('marqueza_recuperacion', JSON.stringify({ correo, creadoEn: new Date().toISOString() }));
-                await Swal.fire({ icon: 'success', title: 'Solicitud registrada', text: 'La recuperación se guardó localmente. Contacta al administrador para restablecer la contraseña.', confirmButtonText: 'Entendido' });
-                this.form.reset();
-            }
+            const result = await window.MarquezaApi.request("/auth/forgot-password", {
+                method: "POST",
+                body: JSON.stringify({ correo })
+            });
+            await Swal.fire({ icon: 'success', title: 'Revisa tu correo', text: result.message || 'Si la cuenta existe, recibirás un enlace para cambiar la contraseña.', confirmButtonText: 'Entendido' });
+            this.form.reset();
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "No se pudo solicitar la recuperación");
         } finally {
             button.disabled = false;
             button.classList.remove('is-loading');
         }
     }
 
-    readUsers() {
-        try {
-            const users = JSON.parse(localStorage.getItem('marqueza_usuarios') || '[]');
-            return Array.isArray(users) ? users : [];
-        } catch {
-            return [];
-        }
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

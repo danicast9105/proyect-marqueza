@@ -38,7 +38,7 @@
             <!-- contenedor de nombre de usuario -->
             <div class="campo-login">
                 <label for="usuario">Nombre de usuario</label>
-                <div class="input-shell"><i class="bx bx-user" aria-hidden="true"></i><input type="text" placeholder="Ingresa tu nombre de usuario" class="caja_inicio" required pattern="^[A-Za-z0-9]{3,20}$" autocomplete="username" title="El nombre de usuario debe tener entre 3 y 20 caracteres y solo puede contener letras y números." id="usuario"></div>
+                <div class="input-shell"><i class="bx bx-user" aria-hidden="true"></i><input type="text" placeholder="Ingresa tu usuario o correo" class="caja_inicio" required autocomplete="username" id="usuario"></div>
             </div>
             
             <!-- contenedor de contraseña -->
@@ -65,8 +65,9 @@
         </form>
 
     </div>
-<script src="../shared/auditoria.js"></script>
+<script src="../shared/auditoria.js?v=20260927-auth1"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../shared/api.js"></script>
 <script src="inicio_sesion.js"></script>
 </body>
 

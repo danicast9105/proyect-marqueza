@@ -1,6 +1,7 @@
 class MarquezaCrudPage {
     constructor({ storageKey, modalId, formId, fields, columns }) {
         this.storageKey = storageKey;
+        this.resource = storageKey.replace(/^marqueza_/, "");
         this.modal = document.getElementById(modalId);
         this.form = document.getElementById(formId);
         this.body = document.querySelector(".cont_tabla tbody");
@@ -30,6 +31,14 @@ class MarquezaCrudPage {
             if (key === this.storageKey) this.render(this.searchInput?.value || "");
         });
         this.render();
+        this.refreshFromApi().catch((error) => {
+            window.MarquezaApi.notifyError(error, "No se pudieron cargar los datos del servidor");
+        });
+    }
+
+    async refreshFromApi() {
+        await window.MarquezaApi.load(this.resource, this.storageKey);
+        this.render(this.searchInput?.value || "");
     }
 
     readRecords() {
@@ -128,7 +137,7 @@ class MarquezaCrudPage {
         this.editIndex = -1;
     }
 
-    submit(event) {
+    async submit(event) {
         event.preventDefault();
         const records = this.readRecords();
         const record = this.collectForm();
@@ -137,12 +146,25 @@ class MarquezaCrudPage {
             return;
         }
         const editing = this.editIndex >= 0;
-        if (editing) records[this.editIndex] = record;
-        else records.push(record);
+        const currentRecord = editing ? records[this.editIndex] : null;
+        try {
+            if (editing && currentRecord.id !== undefined && currentRecord.id !== null) {
+                await window.MarquezaApi.update(this.resource, currentRecord.id, record);
+            } else {
+                await window.MarquezaApi.create(this.resource, record);
+                if (editing) window.MarquezaApi.consumeLegacy(this.storageKey, currentRecord.__localKey);
+            }
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "No se pudo guardar el registro");
+            return;
+        }
         window.MarquezaAudit?.recordChange(editing ? "update" : "create", this.storageKey, record);
-        this.writeRecords(records);
         this.closeModal();
-        this.render(this.searchInput?.value || "");
+        try {
+            await this.refreshFromApi();
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "El cambio se guardó, pero no se pudo actualizar la lista");
+        }
         this.notify({ icon: "success", title: editing ? "Registro actualizado" : "Registro guardado", text: editing ? "Los cambios se guardaron correctamente." : "El registro se agregó correctamente.", timer: 1600, showConfirmButton: false });
     }
 
@@ -158,11 +180,23 @@ class MarquezaCrudPage {
         if (!window.Swal) return;
         const result = await window.Swal.fire({ icon: "warning", title: "¿Eliminar registro?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Eliminar", cancelButtonText: "Cancelar", confirmButtonColor: "#d4554d" });
         if (!result.isConfirmed) return;
-        const records = this.readRecords();
-        const [record] = records.splice(index, 1);
-        window.MarquezaAudit?.recordChange("delete", this.storageKey, record);
-        this.writeRecords(records);
-        this.render(this.searchInput?.value || "");
+        const record = this.readRecords()[index];
+        try {
+            if (record.id === undefined || record.id === null) {
+                window.MarquezaApi.consumeLegacy(this.storageKey, record.__localKey);
+            } else {
+                await window.MarquezaApi.remove(this.resource, record.id);
+            }
+            window.MarquezaAudit?.recordChange("delete", this.storageKey, record);
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "No se pudo eliminar el registro");
+            return;
+        }
+        try {
+            await this.refreshFromApi();
+        } catch (error) {
+            window.MarquezaApi.notifyError(error, "El registro se eliminó, pero no se pudo actualizar la lista");
+        }
         this.notify({ icon: "success", title: "Registro eliminado", text: "El registro se eliminó correctamente.", timer: 1600, showConfirmButton: false });
     }
 }

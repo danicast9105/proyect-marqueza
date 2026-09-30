@@ -1,19 +1,23 @@
 from flask import jsonify, request
-from Services.productos_services import servListProductos, addProductos, deleteProductos, updateProductos
+
+from Services.productos_services import (addProductos, deleteProductos,
+                                         servListProductos, updateProductos)
+
 
 def cntListProductos():
-    data = servListProductos()
-    return jsonify(data), 200
+    return jsonify(servListProductos()), 200
+
 
 def cntAddProductos():
-    data = addProductos()
-    return jsonify(data), 200
+    payload, status = addProductos(request.get_json(silent=True) or {})
+    return jsonify(payload), status
 
-def cntDelProductos():
-    data = deleteProductos()
-    return jsonify(data), 200
 
-def cntModProductos():
-    data = updateProductos()
-    return jsonify(data), 201
+def cntDelProductos(id):
+    payload, status = deleteProductos(id)
+    return jsonify(payload), status
 
+
+def cntModProductos(id):
+    payload, status = updateProductos(id, request.get_json(silent=True) or {})
+    return jsonify(payload), status

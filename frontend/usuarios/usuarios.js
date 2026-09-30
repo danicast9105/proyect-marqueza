@@ -5,7 +5,7 @@
      • Hamburger + menú desplegable (tablet / móvil ≤ 1024 px): Controla la barra superior responsive.
      • Drag lateral (solo desktop): Permite arrastrar la barra lateral para colapsarla.
      • Modo oscuro / claro: Cambia el tema visual de la aplicación.
-     • Gestión de Usuarios: CRUD (Crear, Leer, Actualizar, Eliminar) usando LocalStorage.
+    • Gestión de Usuarios: CRUD (Crear, Leer, Actualizar, Eliminar) usando la API.
    ============================================================ */
 
 // --- Selección de elementos del DOM para la interfaz general ---
@@ -206,21 +206,18 @@ const formEditarUsuario = document.getElementById("formEditarUsuario");
 const btnCerrarEditModal = document.getElementById("cerrarEditModal");
 const btnCancelarEdit = document.getElementById("btnCancelarEdit");
 
-// Función para obtener usuarios de Local Storage
 const getUsuarios = () => {
-    const storedData = localStorage.getItem(STORAGE_KEY);
-    return storedData ? JSON.parse(storedData) : [
-        { nombre: 'Admin', correo: 'admin@example.com', rol: 'Administrador', contrasena: '1234' }
-    ];
+    return window.MarquezaApi.cached(STORAGE_KEY);
 };
 
-/**
- * Guarda el array de usuarios en el almacenamiento local del navegador.
- * @param {Array} usuarios - Lista de objetos de usuario.
- */
-const saveUsuarios = (usuarios) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(usuarios));
+const refreshUsuarios = async () => {
+    await window.MarquezaApi.load("usuarios", STORAGE_KEY);
+    renderTabla(searchInput.value);
 };
+
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+}[character]));
 
 /**
  * Limpia y vuelve a generar las filas de la tabla basadas en los usuarios almacenados.
@@ -250,13 +247,18 @@ const renderTabla = (filtro = "") => {
 
     usuarios.forEach((usuario) => {
         const tr = document.createElement("tr");
+        const esAdminProtegido = String(usuario.correo || "").trim().toLowerCase() === "admin@example.com" ||
+            String(usuario.nombre || "").trim().toLowerCase() === "admin";
+        const acciones = esAdminProtegido
+            ? '<td colspan="2"><span class="usuario-maestro"><i class="bx bx-lock-alt" aria-hidden="true"></i>Usuario maestro</span></td>'
+            : `<td><button type="button" class="btn-editar" data-index="${usuario.originalIndex}" title="Editar" aria-label="Editar"><i class="bx bx-pencil" aria-hidden="true"></i></button></td>
+               <td><button type="button" class="btn-eliminar" data-index="${usuario.originalIndex}" title="Eliminar" aria-label="Eliminar"><i class="bx bx-trash-alt" aria-hidden="true"></i></button></td>`;
         tr.innerHTML = `
-            <td>${usuario.nombre}</td>
-            <td>${usuario.correo}</td>
-            <td>${usuario.rol}</td>
+            <td>${escapeHtml(usuario.nombre)}</td>
+            <td>${escapeHtml(usuario.correo)}</td>
+            <td>${escapeHtml(usuario.rol)}</td>
             <td>********</td>
-            <td><button type="button" class="btn-editar" data-index="${usuario.originalIndex}" title="Editar" aria-label="Editar"><i class="bx bx-pencil" aria-hidden="true"></i></button></td>
-            <td><button type="button" class="btn-eliminar" data-index="${usuario.originalIndex}" title="Eliminar" aria-label="Eliminar"><i class="bx bx-trash-alt" aria-hidden="true"></i></button></td>
+            ${acciones}
         `;
         tableBody.appendChild(tr);
     });
@@ -324,7 +326,7 @@ window.addEventListener("click", (e) => {
 });
 
 // --- Lógica de Guardado (Nuevo Usuario) ---
-formUsuario?.addEventListener("submit", (e) => {
+formUsuario?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nombre = document.getElementById("nombre").value.trim();
     const correo = document.getElementById("correo").value.trim();
@@ -376,16 +378,21 @@ formUsuario?.addEventListener("submit", (e) => {
         return;
     }
 
-    usuarios.push({ nombre, correo, rol, contrasena });
-    window.MarquezaAudit?.recordChange("create", STORAGE_KEY, usuarios[usuarios.length - 1]);
-    saveUsuarios(usuarios);
-    renderTabla(searchInput.value);
+    const usuario = { nombre, correo, rol, contrasena, estado: "Activo" };
+    try {
+        await window.MarquezaApi.create("usuarios", usuario);
+        window.MarquezaAudit?.recordChange("create", STORAGE_KEY, usuario);
+        await refreshUsuarios();
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudo crear el usuario");
+        return;
+    }
     cerrarModal();
     Swal.fire('¡Guardado!', 'El usuario ha sido creado con éxito.', 'success');
 });
 
 // --- Lógica de Actualización (Editar Usuario) ---
-formEditarUsuario?.addEventListener("submit", (e) => {
+formEditarUsuario?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const index = document.getElementById("editIndex").value;
     const nombre = document.getElementById("editNombre").value.trim();
@@ -425,16 +432,29 @@ formEditarUsuario?.addEventListener("submit", (e) => {
 
     const usuarioActual = usuarios[index];
 
-    usuarios[index] = {
+    const usuarioActualizado = {
+        estado: usuarioActual.estado || "Activo",
         nombre,
         correo,
         rol,
-        contrasena: nuevaPass || usuarioActual.contrasena
+        contrasena: nuevaPass
     };
 
-    window.MarquezaAudit?.recordChange("update", STORAGE_KEY, usuarios[index]);
-    saveUsuarios(usuarios);
-    renderTabla(searchInput.value);
+    try {
+        if (usuarioActual.id !== undefined && usuarioActual.id !== null) {
+            await window.MarquezaApi.update("usuarios", usuarioActual.id, usuarioActualizado);
+        } else {
+            usuarioActualizado.contrasena = nuevaPass || usuarioActual.contrasena;
+            if (!usuarioActualizado.contrasena) throw new Error("Es necesario definir una contraseña para migrar este usuario local.");
+            await window.MarquezaApi.create("usuarios", usuarioActualizado);
+            window.MarquezaApi.consumeLegacy(STORAGE_KEY, usuarioActual.__localKey);
+        }
+        window.MarquezaAudit?.recordChange("update", STORAGE_KEY, usuarioActualizado);
+        await refreshUsuarios();
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudo actualizar el usuario");
+        return;
+    }
     cerrarEditModal();
     Swal.fire('¡Actualizado!', 'Los cambios se han guardado correctamente.', 'success');
 });
@@ -467,13 +487,22 @@ window.eliminarUsuario = (index) => {
         cancelButtonColor: '#707070',
         confirmButtonText: 'Eliminar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(async (result) => {
         if (result.isConfirmed) {
             const usuarios = getUsuarios();
-            const [usuario] = usuarios.splice(index, 1);
-            window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, usuario);
-            saveUsuarios(usuarios);
-            renderTabla(searchInput.value);
+            const usuario = usuarios[index];
+            try {
+                if (usuario.id === undefined || usuario.id === null) {
+                    window.MarquezaApi.consumeLegacy(STORAGE_KEY, usuario.__localKey);
+                } else {
+                    await window.MarquezaApi.remove("usuarios", usuario.id);
+                }
+                window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, usuario);
+                await refreshUsuarios();
+            } catch (error) {
+                window.MarquezaApi.notifyError(error, "No se pudo eliminar el usuario");
+                return;
+            }
             Swal.fire('¡Eliminado!', 'El usuario ha sido removido.', 'success');
         }
     });
@@ -481,6 +510,7 @@ window.eliminarUsuario = (index) => {
 
 // Inicializar la tabla al cargar el script
 renderTabla();
+refreshUsuarios().catch(error => window.MarquezaApi.notifyError(error, "No se pudieron cargar los usuarios"));
 window.MarquezaRealtime?.subscribe(({ key }) => {
     if (key === STORAGE_KEY) renderTabla(searchInput.value);
 });

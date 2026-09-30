@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cambiar contraseña | MARQUEZA</title>
+    <link rel="stylesheet" href="../shared/estilos-base.css">
+    <link rel="stylesheet" href="recuperar.css?v=20260927-reset-button">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body class="password-recovery">
+    <main class="recovery-card">
+        <a class="back-link" href="../inicio_sesion/inicio_sesion.html"><i class="bx bx-arrow-back"></i> Volver al inicio de sesión</a>
+        <div class="recovery-brand"><img src="../fondo/icono 3.png" alt="Logo MARQUEZA"><div><strong>MARQUEZA</strong><small>Confecciones que inspiran</small></div></div>
+        <div class="recovery-icon"><i class="bx bx-lock-alt"></i></div>
+        <span class="eyebrow">Acceso seguro</span>
+        <h1>Nueva contraseña</h1>
+        <p class="recovery-copy">Define una contraseña nueva para tu cuenta.</p>
+        <form id="resetForm" novalidate>
+            <label for="nuevaContrasena">Nueva contraseña</label>
+            <div class="input-shell"><i class="bx bx-lock-alt"></i><input id="nuevaContrasena" type="password" autocomplete="new-password" minlength="8" required></div>
+            <label for="confirmarContrasena">Confirmar contraseña</label>
+            <div class="input-shell"><i class="bx bx-lock-alt"></i><input id="confirmarContrasena" type="password" autocomplete="new-password" minlength="8" required></div>
+            <button type="submit"><span>Guardar contraseña</span><i class="bx bx-check"></i></button>
+        </form>
+        <p class="recovery-note"><i class="bx bx-time-five"></i> El enlace es válido durante 30 minutos.</p>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../shared/api.js"></script>
+    <script src="restablecer.js"></script>
+</body>
+</html>

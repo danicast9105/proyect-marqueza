@@ -491,6 +491,21 @@ body.dark .cont_busqueda input {
     background: #e74c3c;
 }
 
+.usuario-maestro {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: inherit;
+    white-space: nowrap;
+}
+
+.usuario-maestro i {
+    font-size: 16px;
+}
+
 .cont_tabla button:hover {
     filter: brightness(1.1);
     transform: scale(1.05);

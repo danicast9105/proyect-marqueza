@@ -1,19 +1,23 @@
 from flask import jsonify, request
-from Services.usuarios_services import servListUsuarios, addUsuarios, deleteUsuarios, updateUsuarios
+
+from Services.usuarios_services import (addUsuarios, deleteUsuarios,
+                                        servListUsuarios, updateUsuarios)
+
 
 def cntListUsuarios():
-    data = servListUsuarios()
-    return jsonify(data), 200
+    return jsonify(servListUsuarios()), 200
+
 
 def cntAddUsuarios():
-    data = addUsuarios()
-    return jsonify(data), 200
+    payload, status = addUsuarios(request.get_json(silent=True) or {})
+    return jsonify(payload), status
 
-def cntDelUsuarios():
-    data = deleteUsuarios()
-    return jsonify(data), 200
 
-def cntModUsuarios():
-    data = updateUsuarios()
-    return jsonify(data), 201
+def cntDelUsuarios(id):
+    payload, status = deleteUsuarios(id)
+    return jsonify(payload), status
 
+
+def cntModUsuarios(id):
+    payload, status = updateUsuarios(id, request.get_json(silent=True) or {})
+    return jsonify(payload), status

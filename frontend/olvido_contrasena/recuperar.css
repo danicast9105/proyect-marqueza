@@ -16,8 +16,10 @@ h1 { margin: 7px 0 9px; color: #12304a; font-size: 29px; letter-spacing: -.02em;
 .input-shell:focus-within { border-color: #9fb8c7; }
 .input-shell i { margin-left: 14px; color: #718096; font-size: 19px; }
 .input-shell input { width: 100%; min-width: 0; padding: 12px 13px; border: 0; outline: 0; background: transparent; color: #263746; font: inherit; font-size: 13px; }
-#recoveryForm button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 48px; border: 0; border-radius: 11px; background: linear-gradient(135deg, #27b7f5, #177e9e); color: #fff; font-weight: 800; cursor: pointer; box-shadow: 0 12px 22px rgba(39,183,245,.2); }
-#recoveryForm button:hover { background: linear-gradient(135deg, #1685b5, #12304a); transform: translateY(-2px); }
+#recoveryForm button, #resetForm button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 48px; border: 0; border-radius: 11px; background: linear-gradient(135deg, #27b7f5, #177e9e); color: #fff; font-weight: 800; cursor: pointer; box-shadow: 0 12px 22px rgba(39,183,245,.2); transition: background .18s ease, transform .18s ease, box-shadow .18s ease; }
+#recoveryForm button:hover, #resetForm button:hover { background: linear-gradient(135deg, #1685b5, #12304a); transform: translateY(-2px); box-shadow: 0 14px 26px rgba(18,48,74,.24); }
+#recoveryForm button:focus-visible, #resetForm button:focus-visible { outline: 3px solid #12304a; outline-offset: 3px; }
+#recoveryForm button:disabled, #resetForm button:disabled { cursor: wait; opacity: .68; transform: none; }
 .recovery-note { display: flex; align-items: center; justify-content: center; gap: 6px; margin: 19px 0 0; color: #8a98a5; font-size: 10px; text-align: center; }
 .recovery-note i { color: #27b7f5; font-size: 15px; }
 body.dark.password-recovery { background: #17232d; }

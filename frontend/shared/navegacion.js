@@ -20,11 +20,12 @@ class MarquezaNavigation {
         this.menu.replaceChildren(...this.items.map(([href, icon, label]) => this.createItem(href, icon, label)));
         const logout = this.root.querySelector('.boton-contenido a[href="#"]');
         if (logout) {
-            logout.href = "../incio%20sesion/inicio%20sesion.html";
+            logout.href = "../inicio_sesion/inicio_sesion.html";
             logout.setAttribute("aria-label", "Cerrar sesión");
             logout.addEventListener("click", () => {
                 window.MarquezaAudit?.log({ action: "Cierre de sesión", module: "Acceso", detail: "El usuario cerró la sesión." });
                 localStorage.removeItem("marqueza_usuario_sesion");
+                sessionStorage.removeItem("marqueza_sesion_activa");
             });
         }
     }

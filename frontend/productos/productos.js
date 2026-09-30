@@ -43,18 +43,35 @@ const getProductos = () => {
             console.error("No se pudo leer los productos:", error);
         }
     }
-
-    const iniciales = [
-        { codigo: "P001", nombre: "Camiseta básica", cantidad: 20, precio: 35000, estado: "Activo", categoria: "Camisetas" },
-        { codigo: "P002", nombre: "Pantalón jean", cantidad: 8, precio: 85000, estado: "Activo", categoria: "Pantalones" }
-    ];
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(iniciales));
-    return iniciales;
+    return [];
 };
 
 const saveProductos = (productos) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(productos));
 };
+
+const nextProductCode = () => {
+    const numbers = getProductos()
+        .map(producto => String(producto.codigo || "").match(/^P(\d+)$/i))
+        .filter(Boolean)
+        .map(match => Number(match[1]));
+    const highestCode = numbers.reduce((highest, number) => Math.max(highest, number), 0);
+    return `P${String(highestCode + 1).padStart(3, "0")}`;
+};
+
+const refreshProductos = async () => {
+    try {
+        await window.MarquezaApi.load("productos", STORAGE_KEY);
+        actualizarCategorias();
+        renderTabla();
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudieron cargar los productos");
+    }
+};
+
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+}[character]));
 
 const formatNumber = (value) =>
     Number(value || 0).toLocaleString("es-CO", {
@@ -132,7 +149,7 @@ const actualizarCategorias = () => {
     filtroCategoria.innerHTML =
         '<option value="">Todas</option>' +
         categorias.map(categoria =>
-            `<option value="${categoria}" ${categoria === actual ? "selected" : ""}>${categoria}</option>`
+            `<option value="${escapeHtml(categoria)}" ${categoria === actual ? "selected" : ""}>${escapeHtml(categoria)}</option>`
         ).join("");
 };
 
@@ -153,8 +170,8 @@ const renderTabla = () => {
         const tr = document.createElement("tr");
 
         tr.innerHTML = `
-            <td data-label="Código">${producto.codigo || ""}</td>
-            <td data-label="Nombre">${producto.nombre || ""}</td>
+            <td data-label="Código">${escapeHtml(producto.codigo)}</td>
+            <td data-label="Nombre">${escapeHtml(producto.nombre)}</td>
             <td data-label="Cantidad">${producto.cantidad ?? ""}</td>
             <td data-label="Precio">${formatNumber(producto.precio)}</td>
             <td data-label="Estado">
@@ -199,6 +216,7 @@ const abrirModal = (index = -1) => {
         document.getElementById("estado").value = producto.estado || "";
     } else {
         if (titulo) titulo.textContent = "Agregar Producto";
+        document.getElementById("codigo").value = nextProductCode();
     }
 
     modal.classList.add("active");
@@ -267,7 +285,7 @@ const exportToPDF = () => {
     window.Swal?.fire({ icon: "success", title: "Exportación lista", text: "El listado de productos se descargó correctamente.", timer: 1600, showConfirmButton: false });
 };
 
-form?.addEventListener("submit", event => {
+    form?.addEventListener("submit", async event => {
     event.preventDefault();
 
     const codigo = document.getElementById("codigo").value.trim();
@@ -293,18 +311,23 @@ form?.addEventListener("submit", event => {
     };
 
     const editing = editIndex >= 0;
-    if (editing) {
-        producto.categoria = productos[editIndex]?.categoria || "General";
-        productos[editIndex] = producto;
-    } else {
-        productos.push(producto);
+    const currentProduct = editing ? productos[editIndex] : null;
+    if (editing) producto.categoria = currentProduct?.categoria || "General";
+    try {
+        if (editing && currentProduct.id !== undefined && currentProduct.id !== null) {
+            await window.MarquezaApi.update("productos", currentProduct.id, producto);
+        } else {
+            await window.MarquezaApi.create("productos", producto);
+            if (editing) window.MarquezaApi.consumeLegacy(STORAGE_KEY, currentProduct.__localKey);
+        }
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudo guardar el producto");
+        return;
     }
 
     window.MarquezaAudit?.recordChange(editing ? "update" : "create", STORAGE_KEY, producto);
-    saveProductos(productos);
-    actualizarCategorias();
-    renderTabla();
     cerrarModal();
+    await refreshProductos();
     window.Swal?.fire({ icon: "success", title: editing ? "Producto actualizado" : "Producto guardado", text: "La información se guardó correctamente.", timer: 1600, showConfirmButton: false });
 });
 
@@ -321,12 +344,20 @@ tbody?.addEventListener("click", event => {
     }
 
     if (button.classList.contains("btn-eliminar")) {
-        const removeProduct = () => {
-            const [producto] = productos.splice(index, 1);
+        const removeProduct = async () => {
+                const producto = productos[index];
+                try {
+                    if (producto.id === undefined || producto.id === null) {
+                        window.MarquezaApi.consumeLegacy(STORAGE_KEY, producto.__localKey);
+                    } else {
+                        await window.MarquezaApi.remove("productos", producto.id);
+                    }
+                } catch (error) {
+                    window.MarquezaApi.notifyError(error, "No se pudo eliminar el producto");
+                    return;
+                }
             window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, producto);
-            saveProductos(productos);
-            actualizarCategorias();
-            renderTabla();
+                await refreshProductos();
             window.Swal?.fire({ icon: "success", title: "Producto eliminado", text: "El producto se eliminó correctamente.", timer: 1600, showConfirmButton: false });
         };
         if (!window.Swal) return;
@@ -518,6 +549,7 @@ sidebar?.addEventListener("mouseleave", () => {
 });
 
 updateLayout();
+refreshProductos();
 actualizarCategorias();
 renderTabla();
 window.MarquezaRealtime?.subscribe(({ key }) => {

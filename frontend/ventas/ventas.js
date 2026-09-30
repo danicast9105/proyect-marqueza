@@ -13,6 +13,13 @@ class VentasPage extends MarquezaCrudPage {
         this.loadClients();
         this.loadProducts();
         super.init();
+        Promise.all([
+            window.MarquezaApi.load("clientes"),
+            window.MarquezaApi.load("productos")
+        ]).then(() => {
+            this.loadClients(document.getElementById("cliente")?.value || "");
+            this.loadProducts(document.getElementById("producto")?.value || "");
+        }).catch(error => window.MarquezaApi.notifyError(error, "No se pudieron cargar clientes y productos"));
         document.getElementById("producto")?.addEventListener("change", () => this.updateSaleTotal());
         document.getElementById("cantidad")?.addEventListener("input", () => this.updateSaleTotal());
         this.updateSummary(this.readRecords(), this.readRecords());

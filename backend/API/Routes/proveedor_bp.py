@@ -10,15 +10,15 @@ def listProveedor():
 
 @proveedor_bp.route('/', methods=['POST'])
 def createProveedor():
-    x = cntAddProveedor
+    x = cntAddProveedor()
     return x
 
-@proveedor_bp.route('/', methods=['PUT'])
-def updateProveedor():
-    x = cntModProveedor
+@proveedor_bp.route('/<id>', methods=['PUT'])
+def updateProveedor(id):
+    x = cntModProveedor(id)
     return x
 
-@proveedor_bp.route('/', methods=['DELETE'])
-def deleteProveedor():
-    x = cntDelProveedor
+@proveedor_bp.route('/<id>', methods=['DELETE'])
+def deleteProveedor(id):
+    x = cntDelProveedor(id)
     return x

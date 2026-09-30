@@ -11,6 +11,21 @@
         }
     }
 
+    function hasActiveSession() {
+        const session = getSession();
+        if (!session?.id) return false;
+        try {
+            return sessionStorage.getItem("marqueza_sesion_activa") === String(session.id);
+        } catch {
+            return false;
+        }
+    }
+
+    function isPublicAccessPage() {
+        const path = decodeURIComponent(window.location.pathname);
+        return /\/(?:inicio_sesion\/inicio_sesion|olvido_contrasena\/(?:recuperar|restablecer))\.html$/.test(path);
+    }
+
     function read() {
         try {
             const events = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
@@ -61,10 +76,10 @@
     }
 
     function guardPage() {
-        if (!document.querySelector(".barra_lateral") || getSession()) return;
+        if (isPublicAccessPage() || hasActiveSession()) return;
         const path = `${window.location.pathname}${window.location.search}`;
         log({ action: "Acceso denegado", module: "Acceso", entity: "Sesión requerida", detail: `Intento de acceso sin sesión a ${path}`, outcome: "denied" });
-        window.location.replace("../incio%20sesion/inicio%20sesion.html?motivo=sesion_requerida");
+        window.location.replace("../inicio_sesion/inicio_sesion.html?motivo=sesion_requerida");
     }
 
     window.MarquezaAudit = { log, read, recordChange, guardPage };

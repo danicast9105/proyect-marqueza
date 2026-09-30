@@ -194,15 +194,26 @@ const getInsumos = () => {
             localStorage.removeItem(STORAGE_KEY);
         }
     }
-    return [
-        { nombre: 'Tela algodón', categoria: 'Tela', cantidad: 25, unidad: 'metros', precioUnitario: 12.50, estado: 'Disponible' },
-        { nombre: 'Botones negros', categoria: 'Complementos', cantidad: 120, unidad: 'piezas', precioUnitario: 0.15, estado: 'Disponible' }
-    ];
+    return [];
 };
 
 const saveInsumos = (insumos) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(insumos));
 };
+
+const refreshInsumos = async () => {
+    try {
+        await window.MarquezaApi.load("insumos", STORAGE_KEY);
+        actualizarCategorias();
+        renderTabla();
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudieron cargar los insumos");
+    }
+};
+
+const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+}[character]));
 
 const getProveedores = () => {
     try {
@@ -267,11 +278,11 @@ const getFilteredInsumos = () => {
         .filter(item => {
             const estadoTexto = getEstadoPorCantidad(item.cantidad).label.toLowerCase();
             const cumpleBusqueda =
-                item.nombre.toLowerCase().includes(textoBusqueda) ||
-                item.categoria.toLowerCase().includes(textoBusqueda) ||
+                String(item.nombre || '').toLowerCase().includes(textoBusqueda) ||
+                String(item.categoria || '').toLowerCase().includes(textoBusqueda) ||
                 String(item.proveedor || '').toLowerCase().includes(textoBusqueda) ||
-                item.unidad.toLowerCase().includes(textoBusqueda) ||
-                item.estado.toLowerCase().includes(textoBusqueda) ||
+                String(item.unidad || '').toLowerCase().includes(textoBusqueda) ||
+                String(item.estado || '').toLowerCase().includes(textoBusqueda) ||
                 estadoTexto.includes(textoBusqueda);
 
             const cumpleCategoria = !categoriaSeleccionada || item.categoria === categoriaSeleccionada;
@@ -299,11 +310,11 @@ const renderTabla = () => {
         const estadoVisual = getEstadoPorCantidad(insumo.cantidad);
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td data-label="Nombre">${insumo.nombre}</td>
-            <td data-label="Categoría">${insumo.categoria}</td>
-            <td data-label="Proveedor">${insumo.proveedor || 'Sin proveedor'}</td>
+            <td data-label="Nombre">${escapeHtml(insumo.nombre)}</td>
+            <td data-label="Categoría">${escapeHtml(insumo.categoria)}</td>
+            <td data-label="Proveedor">${escapeHtml(insumo.proveedor || 'Sin proveedor')}</td>
             <td data-label="Cantidad">${insumo.cantidad}</td>
-            <td data-label="Unidad">${insumo.unidad}</td>
+            <td data-label="Unidad">${escapeHtml(insumo.unidad)}</td>
             <td data-label="Precio">${formatNumber(insumo.precioUnitario)}</td>
             <td data-label="Estado"><span class="estado-badge ${estadoVisual.clase}">${estadoVisual.label}</span></td>
             <td data-label="Editar"><button type="button" class="btn-editar" data-index="${insumo.originalIndex}" title="Editar" aria-label="Editar"><i class="bx bx-pencil" aria-hidden="true"></i></button></td>
@@ -317,7 +328,7 @@ const actualizarCategorias = () => {
     const categorias = Array.from(new Set(getInsumos().map(item => item.categoria).filter(Boolean))).sort();
     const seleccionActual = filtroCategoria.value;
     filtroCategoria.innerHTML = '<option value="">Todas</option>' + categorias.map(cat => `
-        <option value="${cat}"${cat === seleccionActual ? ' selected' : ''}>${cat}</option>
+        <option value="${escapeHtml(cat)}"${cat === seleccionActual ? ' selected' : ''}>${escapeHtml(cat)}</option>
     `).join('');
 };
 
@@ -399,7 +410,7 @@ window.addEventListener("click", (e) => {
     }
 });
 
-formInsumo?.addEventListener("submit", (e) => {
+formInsumo?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const nombre = document.getElementById("nombre").value.trim();
     const categoria = document.getElementById("categoria").value.trim();
@@ -414,8 +425,8 @@ formInsumo?.addEventListener("submit", (e) => {
         return;
     }
 
-    if (!categoria || !proveedor || !unidad) {
-        Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Complete la categoría, el proveedor y la unidad del insumo.', confirmButtonColor: '#27B7F5' });
+    if (!categoria || !unidad) {
+        Swal.fire({ icon: 'warning', title: 'Campos incompletos', text: 'Complete la categoría y la unidad del insumo.', confirmButtonColor: '#27B7F5' });
         return;
     }
 
@@ -429,23 +440,20 @@ formInsumo?.addEventListener("submit", (e) => {
         return;
     }
 
-    const insumos = getInsumos();
-
-    if (insumos.some(item => item.nombre.toLowerCase() === nombre.toLowerCase() && item.categoria.toLowerCase() === categoria.toLowerCase())) {
-        Swal.fire({ icon: 'error', title: 'Insumo duplicado', text: 'Ya existe un insumo con el mismo nombre y categoría.', confirmButtonColor: '#27B7F5' });
+    const insumo = { nombre, categoria, proveedor, cantidad, unidad, precioUnitario, estado };
+    try {
+        await window.MarquezaApi.create("insumos", insumo);
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudo guardar el insumo");
         return;
     }
-
-    insumos.push({ nombre, categoria, proveedor, cantidad, unidad, precioUnitario, estado });
-    window.MarquezaAudit?.recordChange("create", STORAGE_KEY, insumos[insumos.length - 1]);
-    saveInsumos(insumos);
-    actualizarCategorias();
-    renderTabla();
+    window.MarquezaAudit?.recordChange("create", STORAGE_KEY, insumo);
     cerrarModal();
+    await refreshInsumos();
     Swal.fire('¡Guardado!', 'El insumo ha sido agregado correctamente.', 'success');
 });
 
-formEditarInsumo?.addEventListener("submit", (e) => {
+formEditarInsumo?.addEventListener("submit", async (e) => {
     e.preventDefault();
     const index = Number(document.getElementById("editIndex").value);
     const nombre = document.getElementById("editNombre").value.trim();
@@ -461,7 +469,7 @@ formEditarInsumo?.addEventListener("submit", (e) => {
 
     if (!actual) return;
 
-    if (nombre.length < 2 || !categoria || !proveedor || !unidad || !Number.isFinite(cantidad) || cantidad < 1 || !Number.isFinite(precioUnitario) || precioUnitario < 0) {
+    if (nombre.length < 2 || !categoria || !unidad || !Number.isFinite(cantidad) || cantidad < 1 || !Number.isFinite(precioUnitario) || precioUnitario < 0) {
         Swal.fire({ icon: 'warning', title: 'Revisa los datos', text: 'Asegúrate de completar todos los campos con valores válidos.', confirmButtonColor: '#27B7F5' });
         return;
     }
@@ -471,12 +479,21 @@ formEditarInsumo?.addEventListener("submit", (e) => {
         return;
     }
 
-    insumos[index] = { nombre, categoria, proveedor, cantidad, unidad, precioUnitario, estado };
-    window.MarquezaAudit?.recordChange("update", STORAGE_KEY, insumos[index]);
-    saveInsumos(insumos);
-    actualizarCategorias();
-    renderTabla();
+    const insumo = { codigo: actual.codigo, nombre, categoria, proveedor, cantidad, unidad, precioUnitario, estado };
+    try {
+        if (actual.id !== undefined && actual.id !== null) {
+            await window.MarquezaApi.update("insumos", actual.id, insumo);
+        } else {
+            await window.MarquezaApi.create("insumos", insumo);
+            window.MarquezaApi.consumeLegacy(STORAGE_KEY, actual.__localKey);
+        }
+    } catch (error) {
+        window.MarquezaApi.notifyError(error, "No se pudo actualizar el insumo");
+        return;
+    }
+    window.MarquezaAudit?.recordChange("update", STORAGE_KEY, insumo);
     cerrarEditModal();
+    await refreshInsumos();
     Swal.fire('¡Actualizado!', 'Los datos del insumo se han guardado.', 'success');
 });
 
@@ -508,18 +525,38 @@ window.eliminarInsumo = (index) => {
         cancelButtonColor: '#707070',
         confirmButtonText: 'Eliminar',
         cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(async (result) => {
         if (result.isConfirmed) {
             const insumos = getInsumos();
-            const [insumo] = insumos.splice(index, 1);
+            const insumo = insumos[index];
+            try {
+                if (insumo.id === undefined || insumo.id === null) {
+                    window.MarquezaApi.consumeLegacy(STORAGE_KEY, insumo.__localKey);
+                } else {
+                    await window.MarquezaApi.remove("insumos", insumo.id);
+                }
+            } catch (error) {
+                window.MarquezaApi.notifyError(error, "No se pudo eliminar el insumo");
+                return;
+            }
             window.MarquezaAudit?.recordChange("delete", STORAGE_KEY, insumo);
-            saveInsumos(insumos);
-            actualizarCategorias();
-            renderTabla();
+            await refreshInsumos();
             Swal.fire('¡Eliminado!', 'El insumo ha sido removido.', 'success');
         }
     });
 };
+
+Promise.all([
+    window.MarquezaApi.load("proveedores", "marqueza_proveedores").catch(() => []),
+    window.MarquezaApi.load("insumos", STORAGE_KEY).catch(error => {
+        window.MarquezaApi.notifyError(error, "No se pudieron cargar los insumos");
+        return [];
+    })
+]).then(() => {
+    cargarProveedores();
+    actualizarCategorias();
+    renderTabla();
+});
 
 cargarProveedores();
 actualizarCategorias();

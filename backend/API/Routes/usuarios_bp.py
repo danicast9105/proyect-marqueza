@@ -10,15 +10,15 @@ def listUsuarios():
 
 @usuarios_bp.route('/', methods=['POST'])
 def createUsuarios():
-    x = cntAddUsuarios
+    x = cntAddUsuarios()
     return x
 
-@usuarios_bp.route('/', methods=['PUT'])
-def updateUsuarios():
-    x = cntModUsuarios
+@usuarios_bp.route('/<id>', methods=['PUT'])
+def updateUsuarios(id):
+    x = cntModUsuarios(id)
     return x
 
-@usuarios_bp.route('/', methods=['DELETE'])
-def deleteUsuarios():
-    x = cntDelUsuarios
+@usuarios_bp.route('/<id>', methods=['DELETE'])
+def deleteUsuarios(id):
+    x = cntDelUsuarios(id)
     return x

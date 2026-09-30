@@ -162,13 +162,14 @@
     <div id="modalProducto" class="modal-container">
 <div class="modal-content"><header><h2>Agregar Productos</h2><i class='bx bx-x' id="cerrarModal"></i></header>
 <form id="formProducto">
-<div class="input-group"><label for="codigo">Código</label><input id="codigo" type="text" required placeholder="Código del producto"></div><div class="input-group"><label for="nombre">Nombre</label><input id="nombre" type="text" required placeholder="Nombre del producto"></div><div class="input-group"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" required placeholder="Cantidad"></div><div class="input-group"><label for="precio">Precio</label><input id="precio" type="number" required placeholder="Precio"></div><div class="input-group"><label for="estado">Estado</label><input id="estado" type="text" required placeholder="Activo / Inactivo"></div>
+<div class="input-group"><label for="codigo">Código automático</label><input id="codigo" type="text" required readonly title="Se asigna automáticamente y se actualiza al eliminar productos"></div><div class="input-group"><label for="nombre">Nombre</label><input id="nombre" type="text" required placeholder="Nombre del producto"></div><div class="input-group"><label for="cantidad">Cantidad</label><input id="cantidad" type="number" required placeholder="Cantidad"></div><div class="input-group"><label for="precio">Precio</label><input id="precio" type="number" required placeholder="Precio"></div><div class="input-group"><label for="estado">Estado</label><input id="estado" type="text" required placeholder="Activo / Inactivo"></div>
 <div class="modal-buttons"><button type="button" class="btn-secundario" id="btnCancelar">Cancelar</button><button type="submit" class="btn-primario">Guardar</button></div>
 </form></div></div>
-<script src="../shared/auditoria.js"></script>
+<script src="../shared/auditoria.js?v=20260927-auth1"></script>
 <script src="../shared/actualizacion-tiempo-real.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../shared/navegacion.js"></script>
+<script src="../shared/navegacion.js?v=20260927-auth1"></script>
+<script src="../shared/api.js"></script>
 <script src="productos.js"></script></body></html>

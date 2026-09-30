@@ -24,7 +24,7 @@ class RegistroForm {
         return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value);
     }
 
-    submit(event) {
+    async submit(event) {
         event.preventDefault();
         const usuario = this.usuario.value.trim();
         const correo = this.correo.value.trim();
@@ -38,20 +38,28 @@ class RegistroForm {
         if (!this.isValidPassword(contrasena)) return this.showMessage("error", "Error de registro", "La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, una letra minúscula y un número.");
         if (contrasena !== confirmacion) return this.showMessage("error", "Error de registro", "Las contraseñas no coinciden.");
 
-        const users = this.readUsers();
-        if (users.some(item => String(item.nombre || "").toLowerCase() === usuario.toLowerCase())) return this.showMessage("warning", "Usuario existente", "Ese nombre de usuario ya está registrado.");
-        if (users.some(item => String(item.correo || "").toLowerCase() === correo.toLowerCase())) return this.showMessage("warning", "Correo existente", "Ese correo ya está registrado.");
-        users.push({ nombre: usuario, correo, rol, contrasena });
-        localStorage.setItem("marqueza_usuarios", JSON.stringify(users));
-        Swal.fire({ icon: "success", title: "Registro exitoso", text: "Tu cuenta ha sido guardada localmente.", confirmButtonText: "Continuar" }).then(() => this.formulario.reset());
-    }
-
-    readUsers() {
+        if (contrasena.length > 45) return this.showMessage("error", "Contraseña muy larga", "La base de datos actual admite hasta 45 caracteres.");
         try {
-            const users = JSON.parse(localStorage.getItem("marqueza_usuarios") || "[]");
-            return Array.isArray(users) ? users : [];
-        } catch {
-            return [];
+            const users = await window.MarquezaApi.get("/usuarios/");
+            if (users.some(item => String(item.nombre || "").toLowerCase() === usuario.toLowerCase())) return this.showMessage("warning", "Usuario existente", "Ese nombre de usuario ya está registrado.");
+            if (users.some(item => String(item.correo || "").toLowerCase() === correo.toLowerCase())) return this.showMessage("warning", "Correo existente", "Ese correo ya está registrado.");
+
+            const details = await window.MarquezaApi.get("/detalles-etc/");
+            const expectedRole = rol.toLowerCase();
+            const role = details.find(item => String(item.nombre).toLowerCase() === expectedRole);
+            if (!role) return this.showMessage("error", "Rol no configurado", `No existe el rol ${expectedRole.toUpperCase()} en la base de datos.`);
+
+            await window.MarquezaApi.post("/usuarios/", {
+                nombre: usuario,
+                correo,
+                contrasena,
+                estado: "Activo",
+                det_etc_id: role.id
+            });
+            await Swal.fire({ icon: "success", title: "Registro exitoso", text: "La cuenta se guardó en la base de datos.", confirmButtonText: "Continuar" });
+            this.formulario.reset();
+        } catch (error) {
+            this.showMessage("error", "No se pudo registrar", error.message);
         }
     }
 }

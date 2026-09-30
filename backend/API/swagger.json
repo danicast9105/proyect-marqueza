@@ -1,235 +1,185 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "API de Marqueza C",
-    "description": "API REST para gestión de usuarios e inventarios.",
+    "title": "API de Marqueza",
+    "description": "API REST para gestión integral de confecciones - Marqueza",
     "version": "1.0.0"
   },
   "servers": [
-    {
-      "url": "http://192.168.1.9:5000/usuarios/"
-    },
-    {
-      "url": "http://192.168.1.9:5000/clientes/"
-    },
-    {
-      "url": "http://192.168.1.9:5000/usuarios/"
-    }
+    { "url": "http://localhost:5000/api" }
   ],
   "tags": [
-    {
-      "name": "Usuarios",
-      "description": "Gestión de aprendices"
-    },
-    {
-      "name": "Eventos",
-      "description": "Gestión de eventos"
-    }
+    { "name": "Usuarios", "description": "Gestión de usuarios y autenticación" },
+    { "name": "Clientes", "description": "Gestión de clientes" },
+    { "name": "Proveedores", "description": "Gestión de proveedores" },
+    { "name": "Productos", "description": "Catálogo de productos" },
+    { "name": "Insumos", "description": "Inventario de insumos" },
+    { "name": "Ventas", "description": "Operaciones de venta" },
+    { "name": "Cotizaciones", "description": "Propuestas comerciales" },
+    { "name": "Detalle Cotización", "description": "Líneas de productos en cotización" },
+    { "name": "Recuperación", "description": "Recuperación de contraseña" },
+    { "name": "Bitácora", "description": "Bitácora de auditoría" }
   ],
   "paths": {
-    
+    "/auth/login": {
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Iniciar sesión con usuario o correo",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["contrasena"],
+                "properties": {
+                  "correo": { "type": "string" },
+                  "usuario": { "type": "string" },
+                  "contrasena": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Inicio de sesión exitoso" },
+          "401": { "description": "Credenciales inválidas" },
+          "403": { "description": "Cuenta desactivada" }
+        }
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "tags": ["Recuperación"],
+        "summary": "Solicitar recuperación de contraseña",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["correo"],
+                "properties": { "correo": { "type": "string", "format": "email" } }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Correo enviado" } }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": ["Recuperación"],
+        "summary": "Restablecer contraseña",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["token", "nueva_contrasena"],
+                "properties": {
+                  "token": { "type": "string" },
+                  "nueva_contrasena": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": { "200": { "description": "Contraseña actualizada" } }
+      }
+    },
     "/usuarios": {
-      "get": {
-        "tags": ["Usuarios"],
-        "summary": "Listar usuarios",
-        "responses": {
-          "200": {
-            "description": "Lista de usuarios"
-          }
-        }
-      },
-      "post": {
-        "tags": ["Usuarios"],
-        "summary": "Crear usuario",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "nombre": { "type": "string" },
-                  "genero": { "type": "string" },
-                  "frm": { "type": "string" },
-                  "numdoc": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Usuario creado"
-          }
-        }
-      }
+      "get": { "tags": ["Usuarios"], "summary": "Listar usuarios" },
+      "post": { "tags": ["Usuarios"], "summary": "Crear usuario" }
     },
-
     "/usuarios/{id}": {
-      "get": {
-        "tags": ["Usuarios"],
-        "summary": "Obtener usuario por ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Usuario encontrado"
-          },
-          "404": {
-            "description": "Usuario no encontrado"
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Usuarios"],
-        "summary": "Actualizar usuario",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "nombre": { "type": "string" },
-                  "genero": { "type": "string" },
-                  "frm": { "type": "string" },
-                  "numdoc": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Usuario actualizado"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Usuarios"],
-        "summary": "Eliminar usuario",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Usuario eliminado"
-          }
-        }
-      }
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Usuarios"], "summary": "Actualizar usuario" },
+      "delete": { "tags": ["Usuarios"], "summary": "Eliminar usuario" }
     },
-
-    "/eventos": {
-      "get": {
-        "tags": ["Eventos"],
-        "summary": "Listar eventos",
-        "responses": {
-          "200": {
-            "description": "Lista de eventos"
-          }
-        }
-      },
-      "post": {
-        "tags": ["Eventos"],
-        "summary": "Crear evento",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "nombre": { "type": "string" },
-                  "fecha": { "type": "string", "format": "date" },
-                  "lugar": { "type": "string" }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Evento creado"
-          }
-        }
-      }
+    "/clientes": {
+      "get": { "tags": ["Clientes"], "summary": "Listar clientes" },
+      "post": { "tags": ["Clientes"], "summary": "Crear cliente" }
     },
-
-    "/eventos/{id}": {
-      "get": {
-        "tags": ["Eventos"],
-        "summary": "Obtener evento por ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Evento encontrado"
-          },
-          "404": {
-            "description": "Evento no encontrado"
-          }
-        }
-      },
-      "patch": {
-        "tags": ["Eventos"],
-        "summary": "Actualizar evento",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Evento actualizado"
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Eventos"],
-        "summary": "Eliminar evento",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Evento eliminado"
-          }
-        }
+    "/clientes/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Clientes"], "summary": "Actualizar cliente" },
+      "delete": { "tags": ["Clientes"], "summary": "Eliminar cliente" }
+    },
+    "/proveedores": {
+      "get": { "tags": ["Proveedores"], "summary": "Listar proveedores" },
+      "post": { "tags": ["Proveedores"], "summary": "Crear proveedor" }
+    },
+    "/proveedores/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Proveedores"], "summary": "Actualizar proveedor" },
+      "delete": { "tags": ["Proveedores"], "summary": "Eliminar proveedor" }
+    },
+    "/productos": {
+      "get": { "tags": ["Productos"], "summary": "Listar productos" },
+      "post": { "tags": ["Productos"], "summary": "Crear producto" }
+    },
+    "/productos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Productos"], "summary": "Actualizar producto" },
+      "delete": { "tags": ["Productos"], "summary": "Eliminar producto" }
+    },
+    "/insumos": {
+      "get": { "tags": ["Insumos"], "summary": "Listar insumos" },
+      "post": { "tags": ["Insumos"], "summary": "Crear insumo" }
+    },
+    "/insumos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Insumos"], "summary": "Actualizar insumo" },
+      "delete": { "tags": ["Insumos"], "summary": "Eliminar insumo" }
+    },
+    "/ventas": {
+      "get": { "tags": ["Ventas"], "summary": "Listar ventas" },
+      "post": { "tags": ["Ventas"], "summary": "Crear venta" }
+    },
+    "/ventas/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Ventas"], "summary": "Actualizar venta" },
+      "delete": { "tags": ["Ventas"], "summary": "Eliminar venta" }
+    },
+    "/ventas-productos": {
+      "get": { "tags": ["Ventas"], "summary": "Listar detalle de ventas" },
+      "post": { "tags": ["Ventas"], "summary": "Agregar producto a venta" }
+    },
+    "/cotizaciones": {
+      "get": { "tags": ["Cotizaciones"], "summary": "Listar cotizaciones" },
+      "post": { "tags": ["Cotizaciones"], "summary": "Crear cotización" }
+    },
+    "/cotizaciones/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "put": { "tags": ["Cotizaciones"], "summary": "Actualizar cotización" },
+      "delete": { "tags": ["Cotizaciones"], "summary": "Eliminar cotización" }
+    },
+    "/detalle-cotizacion": {
+      "get": { "tags": ["Detalle Cotización"], "summary": "Listar detalles de cotización" },
+      "post": { "tags": ["Detalle Cotización"], "summary": "Agregar producto a cotización" }
+    },
+    "/recuperacion-contrasena": {
+      "get": { "tags": ["Recuperación"], "summary": "Listar recuperaciones" },
+      "post": { "tags": ["Recuperación"], "summary": "Registrar recuperación" }
+    },
+    "/bitacora-auditoria": {
+      "get": { "tags": ["Bitácora"], "summary": "Listar bitácora" },
+      "post": { "tags": ["Bitácora"], "summary": "Registrar evento" }
+    },
+    "/documentacion": {
+      "get": { "tags": ["Documentación"], "summary": "Swagger UI" }
+    }
+  },
+  "components": {
+    "parameters": {
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer" }
       }
     }
-
   }
 }

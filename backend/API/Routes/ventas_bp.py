@@ -10,15 +10,15 @@ def listVentas():
 
 @ventas_bp.route('/', methods=['POST'])
 def createVentas():
-    x = cntAddVentas
+    x = cntAddVentas()
     return x
 
-@ventas_bp.route('/', methods=['PUT'])
-def updateVentas():
-    x = cntModVentas
+@ventas_bp.route('/<id>', methods=['PUT'])
+def updateVentas(id):
+    x = cntModVentas(id)
     return x
 
-@ventas_bp.route('/', methods=['DELETE'])
-def deleteVentas():
-    x = cntDelVentas
+@ventas_bp.route('/<id>', methods=['DELETE'])
+def deleteVentas(id):
+    x = cntDelVentas(id)
     return x

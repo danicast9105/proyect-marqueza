@@ -1,24 +1,26 @@
 from flask import jsonify, request
+
 from Services.cliente_services import cliente_services
 
+
 class cliente_controller:
+    @staticmethod
     def cntListCliente():
-        data = cliente_services.servListCliente()
-        return jsonify(data), 200
+        return jsonify(cliente_services.servListCliente()), 200
 
+    @staticmethod
     def cntAddCliente():
-        persona_id = request.json["persona_id"]
+        data = request.get_json(silent=True) or {}
+        payload, status = cliente_services.addCliente(data)
+        return jsonify(payload), status
 
-        data = cliente_services.addCliente(persona_id)
-        return jsonify(data), 200
-
+    @staticmethod
     def cntDelCliente(id):
-        data = cliente_services.deleteCliente(id)
-        return jsonify(data), 200
+        payload, status = cliente_services.deleteCliente(id)
+        return jsonify(payload), status
 
+    @staticmethod
     def cntModCliente(id):
-        persona_id = request.json["persona_id"]
-
-        data = cliente_services.updateCliente(id, persona_id)
-        return jsonify(data), 200
-
+        data = request.get_json(silent=True) or {}
+        payload, status = cliente_services.updateCliente(id, data)
+        return jsonify(payload), status
