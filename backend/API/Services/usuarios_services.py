@@ -10,21 +10,21 @@ def ensure_admin_user():
     rol_id = resolve_rol("Administrador")
     if rol_id is None:
         grupo_id = scalar(
-            "SELECT ETC_ID FROM t_estado_tipos_categorias WHERE ETC_NOMBRE = %s LIMIT 1",
+            "SELECT ETC_ID FROM T_ESTADO_TIPOS_CATEGORIAS WHERE ETC_NOMBRE = %s LIMIT 1",
             ("ROLES_USUARIO",),
         )
         if grupo_id is None:
             grupo_id = execute(
-                "INSERT INTO t_estado_tipos_categorias (ETC_UUID, ETC_NOMBRE, ETC_DESCRIPCION) VALUES (%s, %s, %s)",
+                "INSERT INTO T_ESTADO_TIPOS_CATEGORIAS (ETC_UUID, ETC_NOMBRE, ETC_DESCRIPCION) VALUES (%s, %s, %s)",
                 (new_uuid(), "ROLES_USUARIO", "Roles de acceso y permisos para el personal"),
             )
         rol_id = execute(
-            "INSERT INTO t_detalles_etc (DET_ETC_UUID, DET_ETC_NOMBRE, DET_ETC_ETC_ID) VALUES (%s, %s, %s)",
+            "INSERT INTO T_DETALLES_ETC (DET_ETC_UUID, DET_ETC_NOMBRE, DET_ETC_ETC_ID) VALUES (%s, %s, %s)",
             (new_uuid(), "Administrador", grupo_id),
         )
 
     admins = query(
-        "SELECT USUA_ID, USUA_CONTRASENA FROM t_usuarios WHERE USUA_NOMBRE = %s OR USUA_CORREO = %s",
+        "SELECT USUA_ID, USUA_CONTRASENA FROM T_USUARIOS WHERE USUA_NOMBRE = %s OR USUA_CORREO = %s",
         (ADMIN_NOMBRE, ADMIN_CORREO),
     )
     if len(admins) > 1:
@@ -35,14 +35,14 @@ def ensure_admin_user():
         if verify_password(admin["USUA_CONTRASENA"], "1234"):
             password_hash = hash_password(ADMIN_CONTRASENA)
             execute(
-                """UPDATE t_usuarios SET USUA_NOMBRE = %s, USUA_CORREO = %s,
+                """UPDATE T_USUARIOS SET USUA_NOMBRE = %s, USUA_CORREO = %s,
                    USUA_CONTRASENA = %s, USUA_ESTADO = 'Activo', USUA_DET_ETC_ID = %s
                    WHERE USUA_ID = %s""",
                 (ADMIN_NOMBRE, ADMIN_CORREO, password_hash, rol_id, admin["USUA_ID"]),
             )
         else:
             execute(
-                """UPDATE t_usuarios SET USUA_NOMBRE = %s, USUA_CORREO = %s,
+                """UPDATE T_USUARIOS SET USUA_NOMBRE = %s, USUA_CORREO = %s,
                    USUA_ESTADO = 'Activo', USUA_DET_ETC_ID = %s WHERE USUA_ID = %s""",
                 (ADMIN_NOMBRE, ADMIN_CORREO, rol_id, admin["USUA_ID"]),
             )
@@ -50,7 +50,7 @@ def ensure_admin_user():
 
     password_hash = hash_password(ADMIN_CONTRASENA)
     return execute(
-        """INSERT INTO t_usuarios
+        """INSERT INTO T_USUARIOS
            (USUA_UUID, USUA_NOMBRE, USUA_CORREO, USUA_CONTRASENA, USUA_ESTADO, USUA_DET_ETC_ID)
            VALUES (%s, %s, %s, %s, 'Activo', %s)""",
         (new_uuid(), ADMIN_NOMBRE, ADMIN_CORREO, password_hash, rol_id),
@@ -59,21 +59,24 @@ def ensure_admin_user():
 
 def _is_protected_admin(user_id):
     return bool(query(
-        """SELECT USUA_ID FROM t_usuarios WHERE USUA_ID = %s
+        """SELECT USUA_ID FROM T_USUARIOS WHERE USUA_ID = %s
            AND (USUA_NOMBRE = %s OR USUA_CORREO = %s)""",
         (user_id, ADMIN_NOMBRE, ADMIN_CORREO),
     ))
 
 
-def servListUsuarios():
+def servListUsuarios(id=None):
     rows = query(
         """SELECT u.USUA_ID AS id, u.USUA_UUID AS uuid, u.USUA_NOMBRE AS nombre,
                   u.USUA_CORREO AS correo, d.DET_ETC_NOMBRE AS rol,
                   u.USUA_DET_ETC_ID AS rol_id, u.USUA_ESTADO AS estado,
                   u.USUA_ULTIMO_ACCESO AS ultimo_acceso
-           FROM t_usuarios u
-           JOIN t_detalles_etc d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
+           FROM T_USUARIOS u
+           JOIN T_DETALLES_ETC d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
+           {where}
            ORDER BY u.USUA_ID"""
+        .format(where="WHERE u.USUA_ID = %s" if id is not None else ""),
+        (id,) if id is not None else (),
     )
     return rows
 
@@ -95,17 +98,35 @@ def _payload(data):
     return nombre, correo, rol_nombre, contrasena, estado, rol_id
 
 
+def _validate_usuario(data):
+    if data.get("estado") not in (None, "", "Activo", "Inactivo"):
+        return {"mensaje": "El estado del usuario no es valido"}, 400
+    rol_nombre = clean(data.get("rol"), "Empleado")
+    rol_id = resolve_rol(rol_nombre)
+    if rol_id is None:
+        try:
+            rol_id = int(rol_nombre)
+        except (TypeError, ValueError):
+            return {"mensaje": "El rol indicado no existe"}, 400
+    if not query("SELECT DET_ETC_ID FROM T_DETALLES_ETC WHERE DET_ETC_ID = %s", (rol_id,)):
+        return {"mensaje": "El rol indicado no existe"}, 400
+    return None
+
+
 def addUsuarios(data):
+    error = _validate_usuario(data)
+    if error:
+        return error
     nombre, correo, rol_nombre, contrasena, estado, rol_id = _payload(data)
     if not nombre or not correo:
         return {"mensaje": "El nombre y el correo son obligatorios"}, 400
     if not contrasena:
         return {"mensaje": "La contrasena es obligatoria"}, 400
-    if query("SELECT USUA_ID FROM t_usuarios WHERE USUA_CORREO = %s OR USUA_NOMBRE = %s", (correo, nombre)):
+    if query("SELECT USUA_ID FROM T_USUARIOS WHERE USUA_CORREO = %s OR USUA_NOMBRE = %s", (correo, nombre)):
         return {"mensaje": "Ya existe un usuario con ese nombre o correo"}, 409
 
     usua_id = execute(
-        """INSERT INTO t_usuarios
+        """INSERT INTO T_USUARIOS
            (USUA_UUID, USUA_NOMBRE, USUA_CORREO, USUA_CONTRASENA, USUA_ESTADO, USUA_DET_ETC_ID)
            VALUES (%s, %s, %s, %s, %s, %s)""",
         (new_uuid(), nombre, correo, hash_password(contrasena), estado, rol_id),
@@ -114,28 +135,31 @@ def addUsuarios(data):
 
 
 def updateUsuarios(id, data):
-    if not query("SELECT USUA_ID FROM t_usuarios WHERE USUA_ID = %s", (id,)):
+    if not query("SELECT USUA_ID FROM T_USUARIOS WHERE USUA_ID = %s", (id,)):
         return {"mensaje": "Usuario no encontrado"}, 404
     if _is_protected_admin(id):
         return {"mensaje": "La cuenta principal de Administrador está protegida"}, 409
 
+    error = _validate_usuario(data)
+    if error:
+        return error
     nombre, correo, rol_nombre, contrasena, estado, rol_id = _payload(data)
     if not nombre or not correo:
         return {"mensaje": "El nombre y el correo son obligatorios"}, 400
-    if query("SELECT USUA_ID FROM t_usuarios WHERE (USUA_CORREO = %s OR USUA_NOMBRE = %s) AND USUA_ID <> %s",
+    if query("SELECT USUA_ID FROM T_USUARIOS WHERE (USUA_CORREO = %s OR USUA_NOMBRE = %s) AND USUA_ID <> %s",
              (correo, nombre, id)):
         return {"mensaje": "Ya existe otro usuario con ese nombre o correo"}, 409
 
     if contrasena:
         execute(
-            """UPDATE t_usuarios SET USUA_NOMBRE = %s, USUA_CORREO = %s, USUA_CONTRASENA = %s,
+            """UPDATE T_USUARIOS SET USUA_NOMBRE = %s, USUA_CORREO = %s, USUA_CONTRASENA = %s,
                USUA_ESTADO = %s, USUA_DET_ETC_ID = %s
                WHERE USUA_ID = %s""",
             (nombre, correo, hash_password(contrasena), estado, rol_id, id),
         )
     else:
         execute(
-            """UPDATE t_usuarios SET USUA_NOMBRE = %s, USUA_CORREO = %s, USUA_ESTADO = %s,
+            """UPDATE T_USUARIOS SET USUA_NOMBRE = %s, USUA_CORREO = %s, USUA_ESTADO = %s,
                USUA_DET_ETC_ID = %s
                WHERE USUA_ID = %s""",
             (nombre, correo, estado, rol_id, id),
@@ -144,12 +168,12 @@ def updateUsuarios(id, data):
 
 
 def deleteUsuarios(id):
-    if not query("SELECT USUA_ID FROM t_usuarios WHERE USUA_ID = %s", (id,)):
+    if not query("SELECT USUA_ID FROM T_USUARIOS WHERE USUA_ID = %s", (id,)):
         return {"mensaje": "Usuario no encontrado"}, 404
     if _is_protected_admin(id):
         return {"mensaje": "La cuenta principal de Administrador no se puede eliminar"}, 409
     try:
-        execute("DELETE FROM t_usuarios WHERE USUA_ID = %s", (id,))
+        execute("DELETE FROM T_USUARIOS WHERE USUA_ID = %s", (id,))
     except Exception:
         return {"mensaje": "No se puede eliminar: el usuario tiene ventas o cotizaciones asociadas"}, 409
     return {"mensaje": "Usuario eliminado correctamente"}, 200
@@ -161,8 +185,8 @@ def buscar_usuario(identificador):
         """SELECT u.USUA_ID AS id, u.USUA_NOMBRE AS nombre, u.USUA_CORREO AS correo,
                   u.USUA_CONTRASENA AS contrasena, u.USUA_ESTADO AS estado,
                   u.USUA_DET_ETC_ID AS rol_id, d.DET_ETC_NOMBRE AS rol
-           FROM t_usuarios u
-           JOIN t_detalles_etc d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
+           FROM T_USUARIOS u
+           JOIN T_DETALLES_ETC d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
            WHERE u.USUA_CORREO = %s OR u.USUA_NOMBRE = %s
            LIMIT 1""",
         (identificador, identificador),
@@ -170,13 +194,13 @@ def buscar_usuario(identificador):
 
 
 def marcar_ultimo_acceso(user_id):
-    execute("UPDATE t_usuarios SET USUA_ULTIMO_ACCESO = NOW() WHERE USUA_ID = %s", (user_id,))
+    execute("UPDATE T_USUARIOS SET USUA_ULTIMO_ACCESO = NOW() WHERE USUA_ID = %s", (user_id,))
 
 
 def obtener_rol(user_id):
     return scalar(
-        """SELECT d.DET_ETC_NOMBRE FROM t_usuarios u
-           JOIN t_detalles_etc d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
+        """SELECT d.DET_ETC_NOMBRE FROM T_USUARIOS u
+           JOIN T_DETALLES_ETC d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
            WHERE u.USUA_ID = %s""",
         (user_id,),
     )

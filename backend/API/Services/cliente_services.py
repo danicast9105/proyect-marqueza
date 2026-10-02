@@ -4,11 +4,14 @@ from Services.helpers import (clean, execute, new_uuid, query, scalar,
 
 class cliente_services:
     @staticmethod
-    def servListCliente():
+    def servListCliente(id=None):
         rows = query(
             """SELECT id, nombre, documento, telefono, correo, direccion, estado
-               FROM v_clientes_completo
+               FROM V_CLIENTES_COMPLETO
+               {where}
                ORDER BY nombre"""
+            .format(where="WHERE id = %s" if id is not None else ""),
+            (id,) if id is not None else (),
         )
         return serialize_rows(rows)
 
@@ -29,7 +32,7 @@ class cliente_services:
             return {"mensaje": "El nombre es obligatorio"}, 400
 
         existente = scalar(
-            "SELECT id FROM v_clientes_completo WHERE documento = %s LIMIT 1",
+            "SELECT id FROM V_CLIENTES_COMPLETO WHERE documento = %s LIMIT 1",
             (documento,),
         )
         if existente and documento:
@@ -39,10 +42,10 @@ class cliente_services:
 
         per_id = None
         if documento:
-            per_id = scalar("SELECT PER_ID FROM t_persona WHERE PER_IDENTIFICACION = %s LIMIT 1", (documento,))
+            per_id = scalar("SELECT PER_ID FROM T_PERSONA WHERE PER_IDENTIFICACION = %s LIMIT 1", (documento,))
         if per_id is None:
             per_id = execute(
-                """INSERT INTO t_persona
+                """INSERT INTO T_PERSONA
                    (PER_UUID, PER_NOMBRE, PER_SEG_NOMBRE, PER_PRI_APELLIDO, PER_SEG_APELLIDO,
                     PER_CORREO, PER_DIRECCION, PER_IDENTIFICACION, PER_TELEFONO)
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -51,14 +54,14 @@ class cliente_services:
             )
         else:
             execute(
-                """UPDATE t_persona SET PER_NOMBRE = %s, PER_PRI_APELLIDO = %s,
+                """UPDATE T_PERSONA SET PER_NOMBRE = %s, PER_PRI_APELLIDO = %s,
                    PER_TELEFONO = %s, PER_CORREO = %s, PER_DIRECCION = %s
                    WHERE PER_ID = %s""",
                 (base_nombre, resto, telefono, correo, direccion, per_id),
             )
 
         cli_id = execute(
-            "INSERT INTO t_cliente (CLI_UUID, CLI_PER_ID) VALUES (%s, %s)",
+            "INSERT INTO T_CLIENTE (CLI_UUID, CLI_PER_ID) VALUES (%s, %s)",
             (new_uuid(), per_id),
         )
         return {"mensaje": "Cliente agregado correctamente", "id": cli_id}, 201
@@ -71,10 +74,13 @@ class cliente_services:
         correo = clean(data.get("correo"), "")
         direccion = clean(data.get("direccion"), "")
 
+        if not nombre:
+            return {"mensaje": "El nombre es obligatorio"}, 400
+
         fila = query(
             """SELECT c.CLI_ID, c.CLI_PER_ID, p.PER_IDENTIFICACION
-               FROM t_cliente c
-               JOIN t_persona p ON p.PER_ID = c.CLI_PER_ID
+               FROM T_CLIENTE c
+               JOIN T_PERSONA p ON p.PER_ID = c.CLI_PER_ID
                WHERE c.CLI_ID = %s""",
             (id,),
         )
@@ -86,7 +92,7 @@ class cliente_services:
         base_nombre, resto = cliente_services._split_nombre(nombre or "")
         try:
             execute(
-                """UPDATE t_persona SET PER_NOMBRE = %s, PER_PRI_APELLIDO = %s,
+                """UPDATE T_PERSONA SET PER_NOMBRE = %s, PER_PRI_APELLIDO = %s,
                    PER_IDENTIFICACION = %s, PER_TELEFONO = %s, PER_CORREO = %s, PER_DIRECCION = %s
                    WHERE PER_ID = %s""",
                 (base_nombre, resto, identificacion, telefono, correo, direccion, per_id),
@@ -97,11 +103,11 @@ class cliente_services:
 
     @staticmethod
     def deleteCliente(id):
-        existente = query("SELECT CLI_ID FROM t_cliente WHERE CLI_ID = %s", (id,))
+        existente = query("SELECT CLI_ID FROM T_CLIENTE WHERE CLI_ID = %s", (id,))
         if not existente:
             return {"mensaje": "Cliente no encontrado"}, 404
         try:
-            execute("DELETE FROM t_cliente WHERE CLI_ID = %s", (id,))
+            execute("DELETE FROM T_CLIENTE WHERE CLI_ID = %s", (id,))
         except Exception:
             return {"mensaje": "No se puede eliminar: el cliente tiene ventas o cotizaciones asociadas"}, 409
         return {"mensaje": "Cliente eliminado correctamente"}, 200

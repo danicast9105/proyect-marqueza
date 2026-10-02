@@ -19,14 +19,19 @@ class documentacion_services:
         return documentacion_services.TABLA_EXISTE
 
     @staticmethod
-    def servListDocumentacion():
+    def servListDocumentacion(id=None):
         if not documentacion_services._tabla_disponible():
             return []
         rows = query(
             """SELECT DOC_ID AS id, DOC_UUID AS uuid, DOC_TIPO AS tipo,
                       DOC_TITULO AS titulo, DOC_DESCRIPCION AS descripcion,
                       DOC_RUTA AS ruta, DOC_ACTIVO AS activo
-               FROM T_DOCUMENTACION ORDER BY DOC_ID DESC"""
+               FROM T_DOCUMENTACION
+               {where}
+               ORDER BY DOC_ID DESC""".format(
+                where="WHERE DOC_ID = %s" if id is not None else ""
+            ),
+            (id,) if id is not None else (),
         )
         return serialize_rows(rows)
 
@@ -34,6 +39,10 @@ class documentacion_services:
     def addDocumentacion(tipo, titulo, descripcion, ruta, activo=True):
         if not documentacion_services._tabla_disponible():
             return {"mensaje": "El modulo de documentacion no esta disponible"}, 503
+        if not all(isinstance(value, str) and value.strip() for value in (tipo, titulo, ruta)):
+            return {"mensaje": "Los campos tipo, titulo y ruta son obligatorios"}, 400
+        if not isinstance(activo, bool):
+            return {"mensaje": "El campo activo debe ser booleano"}, 400
         execute_sql = (
             "INSERT INTO T_DOCUMENTACION "
             "(DOC_UUID, DOC_TIPO, DOC_TITULO, DOC_DESCRIPCION, DOC_RUTA, DOC_ACTIVO) "
@@ -47,6 +56,8 @@ class documentacion_services:
     def deleteDocumentacion(id):
         if not documentacion_services._tabla_disponible():
             return {"mensaje": "El modulo de documentacion no esta disponible"}, 503
+        if not query("SELECT DOC_ID FROM T_DOCUMENTACION WHERE DOC_ID = %s", (id,)):
+            return {"mensaje": "Documentacion no encontrada"}, 404
         from Services.helpers import execute
         execute("DELETE FROM T_DOCUMENTACION WHERE DOC_ID = %s", (id,))
         return {"mensaje": "Documentacion eliminada correctamente"}, 200
@@ -55,6 +66,12 @@ class documentacion_services:
     def updateDocumentacion(id, tipo, titulo, descripcion, ruta, activo):
         if not documentacion_services._tabla_disponible():
             return {"mensaje": "El modulo de documentacion no esta disponible"}, 503
+        if not query("SELECT DOC_ID FROM T_DOCUMENTACION WHERE DOC_ID = %s", (id,)):
+            return {"mensaje": "Documentacion no encontrada"}, 404
+        if not all(isinstance(value, str) and value.strip() for value in (tipo, titulo, ruta)):
+            return {"mensaje": "Los campos tipo, titulo y ruta son obligatorios"}, 400
+        if not isinstance(activo, bool):
+            return {"mensaje": "El campo activo debe ser booleano"}, 400
         from Services.helpers import execute
         execute(
             "UPDATE T_DOCUMENTACION SET DOC_TIPO=%s, DOC_TITULO=%s, DOC_DESCRIPCION=%s, "

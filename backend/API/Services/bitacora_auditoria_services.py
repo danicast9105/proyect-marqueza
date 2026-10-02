@@ -27,15 +27,18 @@ def _pick(data, key):
 
 class bitacora_auditoria_services:
     @staticmethod
-    def servListBitacora():
+    def servListBitacora(id=None):
         rows = query(
             """SELECT AUD_FECHA_HORA AS timestamp, AUD_FECHA_HORA AS fecha_hora,
                       AUD_ACTOR AS actor, AUD_CORREO AS email, AUD_ROL AS role,
                       AUD_ACCION AS action, AUD_MODULO AS module, AUD_ENTIDAD AS entity,
                       AUD_DETALLE AS detail, AUD_RESULTADO AS outcome, AUD_ID AS id
-               FROM t_bitacora_auditoria
+               FROM T_BITACORA_AUDITORIA
+               {where}
                ORDER BY AUD_FECHA_HORA DESC, AUD_ID DESC
                LIMIT 1000"""
+            .format(where="WHERE AUD_ID = %s" if id is not None else ""),
+            (id,) if id is not None else (),
         )
         return serialize_rows(rows)
 
@@ -53,7 +56,7 @@ class bitacora_auditoria_services:
             outcome = "success"
 
         execute(
-            """INSERT INTO t_bitacora_auditoria
+            """INSERT INTO T_BITACORA_AUDITORIA
                (AUD_UUID, AUD_ACTOR, AUD_CORREO, AUD_ROL, AUD_ACCION, AUD_MODULO,
                 AUD_ENTIDAD, AUD_DETALLE, AUD_RESULTADO)
                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -64,19 +67,26 @@ class bitacora_auditoria_services:
 
     @staticmethod
     def deleteBitacoraAuditoria(id):
-        execute("DELETE FROM t_bitacora_auditoria WHERE AUD_ID = %s", (id,))
+        if not query("SELECT AUD_ID FROM T_BITACORA_AUDITORIA WHERE AUD_ID = %s", (id,)):
+            return {"mensaje": "Registro de bitacora no encontrado"}, 404
+        execute("DELETE FROM T_BITACORA_AUDITORIA WHERE AUD_ID = %s", (id,))
         return {"mensaje": "Bitacora eliminada correctamente"}, 200
 
     @staticmethod
     def updateBitacoraAuditoria(id, data):
+        if not query("SELECT AUD_ID FROM T_BITACORA_AUDITORIA WHERE AUD_ID = %s", (id,)):
+            return {"mensaje": "Registro de bitacora no encontrado"}, 404
+        outcome = clean(_pick(data, "outcome"), "success")
+        if outcome not in _OUTCOMES:
+            return {"mensaje": "El resultado indicado no es valido"}, 400
         execute(
-            """UPDATE t_bitacora_auditoria SET AUD_ACTOR = %s, AUD_CORREO = %s, AUD_ROL = %s,
+            """UPDATE T_BITACORA_AUDITORIA SET AUD_ACTOR = %s, AUD_CORREO = %s, AUD_ROL = %s,
                AUD_ACCION = %s, AUD_MODULO = %s, AUD_ENTIDAD = %s, AUD_DETALLE = %s,
                AUD_RESULTADO = %s
                WHERE AUD_ID = %s""",
             (clean(_pick(data, "actor"), "Sin identificar"), clean(_pick(data, "email")) or None,
              clean(_pick(data, "role")) or None, clean(_pick(data, "action")) or "Actividad",
              clean(_pick(data, "module"), "Sistema"), clean(_pick(data, "entity")) or None,
-             clean(_pick(data, "detail")) or None, clean(_pick(data, "outcome"), "success"), id),
+             clean(_pick(data, "detail")) or None, outcome, id),
         )
         return {"mensaje": "Bitacora actualizada correctamente"}, 200

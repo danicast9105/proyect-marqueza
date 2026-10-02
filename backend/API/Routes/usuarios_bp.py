@@ -1,24 +1,24 @@
 from flask import Blueprint, jsonify
-from Controllers.usuarios_controller import cntListUsuarios, cntAddUsuarios, cntDelUsuarios, cntModUsuarios
+from Controllers.usuarios_controller import usuarios_controller
 
 usuarios_bp = Blueprint('usuarios_bp', __name__)
 
 @usuarios_bp.route('/', methods=['GET'])
 def listUsuarios():
-    x = cntListUsuarios()
+    x = usuarios_controller.cntListUsuarios()
     return x
 
 @usuarios_bp.route('/', methods=['POST'])
 def createUsuarios():
-    x = cntAddUsuarios()
+    x = usuarios_controller.cntAddUsuarios()
     return x
 
 @usuarios_bp.route('/<id>', methods=['PUT'])
 def updateUsuarios(id):
-    x = cntModUsuarios(id)
+    x = usuarios_controller.cntModUsuarios(id)
     return x
 
 @usuarios_bp.route('/<id>', methods=['DELETE'])
 def deleteUsuarios(id):
-    x = cntDelUsuarios(id)
+    x = usuarios_controller.cntDelUsuarios(id)
     return x

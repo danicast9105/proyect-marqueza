@@ -1,21 +1,41 @@
 from flask import jsonify, request
 
 from Services.detalle_cotizacion_services import detalle_cotizacion_services
+from Controllers.response_helpers import (
+    controller_response, request_id, request_object,
+)
 
 
 class detalle_cotizacion_controller:
-    @staticmethod
     def cntListDetalleCotizacion():
-        return jsonify(detalle_cotizacion_services.servListDetalleCotizacion()), 200
+        id = request.args.get("id") or None
+        if id is not None:
+            id = request_id(id)
+            if id is None:
+                return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        return jsonify(detalle_cotizacion_services.servListDetalleCotizacion(id)), 200
 
-    @staticmethod
     def cntAddDetalleCotizacion():
-        return jsonify(detalle_cotizacion_services.addDetalleCotizacion()), 201
+        data, error = request_object()
+        if error:
+            return error
+        return controller_response(
+            detalle_cotizacion_services.addDetalleCotizacion(data), 201
+        )
 
-    @staticmethod
     def cntDelDetalleCotizacion(id):
-        return jsonify(detalle_cotizacion_services.deleteDetalleCotizacion(id)), 200
+        id = request_id(id)
+        if id is None:
+            return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        return controller_response(detalle_cotizacion_services.deleteDetalleCotizacion(id))
 
-    @staticmethod
     def cntModDetalleCotizacion(id):
-        return jsonify(detalle_cotizacion_services.updateDetalleCotizacion(id)), 200
+        id = request_id(id)
+        if id is None:
+            return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        data, error = request_object()
+        if error:
+            return error
+        return controller_response(
+            detalle_cotizacion_services.updateDetalleCotizacion(id, data)
+        )

@@ -4,24 +4,38 @@ from Services.cotizaciones_services import (addCotizaciones,
                                             deleteCotizaciones,
                                             servListCotizaciones,
                                             updateCotizaciones)
+from Controllers.response_helpers import request_id, request_object
 
 
 class cotizaciones_controller:
-    @staticmethod
     def cntListCotizaciones():
-        return jsonify(servListCotizaciones()), 200
+        id = request.args.get("id") or None
+        if id is not None:
+            id = request_id(id)
+            if id is None:
+                return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        return jsonify(servListCotizaciones(id)), 200
 
-    @staticmethod
     def cntAddCotizaciones():
-        payload, status = addCotizaciones(request.get_json(silent=True) or {})
+        data, error = request_object()
+        if error:
+            return error
+        payload, status = addCotizaciones(data)
         return jsonify(payload), status
 
-    @staticmethod
     def cntDelCotizaciones(id):
+        id = request_id(id)
+        if id is None:
+            return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
         payload, status = deleteCotizaciones(id)
         return jsonify(payload), status
 
-    @staticmethod
     def cntModCotizaciones(id):
-        payload, status = updateCotizaciones(id, request.get_json(silent=True) or {})
+        id = request_id(id)
+        if id is None:
+            return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        data, error = request_object()
+        if error:
+            return error
+        payload, status = updateCotizaciones(id, data)
         return jsonify(payload), status

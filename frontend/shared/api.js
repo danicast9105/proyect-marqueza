@@ -2,7 +2,12 @@ const loginUrl = new URL("../inicio_sesion/inicio_sesion.html?motivo=servidor_de
 
 class MarquezaApi {
     static get baseUrl() {
-        const localApiUrl = `${window.location.protocol}//${window.location.hostname}:5000/api`;
+        const hostname = window.location.hostname;
+        const isDevTunnel = hostname.endsWith(".devtunnels.ms");
+        const apiHost = isDevTunnel
+            ? hostname.replace(/-(5500|5000)(?=\.)/, "-5000")
+            : `${hostname}:5000`;
+        const localApiUrl = `${window.location.protocol}//${apiHost}/api`;
         return (window.MARQUEZA_API_BASE_URL || localApiUrl).replace(/\/+$/, "");
         /* return (window.MARQUEZA_API_BASE_URL || "https://api-marqueza.zona52.lat/api").replace(/\/+$/, ""); */
     }

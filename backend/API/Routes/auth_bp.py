@@ -79,8 +79,8 @@ def login():
     usuarios = query(
         """SELECT u.USUA_ID, u.USUA_NOMBRE, u.USUA_CORREO, u.USUA_CONTRASENA,
                   u.USUA_ESTADO, u.USUA_DET_ETC_ID, d.DET_ETC_NOMBRE
-           FROM t_usuarios u
-           JOIN t_detalles_etc d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
+           FROM T_USUARIOS u
+           JOIN T_DETALLES_ETC d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
            WHERE u.USUA_CORREO = %s OR u.USUA_NOMBRE = %s
            LIMIT 1""",
         (identificador, identificador),

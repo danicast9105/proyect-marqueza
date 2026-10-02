@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, redirect, request, send_from_directory
 
 from config import Config
 from flask_mysqldb import MySQL
@@ -9,6 +9,7 @@ from Services.usuarios_services import ensure_admin_user
 
 app = Flask(__name__)
 app.config.from_object(Config)
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend"))
 
 mysql = MySQL(app)
 app.mysql = mysql
@@ -31,6 +32,16 @@ def handle_preflight():
 @app.errorhandler(404)
 def not_found(_error):
     return jsonify({"message": "Recurso no encontrado"}), 404
+
+
+@app.route("/")
+def frontend_index():
+    return redirect("/frontend/index.html")
+
+
+@app.route("/frontend/<path:filename>")
+def frontend_files(filename):
+    return send_from_directory(FRONTEND_DIR, filename)
 
 
 @app.errorhandler(405)

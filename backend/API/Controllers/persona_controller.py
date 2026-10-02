@@ -1,42 +1,59 @@
 from flask import jsonify, request
 from Services.persona_services import persona_services
+from Controllers.response_helpers import (
+    controller_response, request_id, request_object,
+)
 
 class persona_controller:
     def cntListPersona():
-        data = persona_services.servListPersona()
+        id = request.args.get("id") or None
+        if id is not None:
+            id = request_id(id)
+            if id is None:
+                return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        data = persona_services.servListPersona(id)
         return jsonify(data), 200
 
     def cntAddPersona():
-        data = request.get_json(silent=True)
+        data, error = request_object()
+        if error:
+            return error
 
-        nombre = data["nombre"]
-        seg_nombre = data["seg_nombre"]
-        pri_apellido = data["pri_apellido"]
-        seg_apellido = data["seg_apellido"]
-        correo = data["correo"]
-        direccion = data["direccion"]
-        identificacion = data["identificacion"]
-        telefono = data["telefono"]
+        nombre = data.get("nombre")
+        seg_nombre = data.get("seg_nombre")
+        pri_apellido = data.get("pri_apellido")
+        seg_apellido = data.get("seg_apellido")
+        correo = data.get("correo")
+        direccion = data.get("direccion")
+        identificacion = data.get("identificacion")
+        telefono = data.get("telefono")
 
         x = persona_services.addPersona(nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono)
-        return jsonify(x), 200
+        return controller_response(x)
 
     def cntDelPersona(id):
+        id = request_id(id)
+        if id is None:
+            return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
         data = persona_services.deletePersona(id)
-        return jsonify(data), 200
+        return controller_response(data)
 
     def cntModPersona(id):
-        data = request.get_json(silent=True)
+        id = request_id(id)
+        if id is None:
+            return jsonify({"mensaje": "El ID debe ser un entero positivo"}), 400
+        data, error = request_object()
+        if error:
+            return error
 
-        nombre = data["nombre"]
-        seg_nombre = data["seg_nombre"]
-        pri_apellido = data["pri_apellido"]
-        seg_apellido = data["seg_apellido"]
-        correo = data["correo"]
-        direccion = data["direccion"]
-        identificacion = data["identificacion"]
-        telefono = data["telefono"]
+        nombre = data.get("nombre")
+        seg_nombre = data.get("seg_nombre")
+        pri_apellido = data.get("pri_apellido")
+        seg_apellido = data.get("seg_apellido")
+        correo = data.get("correo")
+        direccion = data.get("direccion")
+        identificacion = data.get("identificacion")
+        telefono = data.get("telefono")
 
         x = persona_services.updatePersona(id, nombre, seg_nombre, pri_apellido, seg_apellido, correo, direccion, identificacion, telefono)
-        return jsonify(x), 200
-
+        return controller_response(x)
