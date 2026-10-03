@@ -4,12 +4,14 @@ class MarquezaApi {
     static get baseUrl() {
         const hostname = window.location.hostname;
         const isDevTunnel = hostname.endsWith(".devtunnels.ms");
+        const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
         const apiHost = isDevTunnel
-            ? hostname.replace(/-(5500|5000)(?=\.)/, "-5000")
-            : `${hostname}:5000`;
-        const localApiUrl = `${window.location.protocol}//${apiHost}/api`;
+            ? `${window.location.protocol}//${hostname.replace(/-(5500|5000)(?=\.)/, "-5000")}`
+            : isLocal
+                ? `${window.location.protocol}//${hostname}:5000`
+                : window.location.origin;
+        const localApiUrl = `${apiHost}/api`;
         return (window.MARQUEZA_API_BASE_URL || localApiUrl).replace(/\/+$/, "");
-        /* return (window.MARQUEZA_API_BASE_URL || "https://api-marqueza.zona52.lat/api").replace(/\/+$/, ""); */
     }
 
     static async request(path, options = {}) {
