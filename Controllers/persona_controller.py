@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.persona_services import persona_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class persona_controller:
     def cntListPersona():
@@ -15,9 +16,8 @@ class persona_controller:
     def cntAddPersona():
         data = request.get_json(silent=True)
 
-        # Validar que el json no esté vacío
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
         nombre = data.get("nombre")
         seg_nombre = data.get("seg_nombre")
@@ -29,18 +29,16 @@ class persona_controller:
         telefono = data.get("telefono")
 
         
-        campos_requeridos = {
-            "nombre": nombre,
-            "pri_apellido": pri_apellido,
-            "correo": correo,
-            "direccion": direccion,
-            "identificacion": identificacion,
-            "telefono": telefono
-        }
-        
-        for campo, valor in campos_requeridos.items():
-            if valor is None or (isinstance(valor, str) and not valor.strip()):
-                return jsonify({"error": f"El campo '{campo}' es obligatorio y no puede estar vacío"}), 400
+        campos_requeridos = (
+            "nombre", "pri_apellido", "correo", "direccion",
+            "identificacion", "telefono"
+        )
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
+            return jsonify({
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
+            }), 400
 
         # Función de ayuda para saber si una cadena tiene digitos
         def contiene_digitos(cadena):
@@ -87,8 +85,8 @@ class persona_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
     
         nombre = data.get("nombre")
@@ -157,4 +155,3 @@ class persona_controller:
             telefono
         )
         return jsonify(x), 200
-

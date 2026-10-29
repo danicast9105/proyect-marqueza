@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.contacto_services import contacto_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class contacto_controller:
 
@@ -16,16 +17,20 @@ class contacto_controller:
     def cntAddContacto():
         # Que la peticon no esté vacia
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        tipo_contacto = data.get("tipo_contacto")
-        contenido = data.get("contenido")
-        proveedor_id = data.get("proveedor_id")
+        campos_requeridos = ("tipo_contacto", "contenido", "proveedor_id")
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
+            return jsonify({
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
+            }), 400
 
-        # Validar campos obligatorios
-        if tipo_contacto is None or contenido is None or proveedor_id is None:
-            return jsonify({"error": "Los campos 'tipo_contacto', 'contenido' y 'proveedor_id' son obligatorios"}), 400
+        tipo_contacto = data["tipo_contacto"]
+        contenido = data["contenido"]
+        proveedor_id = data["proveedor_id"]
 
         if not isinstance(tipo_contacto, str) or not tipo_contacto.strip():
             return jsonify({"error": "El campo 'tipo_contacto' debe ser una cadena no vacía"}), 400
@@ -62,8 +67,8 @@ class contacto_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
         tipo_contacto = data.get("tipo_contacto")
         contenido = data.get("contenido")

@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.insumos_services import insumos_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class insumos_controller:
 
@@ -16,25 +17,28 @@ class insumos_controller:
     def cntAddInsumos():
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
-        
-        codigo = data.get("codigo")
-        nombre = data.get("nombre")
-        cantidad = data.get("cantidad")
-        precio = data.get("precio")
-        estado = data.get("estado")
-        usuario_id = data.get("usuario_id")
-        proveedor_id = data.get("proveedor_id")
-        etc_id = data.get("etc_id")
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        # Validar campos obligatorios
-        if (codigo is None or nombre is None or cantidad is None or
-            precio is None or estado is None or usuario_id is None or
-            proveedor_id is None or etc_id is None):
+        campos_requeridos = (
+            "codigo", "nombre", "cantidad", "precio", "estado",
+            "usuario_id", "proveedor_id", "etc_id"
+        )
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
             return jsonify({
-                "error": "Los campos 'codigo', 'nombre', 'cantidad', 'precio', 'estado', 'usuario_id', 'proveedor_id' y 'etc_id' son obligatorios"
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
             }), 400
+        
+        codigo = data["codigo"]
+        nombre = data["nombre"]
+        cantidad = data["cantidad"]
+        precio = data["precio"]
+        estado = data["estado"]
+        usuario_id = data["usuario_id"]
+        proveedor_id = data["proveedor_id"]
+        etc_id = data["etc_id"]
 
         # Validar codigo 
         if not isinstance(codigo, str) or not codigo.strip():
@@ -114,8 +118,8 @@ class insumos_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
         codigo = data.get("codigo")
         nombre = data.get("nombre")

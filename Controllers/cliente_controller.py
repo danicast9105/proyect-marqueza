@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.cliente_services import cliente_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class cliente_controller:
     def cntListCliente():
@@ -15,12 +16,18 @@ class cliente_controller:
     def cntAddCliente():
         # Validar que el cuerpo del json no esté vacio 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        persona_id = data.get("persona_id")
-        if persona_id is None:
-            return jsonify({"error": "El campo 'persona_id' es obligatorio"}), 400
+        campos_requeridos = ("persona_id",)
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
+            return jsonify({
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
+            }), 400
+
+        persona_id = data["persona_id"]
 
         # Validar que el id de persona sea num positivo
         try:
@@ -48,13 +55,17 @@ class cliente_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        # ID persona obligatorio
-        persona_id = data.get("persona_id")
-        if persona_id is None:
-            return jsonify({"error": "El campo 'persona_id' es obligatorio"}), 400
+        campos_faltantes = obtener_campos_faltantes(data, ("persona_id",))
+        if campos_faltantes:
+            return jsonify({
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
+            }), 400
+
+        persona_id = data["persona_id"]
 
         # ID persona debe ser numero positivo 
         try:
@@ -66,4 +77,3 @@ class cliente_controller:
 
         result = cliente_services.updateCliente(id, persona_id)
         return jsonify(result), 200
-

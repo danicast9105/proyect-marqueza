@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.detalles_etc_services import detalles_etc_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class detalles_etc_controller:
 
@@ -16,18 +17,20 @@ class detalles_etc_controller:
     def cntAddDetalles_etc():
     
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        det_etc_nombre = data.get("det_etc_nombre")
-        det_etc_etc_id = data.get("det_etc_etc_id")
-        det_etc_per_id = data.get("det_etc_per_id")
-
-        # Validar campos obligatorios
-        if det_etc_nombre is None or det_etc_etc_id is None or det_etc_per_id is None:
+        campos_requeridos = ("det_etc_nombre", "det_etc_etc_id", "det_etc_per_id")
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
             return jsonify({
-                "error": "Los campos 'det_etc_nombre', 'det_etc_etc_id' y 'det_etc_per_id' son obligatorios"
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
             }), 400
+
+        det_etc_nombre = data["det_etc_nombre"]
+        det_etc_etc_id = data["det_etc_etc_id"]
+        det_etc_per_id = data["det_etc_per_id"]
 
         # Validar det_etc_nombre: string no vacío, sin números, máx 45
         if not isinstance(det_etc_nombre, str) or not det_etc_nombre.strip():
@@ -74,8 +77,8 @@ class detalles_etc_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
         det_etc_nombre = data.get("det_etc_nombre")
         det_etc_etc_id = data.get("det_etc_etc_id")

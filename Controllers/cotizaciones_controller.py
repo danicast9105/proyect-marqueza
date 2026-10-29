@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.cotizaciones_services import cotizaciones_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class cotizaciones_controller:
 
@@ -15,23 +16,27 @@ class cotizaciones_controller:
 
     def cntAddCotizaciones():
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        pro_codigo = data.get("pro_codigo")
-        pro_nombre = data.get("pro_nombre")
-        pro_cantidad = data.get("pro_cantidad")
-        pro_precio = data.get("pro_precio")
-        total_pagar = data.get("total_pagar")
-        usuario_id = data.get("usuario_id")
-        cliente_id = data.get("cliente_id")
-
-        if (pro_codigo is None or pro_nombre is None or pro_cantidad is None or
-            pro_precio is None or total_pagar is None or usuario_id is None or
-            cliente_id is None):
+        campos_requeridos = (
+            "pro_codigo", "pro_nombre", "pro_cantidad", "pro_precio",
+            "total_pagar", "usuario_id", "cliente_id"
+        )
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
             return jsonify({
-                "error": "Los campos 'pro_codigo', 'pro_nombre', 'pro_cantidad', 'pro_precio', 'total_pagar', 'usuario_id' y 'cliente_id' son obligatorios"
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
             }), 400
+
+        pro_codigo = data["pro_codigo"]
+        pro_nombre = data["pro_nombre"]
+        pro_cantidad = data["pro_cantidad"]
+        pro_precio = data["pro_precio"]
+        total_pagar = data["total_pagar"]
+        usuario_id = data["usuario_id"]
+        cliente_id = data["cliente_id"]
 
         if not isinstance(pro_codigo, str) or not pro_codigo.strip():
             return jsonify({"error": "El campo 'pro_codigo' debe ser una cadena no vacía"}), 400
@@ -118,8 +123,8 @@ class cotizaciones_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
         pro_codigo = data.get("pro_codigo")
         pro_nombre = data.get("pro_nombre")

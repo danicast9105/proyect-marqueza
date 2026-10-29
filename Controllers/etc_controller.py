@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.etc_services import etc_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class etc_controller:
 
@@ -15,13 +16,17 @@ class etc_controller:
 
     def cntAddETC():
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
+
+        campos_faltantes = obtener_campos_faltantes(data, ("etc_nombre",))
+        if campos_faltantes:
+            return jsonify({
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
+            }), 400
 
         etc_nombre = data.get("etc_nombre")
-
-        if etc_nombre is None:
-            return jsonify({"error": "El campo 'etc_nombre' es obligatorio"}), 400
 
         # Validar tipo y contenido
         if not isinstance(etc_nombre, str) or not etc_nombre.strip():
@@ -59,13 +64,17 @@ class etc_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        etc_nombre = data.get("etc_nombre")
+        campos_faltantes = obtener_campos_faltantes(data, ("etc_nombre",))
+        if campos_faltantes:
+            return jsonify({
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
+            }), 400
 
-        if etc_nombre is None:
-            return jsonify({"error": "El campo 'etc_nombre' es obligatorio para actualizar"}), 400
+        etc_nombre = data["etc_nombre"]
 
         if not isinstance(etc_nombre, str) or not etc_nombre.strip():
             return jsonify({"error": "El campo 'etc_nombre' debe ser una cadena no vacía"}), 400

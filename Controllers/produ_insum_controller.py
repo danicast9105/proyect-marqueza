@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.produ_insum_services import produ_insum_services
+from Controllers.request_validation import obtener_campos_faltantes
 
 class produ_insum_controller:
 
@@ -16,18 +17,20 @@ class produ_insum_controller:
     def cntAddProduInsum():
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
-        cantidad = data.get("cantidad")
-        producto_id = data.get("producto_id")
-        insumo_id = data.get("insumo_id")
-
-        # Validar campos
-        if cantidad is None or producto_id is None or insumo_id is None:
+        campos_requeridos = ("cantidad", "producto_id", "insumo_id")
+        campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+        if campos_faltantes:
             return jsonify({
-                "error": "Los campos 'cantidad', 'producto_id' e 'insumo_id' son obligatorios"
+                "error": "Faltan campos obligatorios",
+                "campos_faltantes": campos_faltantes
             }), 400
+
+        cantidad = data["cantidad"]
+        producto_id = data["producto_id"]
+        insumo_id = data["insumo_id"]
 
         # Validar cantidad
         try:
@@ -69,8 +72,8 @@ class produ_insum_controller:
             return jsonify({"error": "El ID debe ser un entero positivo"}), 400
 
         data = request.get_json(silent=True)
-        if not data:
-            return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+        if not isinstance(data, dict):
+            return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
         # Obtener campos 
         cantidad = data.get("cantidad")

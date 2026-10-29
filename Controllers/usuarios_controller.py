@@ -1,5 +1,6 @@
 from flask import jsonify, request
 from Services.usuarios_services import servListUsuarios, getUsuarios, addUsuarios, deleteUsuarios, updateUsuarios
+from Controllers.request_validation import obtener_campos_faltantes
 
 def cntListUsuarios():
     data = servListUsuarios()
@@ -14,8 +15,16 @@ def cntGetUsuarios(id):
 def cntAddUsuarios():
     # Validar que el cuerpo de la petición exista o que no se mande vacia
     data = request.get_json(silent=True)
-    if not data:
-        return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+    if not isinstance(data, dict):
+        return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
+
+    campos_requeridos = ("nombre", "correo", "contrasena")
+    campos_faltantes = obtener_campos_faltantes(data, campos_requeridos)
+    if campos_faltantes:
+        return jsonify({
+            "error": "Faltan campos obligatorios",
+            "campos_faltantes": campos_faltantes
+        }), 400
 
     # Obtener campos
     nombre = data.get("nombre")
@@ -23,10 +32,6 @@ def cntAddUsuarios():
     contrasena = data.get("contrasena")
     estado = data.get("estado", "ACTIVO")     #Valor por defecto o predeterminada que está en la BD
     det_etc_id = data.get("det_etc_id")
-
-    # Validar campos obligatorios
-    if nombre is None or correo is None or contrasena is None:
-        return jsonify({"error": "Los campos 'nombre', 'correo' y 'contrasena' son obligatorios"}), 400
 
     # Validar que sean strings no vacíos
     if not isinstance(nombre, str) or not nombre.strip():
@@ -70,8 +75,8 @@ def cntDelUsuarios(id):
 def cntModUsuarios(id):
     # Validar que el cuerpo de la petición exista o que no se mande vacio o en blanco
     data = request.get_json(silent=True)
-    if not data:
-        return jsonify({"error": "El cuerpo de la petición es obligatorio"}), 400
+    if not isinstance(data, dict):
+        return jsonify({"error": "El cuerpo debe ser un objeto JSON"}), 400
 
     nombre = data.get("nombre")
     correo = data.get("correo")
@@ -124,4 +129,3 @@ def cntModUsuarios(id):
         det_etc_id
     )
     return jsonify(result), 200
-
