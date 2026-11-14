@@ -4,7 +4,7 @@ Aplicacion de gestion con frontend multipagina en `frontend/` y API Flask en `ba
 
 ## Ejecutar frontend y backend
 
-1. Importa `database_marqueza.sql` en MariaDB 10.11 o posterior. El script elimina y vuelve a crear las tablas de la aplicacion, asi que no lo ejecutes sobre datos que quieras conservar. Revisa las credenciales en `backend/API/.env` y confirma que MariaDB este iniciado.
+1. Importa `database_marqueza.sql` en MariaDB 10.11 o posterior. El script elimina y vuelve a crear las tablas de la aplicacion, asi que no lo ejecutes sobre datos que quieras conservar. Revisa las credenciales en `backend/API/.env`, configura `MARQUEZA_TOKEN_SECRET` con una clave aleatoria de al menos 32 caracteres y confirma que MariaDB este iniciado.
 2. En PowerShell, instala y ejecuta el backend:
 
 	```powershell
@@ -33,15 +33,17 @@ Si la API esta en otro host o puerto, define `window.MARQUEZA_API_BASE_URL` ante
 El repositorio incluye [compose.yaml](compose.yaml) y un [Dockerfile](Dockerfile) en la raiz. Compose despliega la aplicacion (frontend y API en el mismo dominio) y MariaDB con un volumen persistente. La base se inicializa desde `database_marqueza.sql` solo la primera vez que se crea el volumen.
 
 1. Sube los cambios a GitHub y crea en Dokploy un proyecto y una aplicacion de tipo **Docker Compose**, conectada a este repositorio. Usa la raiz del repositorio como directorio y `compose.yaml` como archivo Compose.
-2. En **Environment** de la aplicacion, define `MARIADB_ROOT_PASSWORD` y `MARIADB_PASSWORD` con contrasenas largas y unicas. Puedes usar `MARIADB_USER=marqueza_app`; no cambies `MARIADB_DATABASE` ni `MYSQL_DB`, ya que el esquema incluido crea `marqueza_db`. La plantilla de variables esta en [.env.dokploy.example](.env.dokploy.example); no subas credenciales reales al repositorio.
+2. En **Environment** de la aplicacion, define `MARIADB_ROOT_PASSWORD` y `MARIADB_PASSWORD` con contrasenas largas y unicas y `MARQUEZA_TOKEN_SECRET` con una clave aleatoria de al menos 32 caracteres. Puedes generar una con `python -c "import secrets; print(secrets.token_urlsafe(48))"` y guardarla como secreto en Dokploy; no la pongas en el frontend ni en Git. Puedes usar `MARIADB_USER=marqueza_app`; no cambies `MARIADB_DATABASE` ni `MYSQL_DB`, ya que el esquema incluido crea `marqueza_db`. No subas credenciales reales al repositorio.
 3. Guarda y despliega. Espera a que el servicio `db` este saludable y luego que termine el build de `app`. La base no publica ningun puerto a Internet y sus datos quedan en el volumen `marqueza_db_data`.
-4. En la configuracion de dominios de Dokploy, asigna tu dominio a `app` en el puerto interno `5000` y activa HTTPS. No hace falta crear otro contenedor NGINX: el proxy de Dokploy sirve el frontend y la API desde el mismo dominio.
-5. Abre `https://tu-dominio/`. Para verificar la API y MariaDB, abre `https://tu-dominio/api/health`; la respuesta esperada incluye `"status": "ok"` y `"database": "conectada"`.
-6. (Opcional) Para habilitar recuperacion de contrasena por correo, configura las variables `SMTP_*` de la plantilla y cambia `FRONTEND_RESET_URL` a `https://tu-dominio/frontend/olvido_contrasena/restablecer.html`. Para Gmail usa una contrasena de aplicacion. Si no configuras SMTP, esa funcion no enviara correos.
+4. En la configuracion de dominios de Dokploy, asigna el dominio del frontend al servicio `app` en el puerto interno `5000` y activa HTTPS. El frontend y la API se sirven desde el mismo dominio, por lo que las solicitudes usan `/api`. Opcionalmente, asigna un dominio adicional al mismo servicio para abrir Swagger desde su raiz; configura ese nombre en `API_DOCS_HOST`.
+5. Abre el dominio del frontend para usar la aplicacion. Para verificar la API y MariaDB, abre `https://<dominio-del-frontend>/api/health`; la respuesta esperada incluye `"status": "ok"` y `"database": "conectada"`.
+6. (Opcional) Para habilitar recuperacion de contrasena por correo, configura las variables `SMTP_*` de la plantilla y cambia `FRONTEND_RESET_URL` a `https://<dominio-del-frontend>/frontend/olvido_contrasena/restablecer.html`. Para Gmail usa una contrasena de aplicacion. Si no configuras SMTP, esa funcion no enviara correos.
+
+Cada inicio de sesion emite un token Bearer único y sin vencimiento. El servidor guarda su huella en `T_API_TOKENS` y verifica que siga activo en cada solicitud protegida; al cerrar sesión, el token se revoca en el servidor. Todas las rutas de datos bajo `/api` requieren token; inicio/recuperacion de contrasena, salud y documentacion permanecen publicos. Mantén `MARQUEZA_TOKEN_SECRET` estable entre despliegues: cambiarlo invalida todos los tokens emitidos.
 
 **Importante sobre la base de datos:** el SQL inicial elimina y vuelve a crear las tablas. Se ejecuta automaticamente solo cuando MariaDB inicializa un volumen vacio. No borres el volumen para "reiniciar" la aplicacion: perderias los datos. Configura copias de seguridad del volumen/base de datos desde tu servidor antes de usarla con datos reales.
 
-El frontend detecta automaticamente cuando se sirve detras de un dominio de produccion y utiliza ese mismo origen para llamar a `/api`. En desarrollo conserva el puerto local `5000` y el comportamiento de Dev Tunnels.
+En produccion, el frontend usa por defecto la API del mismo dominio (`/api`). Para alojar la API en otro dominio, define `window.MARQUEZA_API_BASE_URL` antes de cargar `frontend/shared/api.js`. En desarrollo conserva el puerto local `5000` y el comportamiento de Dev Tunnels.
 
 Para enviar correos de recuperación con Gmail, activa la verificación en dos pasos y crea una contraseña de aplicación. Copia las variables SMTP de `backend/API/.env.example` a `backend/API/.env` y reemplaza el correo y la contraseña de ejemplo. Añádelas sin borrar las variables MySQL que ya existan; `.env` está excluido de Git. Reinicia Flask después de modificarlas.
 

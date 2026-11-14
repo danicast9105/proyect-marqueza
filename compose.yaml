@@ -6,11 +6,13 @@ services:
     restart: unless-stopped
     environment:
       PORT: "5000"
+      API_DOCS_HOST: ${API_DOCS_HOST:-api-marqueza.zona52.lat}
       MYSQL_HOST: db
       MYSQL_PORT: "3306"
       MYSQL_USER: ${MARIADB_USER:-marqueza_app}
       MYSQL_PASSWORD: ${MARIADB_PASSWORD:?Define MARIADB_PASSWORD en Dokploy}
       MYSQL_DB: marqueza_db
+      MARQUEZA_TOKEN_SECRET: ${MARQUEZA_TOKEN_SECRET:?Define MARQUEZA_TOKEN_SECRET en Dokploy}
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USE_SSL: ${SMTP_USE_SSL:-false}
