@@ -4,8 +4,15 @@ import ssl
 from email.message import EmailMessage
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, g, jsonify, request, current_app
+from MySQLdb import Error as MySQLError
 
+from Services.auth_tokens import (
+    TokenConfigurationError,
+    create_access_token,
+    register_access_token,
+    revoke_access_token,
+)
 from Services.helpers import hash_password, query, verify_password
 
 auth_bp = Blueprint("auth_bp", __name__)
@@ -68,7 +75,7 @@ def login():
     if request.method == "OPTIONS":
         return "", 204
     data = request.get_json(silent=True) or {}
-    identificador = str(data.get("correo") or data.get("usuario") or "").strip()
+    identificador = str(data.get("correo") or data.get("usuario") or "")
     contrasena = data.get("contrasena") or data.get("password") or ""
 
     if not identificador:
@@ -81,7 +88,8 @@ def login():
                   u.USUA_ESTADO, u.USUA_DET_ETC_ID, d.DET_ETC_NOMBRE
            FROM T_USUARIOS u
            JOIN T_DETALLES_ETC d ON d.DET_ETC_ID = u.USUA_DET_ETC_ID
-           WHERE u.USUA_CORREO = %s OR u.USUA_NOMBRE = %s
+           WHERE BINARY u.USUA_CORREO = BINARY %s
+              OR BINARY u.USUA_NOMBRE = BINARY %s
            LIMIT 1""",
         (identificador, identificador),
     )
@@ -94,17 +102,33 @@ def login():
     if not verify_password(usuario["USUA_CONTRASENA"], contrasena):
         return jsonify({"message": "Usuario o contrasena incorrectos."}), 401
 
+    try:
+        token, token_id = create_access_token(
+            usuario["USUA_ID"],
+            usuario["DET_ETC_NOMBRE"],
+            current_app.config.get("API_TOKEN_SECRET"),
+        )
+    except TokenConfigurationError as error:
+        current_app.logger.error("No se pudo emitir el token de acceso: %s", error)
+        return jsonify({"message": str(error)}), 503
+
+    try:
+        register_access_token(token_id, usuario["USUA_ID"])
+    except MySQLError:
+        current_app.logger.exception("No se pudo guardar el token de acceso.")
+        return jsonify({"message": "No se pudo crear una sesión de acceso."}), 503
+
     from Services.usuarios_services import marcar_ultimo_acceso
     try:
         marcar_ultimo_acceso(usuario["USUA_ID"])
     except Exception:
         pass
 
-    token = secrets.token_urlsafe(32)
-
     return jsonify({
         "message": "Inicio de sesion exitoso",
         "token": token,
+        "token_type": "Bearer",
+        "expires_in": None,
         "usuario": {
             "id": usuario["USUA_ID"],
             "nombre": usuario["USUA_NOMBRE"],
@@ -113,6 +137,20 @@ def login():
             "rol_id": usuario["USUA_DET_ETC_ID"]
         }
     }), 200
+
+
+@auth_bp.route("/logout", methods=["POST", "OPTIONS"])
+def logout():
+    if request.method == "OPTIONS":
+        return "", 204
+    try:
+        revoked = revoke_access_token(g.api_user["jti"])
+    except MySQLError:
+        current_app.logger.exception("No se pudo revocar el token de acceso.")
+        return jsonify({"message": "No se pudo cerrar la sesión en el servidor."}), 503
+    if not revoked:
+        return jsonify({"message": "La sesión ya fue cerrada o el token no está activo."}), 401
+    return "", 204
 
 
 @auth_bp.route("/forgot-password", methods=["POST", "OPTIONS"])
@@ -176,17 +214,31 @@ def reset_password():
 
     correo = token_data["correo"]
     c = current_app.mysql.connection.cursor()
-    c.execute("SELECT USUA_ID FROM T_USUARIOS WHERE USUA_CORREO = %s", (correo,))
-    user = c.fetchone()
-    if not user:
-        c.close()
-        return jsonify({"message": "Usuario no encontrado."}), 404
+    try:
+        c.execute("SELECT USUA_ID FROM T_USUARIOS WHERE USUA_CORREO = %s", (correo,))
+        user = c.fetchone()
+        if not user:
+            return jsonify({"message": "Usuario no encontrado."}), 404
 
-    usua_id = user[0]
-    c.execute("UPDATE T_USUARIOS SET USUA_CONTRASENA = %s WHERE USUA_ID = %s",
-              (hash_password(new_password), usua_id))
-    current_app.mysql.connection.commit()
-    c.close()
+        usua_id = user[0]
+        from Services.auth_tokens import ensure_access_token_table
+        ensure_access_token_table()
+        c.execute(
+            "UPDATE T_USUARIOS SET USUA_CONTRASENA = %s WHERE USUA_ID = %s",
+            (hash_password(new_password), usua_id),
+        )
+        c.execute(
+            """UPDATE T_API_TOKENS SET TOKEN_REVOCADO = CURRENT_TIMESTAMP
+               WHERE TOKEN_USUA_ID = %s AND TOKEN_REVOCADO IS NULL""",
+            (usua_id,),
+        )
+        current_app.mysql.connection.commit()
+    except MySQLError:
+        current_app.mysql.connection.rollback()
+        current_app.logger.exception("No se pudo restablecer la contraseña y revocar sus sesiones.")
+        return jsonify({"message": "No se pudo completar el restablecimiento de contraseña."}), 503
+    finally:
+        c.close()
 
     del _reset_tokens[token]
     return jsonify({"message": "Contraseña actualizada correctamente."}), 200
