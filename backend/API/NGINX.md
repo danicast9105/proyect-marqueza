@@ -44,6 +44,10 @@ sudo systemctl reload nginx
 
 Si NGINX está en el mismo servidor que Dokploy, no uses este ejemplo sin cambiar la arquitectura: ambos pueden intentar ocupar los puertos `80` y `443`. En ese caso, usa el proxy de Dokploy o coloca NGINX en otra máquina.
 
+## Swagger
+
+La interfaz Swagger esta disponible en `/documentacion` (tambien `/api/docs`) y carga la especificacion desde `/api/swagger.json`. En Dokploy, la raiz del dominio configurado como `API_DOCS_HOST` tambien abre Swagger; el valor predeterminado es `api-marqueza.zona52.lat`. Los botones **Try it out** usan la ruta relativa `/api` en el mismo dominio donde se abre Swagger. Si la API se aloja en otro origen, actualiza el servidor definido en `swagger.json`.
+
 ## Verificar
 
 Abre `https://api.ejemplo.com/api/health`. La respuesta debe indicar `"status": "ok"` y `"database": "conectada"`. Si falla, confirma que el dominio apunta al proxy, que el upstream usa el puerto correcto y que MySQL es accesible desde la API.

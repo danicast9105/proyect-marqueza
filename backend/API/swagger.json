@@ -2,56 +2,103 @@
   "openapi": "3.0.0",
   "info": {
     "title": "API de Marqueza",
-    "description": "API REST para gestión integral de confecciones - Marqueza",
+    "description": "API REST para gestión integral de confecciones - Marqueza.",
     "version": "1.0.0"
   },
+  "security": [{ "BearerAuth": [] }],
   "servers": [
-    { "url": "http://localhost:5000/api" }
+    {
+      "url": "/api",
+      "description": "API del dominio actual"
+    }
   ],
   "tags": [
-    { "name": "Usuarios", "description": "Gestión de usuarios y autenticación" },
+    { "name": "Estado", "description": "Estado del servicio" },
+    { "name": "Autenticación", "description": "Inicio de sesión y recuperación de contraseña" },
+    { "name": "Usuarios", "description": "Gestión de usuarios" },
     { "name": "Clientes", "description": "Gestión de clientes" },
-    { "name": "Proveedores", "description": "Gestión de proveedores" },
-    { "name": "Productos", "description": "Catálogo de productos" },
+    { "name": "Contactos", "description": "Gestión de contactos de proveedores" },
+    { "name": "Cotizaciones", "description": "Gestión de cotizaciones" },
+    { "name": "Detalles ETC", "description": "Gestión de detalles de catálogos ETC" },
+    { "name": "ETC", "description": "Gestión de catálogos ETC" },
     { "name": "Insumos", "description": "Inventario de insumos" },
+    { "name": "Personas", "description": "Gestión de personas" },
+    { "name": "Productos-insumos", "description": "Relación entre productos e insumos" },
+    { "name": "Productos", "description": "Catálogo de productos" },
+    { "name": "Proveedores", "description": "Gestión de proveedores" },
+    { "name": "Ventas-productos", "description": "Productos asociados a ventas" },
     { "name": "Ventas", "description": "Operaciones de venta" },
-    { "name": "Cotizaciones", "description": "Propuestas comerciales" },
-    { "name": "Detalle Cotización", "description": "Líneas de productos en cotización" },
-    { "name": "Recuperación", "description": "Recuperación de contraseña" },
-    { "name": "Bitácora", "description": "Bitácora de auditoría" }
+    { "name": "Documentación", "description": "Registros de documentación" },
+    { "name": "Detalle cotización", "description": "Productos asociados a cotizaciones" },
+    { "name": "Recuperación de contraseña", "description": "Gestión de solicitudes de recuperación" },
+    { "name": "Bitácora de auditoría", "description": "Registro de eventos de auditoría" }
   ],
   "paths": {
+    "/health": {
+      "get": {
+        "tags": ["Estado"],
+        "summary": "Verificar API y conexión a la base de datos",
+        "operationId": "getHealth",
+        "security": [],
+        "responses": {
+          "200": { "description": "Estado del servicio y conexión a base de datos" }
+        }
+      }
+    },
     "/auth/login": {
       "post": {
-        "tags": ["Usuarios"],
+        "tags": ["Autenticación"],
         "summary": "Iniciar sesión con usuario o correo",
+        "operationId": "login",
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["contrasena"],
                 "properties": {
-                  "correo": { "type": "string" },
+                  "correo": { "type": "string", "format": "email" },
                   "usuario": { "type": "string" },
-                  "contrasena": { "type": "string" }
-                }
+                  "contrasena": { "type": "string" },
+                  "password": { "type": "string" }
+                },
+                "anyOf": [
+                  { "required": ["correo", "contrasena"] },
+                  { "required": ["correo", "password"] },
+                  { "required": ["usuario", "contrasena"] },
+                  { "required": ["usuario", "password"] }
+                ]
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Inicio de sesión exitoso" },
+          "200": { "description": "Devuelve el usuario y un token Bearer único sin vencimiento." },
+          "400": { "description": "Falta el usuario/correo o la contraseña" },
           "401": { "description": "Credenciales inválidas" },
           "403": { "description": "Cuenta desactivada" }
         }
       }
     },
+    "/auth/logout": {
+      "post": {
+        "tags": ["Autenticación"],
+        "summary": "Revocar el token de la sesión actual",
+        "operationId": "logout",
+        "responses": {
+          "204": { "description": "Token revocado correctamente" },
+          "401": { "description": "Token inválido o ya revocado" },
+          "503": { "description": "No fue posible revocar el token" }
+        }
+      }
+    },
     "/auth/forgot-password": {
       "post": {
-        "tags": ["Recuperación"],
+        "tags": ["Autenticación"],
         "summary": "Solicitar recuperación de contraseña",
+        "operationId": "forgotPassword",
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -59,18 +106,27 @@
               "schema": {
                 "type": "object",
                 "required": ["correo"],
-                "properties": { "correo": { "type": "string", "format": "email" } }
+                "properties": {
+                  "correo": { "type": "string", "format": "email" }
+                }
               }
             }
           }
         },
-        "responses": { "200": { "description": "Correo enviado" } }
+        "responses": {
+          "200": { "description": "Correo de recuperación enviado" },
+          "400": { "description": "Correo inválido" },
+          "502": { "description": "No fue posible enviar el correo" },
+          "503": { "description": "El servicio de correo no está configurado" }
+        }
       }
     },
     "/auth/reset-password": {
       "post": {
-        "tags": ["Recuperación"],
-        "summary": "Restablecer contraseña",
+        "tags": ["Autenticación"],
+        "summary": "Restablecer contraseña con el token recibido por correo",
+        "operationId": "resetPassword",
+        "security": [],
         "requestBody": {
           "required": true,
           "content": {
@@ -86,99 +142,768 @@
             }
           }
         },
-        "responses": { "200": { "description": "Contraseña actualizada" } }
+        "responses": {
+          "200": { "description": "Contraseña actualizada" },
+          "400": { "description": "Token inválido/expirado o campos faltantes" },
+          "404": { "description": "Usuario no encontrado" }
+        }
       }
     },
     "/usuarios": {
-      "get": { "tags": ["Usuarios"], "summary": "Listar usuarios" },
-      "post": { "tags": ["Usuarios"], "summary": "Crear usuario" }
+      "get": {
+        "tags": ["Usuarios"],
+        "summary": "Listar usuarios",
+        "operationId": "listUsuarios",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de usuarios" } }
+      },
+      "post": {
+        "tags": ["Usuarios"],
+        "summary": "Crear usuario",
+        "operationId": "createUsuario",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Usuario creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
     },
     "/usuarios/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Usuarios"], "summary": "Actualizar usuario" },
-      "delete": { "tags": ["Usuarios"], "summary": "Eliminar usuario" }
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Usuarios"],
+        "summary": "Actualizar usuario",
+        "operationId": "updateUsuario",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Usuario actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Usuario no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Usuarios"],
+        "summary": "Eliminar usuario",
+        "operationId": "deleteUsuario",
+        "responses": {
+          "200": { "description": "Usuario eliminado" },
+          "404": { "description": "Usuario no encontrado" }
+        }
+      }
     },
     "/clientes": {
-      "get": { "tags": ["Clientes"], "summary": "Listar clientes" },
-      "post": { "tags": ["Clientes"], "summary": "Crear cliente" }
+      "get": {
+        "tags": ["Clientes"],
+        "summary": "Listar clientes",
+        "operationId": "listClientes",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de clientes" } }
+      },
+      "post": {
+        "tags": ["Clientes"],
+        "summary": "Crear cliente",
+        "operationId": "createCliente",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Cliente creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
     },
     "/clientes/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Clientes"], "summary": "Actualizar cliente" },
-      "delete": { "tags": ["Clientes"], "summary": "Eliminar cliente" }
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Clientes"],
+        "summary": "Actualizar cliente",
+        "operationId": "updateCliente",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Cliente actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Cliente no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Clientes"],
+        "summary": "Eliminar cliente",
+        "operationId": "deleteCliente",
+        "responses": {
+          "200": { "description": "Cliente eliminado" },
+          "404": { "description": "Cliente no encontrado" }
+        }
+      }
     },
-    "/proveedores": {
-      "get": { "tags": ["Proveedores"], "summary": "Listar proveedores" },
-      "post": { "tags": ["Proveedores"], "summary": "Crear proveedor" }
+    "/contactos": {
+      "get": {
+        "tags": ["Contactos"],
+        "summary": "Listar contactos",
+        "operationId": "listContactos",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de contactos" } }
+      },
+      "post": {
+        "tags": ["Contactos"],
+        "summary": "Crear contacto",
+        "operationId": "createContacto",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Contacto creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
     },
-    "/proveedores/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Proveedores"], "summary": "Actualizar proveedor" },
-      "delete": { "tags": ["Proveedores"], "summary": "Eliminar proveedor" }
-    },
-    "/productos": {
-      "get": { "tags": ["Productos"], "summary": "Listar productos" },
-      "post": { "tags": ["Productos"], "summary": "Crear producto" }
-    },
-    "/productos/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Productos"], "summary": "Actualizar producto" },
-      "delete": { "tags": ["Productos"], "summary": "Eliminar producto" }
-    },
-    "/insumos": {
-      "get": { "tags": ["Insumos"], "summary": "Listar insumos" },
-      "post": { "tags": ["Insumos"], "summary": "Crear insumo" }
-    },
-    "/insumos/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Insumos"], "summary": "Actualizar insumo" },
-      "delete": { "tags": ["Insumos"], "summary": "Eliminar insumo" }
-    },
-    "/ventas": {
-      "get": { "tags": ["Ventas"], "summary": "Listar ventas" },
-      "post": { "tags": ["Ventas"], "summary": "Crear venta" }
-    },
-    "/ventas/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Ventas"], "summary": "Actualizar venta" },
-      "delete": { "tags": ["Ventas"], "summary": "Eliminar venta" }
-    },
-    "/ventas-productos": {
-      "get": { "tags": ["Ventas"], "summary": "Listar detalle de ventas" },
-      "post": { "tags": ["Ventas"], "summary": "Agregar producto a venta" }
+    "/contactos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Contactos"],
+        "summary": "Actualizar contacto",
+        "operationId": "updateContacto",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Contacto actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Contacto no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Contactos"],
+        "summary": "Eliminar contacto",
+        "operationId": "deleteContacto",
+        "responses": {
+          "200": { "description": "Contacto eliminado" },
+          "404": { "description": "Contacto no encontrado" }
+        }
+      }
     },
     "/cotizaciones": {
-      "get": { "tags": ["Cotizaciones"], "summary": "Listar cotizaciones" },
-      "post": { "tags": ["Cotizaciones"], "summary": "Crear cotización" }
+      "get": {
+        "tags": ["Cotizaciones"],
+        "summary": "Listar cotizaciones",
+        "operationId": "listCotizaciones",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de cotizaciones" } }
+      },
+      "post": {
+        "tags": ["Cotizaciones"],
+        "summary": "Crear cotización",
+        "operationId": "createCotizacion",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Cotización creada" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
     },
     "/cotizaciones/{id}": {
-      "parameters": [{ "$ref": "#/components/parameters/Id" }],
-      "put": { "tags": ["Cotizaciones"], "summary": "Actualizar cotización" },
-      "delete": { "tags": ["Cotizaciones"], "summary": "Eliminar cotización" }
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Cotizaciones"],
+        "summary": "Actualizar cotización",
+        "operationId": "updateCotizacion",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Cotización actualizada" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Cotización no encontrada" }
+        }
+      },
+      "delete": {
+        "tags": ["Cotizaciones"],
+        "summary": "Eliminar cotización",
+        "operationId": "deleteCotizacion",
+        "responses": {
+          "200": { "description": "Cotización eliminada" },
+          "404": { "description": "Cotización no encontrada" }
+        }
+      }
     },
-    "/detalle-cotizacion": {
-      "get": { "tags": ["Detalle Cotización"], "summary": "Listar detalles de cotización" },
-      "post": { "tags": ["Detalle Cotización"], "summary": "Agregar producto a cotización" }
+    "/detalles-etc": {
+      "get": {
+        "tags": ["Detalles ETC"],
+        "summary": "Listar detalles ETC",
+        "operationId": "listDetallesEtc",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de detalles ETC" } }
+      },
+      "post": {
+        "tags": ["Detalles ETC"],
+        "summary": "Crear detalle ETC",
+        "operationId": "createDetalleEtc",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Detalle ETC creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
     },
-    "/recuperacion-contrasena": {
-      "get": { "tags": ["Recuperación"], "summary": "Listar recuperaciones" },
-      "post": { "tags": ["Recuperación"], "summary": "Registrar recuperación" }
+    "/detalles-etc/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Detalles ETC"],
+        "summary": "Actualizar detalle ETC",
+        "operationId": "updateDetalleEtc",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Detalle ETC actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Detalle ETC no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Detalles ETC"],
+        "summary": "Eliminar detalle ETC",
+        "operationId": "deleteDetalleEtc",
+        "responses": {
+          "200": { "description": "Detalle ETC eliminado" },
+          "404": { "description": "Detalle ETC no encontrado" }
+        }
+      }
     },
-    "/bitacora-auditoria": {
-      "get": { "tags": ["Bitácora"], "summary": "Listar bitácora" },
-      "post": { "tags": ["Bitácora"], "summary": "Registrar evento" }
+    "/etc": {
+      "get": {
+        "tags": ["ETC"],
+        "summary": "Listar catálogos ETC",
+        "operationId": "listEtc",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de catálogos ETC" } }
+      },
+      "post": {
+        "tags": ["ETC"],
+        "summary": "Crear catálogo ETC",
+        "operationId": "createEtc",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Catálogo ETC creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/etc/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["ETC"],
+        "summary": "Actualizar catálogo ETC",
+        "operationId": "updateEtc",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Catálogo ETC actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Catálogo ETC no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["ETC"],
+        "summary": "Eliminar catálogo ETC",
+        "operationId": "deleteEtc",
+        "responses": {
+          "200": { "description": "Catálogo ETC eliminado" },
+          "404": { "description": "Catálogo ETC no encontrado" }
+        }
+      }
+    },
+    "/insumos": {
+      "get": {
+        "tags": ["Insumos"],
+        "summary": "Listar insumos",
+        "operationId": "listInsumos",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de insumos" } }
+      },
+      "post": {
+        "tags": ["Insumos"],
+        "summary": "Crear insumo",
+        "operationId": "createInsumo",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Insumo creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/insumos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Insumos"],
+        "summary": "Actualizar insumo",
+        "operationId": "updateInsumo",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Insumo actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Insumo no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Insumos"],
+        "summary": "Eliminar insumo",
+        "operationId": "deleteInsumo",
+        "responses": {
+          "200": { "description": "Insumo eliminado" },
+          "404": { "description": "Insumo no encontrado" }
+        }
+      }
+    },
+    "/personas": {
+      "get": {
+        "tags": ["Personas"],
+        "summary": "Listar personas",
+        "operationId": "listPersonas",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de personas" } }
+      },
+      "post": {
+        "tags": ["Personas"],
+        "summary": "Crear persona",
+        "operationId": "createPersona",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Persona creada" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/personas/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Personas"],
+        "summary": "Actualizar persona",
+        "operationId": "updatePersona",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Persona actualizada" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Persona no encontrada" }
+        }
+      },
+      "delete": {
+        "tags": ["Personas"],
+        "summary": "Eliminar persona",
+        "operationId": "deletePersona",
+        "responses": {
+          "200": { "description": "Persona eliminada" },
+          "404": { "description": "Persona no encontrada" }
+        }
+      }
+    },
+    "/productos-insumos": {
+      "get": {
+        "tags": ["Productos-insumos"],
+        "summary": "Listar relaciones entre productos e insumos",
+        "operationId": "listProductosInsumos",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de relaciones" } }
+      },
+      "post": {
+        "tags": ["Productos-insumos"],
+        "summary": "Crear relación producto-insumo",
+        "operationId": "createProductoInsumo",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Relación creada" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/productos-insumos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Productos-insumos"],
+        "summary": "Actualizar relación producto-insumo",
+        "operationId": "updateProductoInsumo",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Relación actualizada" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Relación no encontrada" }
+        }
+      },
+      "delete": {
+        "tags": ["Productos-insumos"],
+        "summary": "Eliminar relación producto-insumo",
+        "operationId": "deleteProductoInsumo",
+        "responses": {
+          "200": { "description": "Relación eliminada" },
+          "404": { "description": "Relación no encontrada" }
+        }
+      }
+    },
+    "/productos": {
+      "get": {
+        "tags": ["Productos"],
+        "summary": "Listar productos",
+        "operationId": "listProductos",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de productos" } }
+      },
+      "post": {
+        "tags": ["Productos"],
+        "summary": "Crear producto",
+        "operationId": "createProducto",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Producto creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/productos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Productos"],
+        "summary": "Actualizar producto",
+        "operationId": "updateProducto",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Producto actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Producto no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Productos"],
+        "summary": "Eliminar producto",
+        "operationId": "deleteProducto",
+        "responses": {
+          "200": { "description": "Producto eliminado" },
+          "404": { "description": "Producto no encontrado" }
+        }
+      }
+    },
+    "/proveedores": {
+      "get": {
+        "tags": ["Proveedores"],
+        "summary": "Listar proveedores",
+        "operationId": "listProveedores",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de proveedores" } }
+      },
+      "post": {
+        "tags": ["Proveedores"],
+        "summary": "Crear proveedor",
+        "operationId": "createProveedor",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Proveedor creado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/proveedores/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Proveedores"],
+        "summary": "Actualizar proveedor",
+        "operationId": "updateProveedor",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Proveedor actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Proveedor no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Proveedores"],
+        "summary": "Eliminar proveedor",
+        "operationId": "deleteProveedor",
+        "responses": {
+          "200": { "description": "Proveedor eliminado" },
+          "404": { "description": "Proveedor no encontrado" }
+        }
+      }
+    },
+    "/ventas-productos": {
+      "get": {
+        "tags": ["Ventas-productos"],
+        "summary": "Listar productos asociados a ventas",
+        "operationId": "listVentasProductos",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de productos de ventas" } }
+      },
+      "post": {
+        "tags": ["Ventas-productos"],
+        "summary": "Agregar producto a venta",
+        "operationId": "createVentaProducto",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Producto agregado a la venta" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/ventas-productos/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Ventas-productos"],
+        "summary": "Actualizar producto de una venta",
+        "operationId": "updateVentaProducto",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Detalle de venta actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Detalle de venta no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Ventas-productos"],
+        "summary": "Eliminar producto de una venta",
+        "operationId": "deleteVentaProducto",
+        "responses": {
+          "200": { "description": "Detalle de venta eliminado" },
+          "404": { "description": "Detalle de venta no encontrado" }
+        }
+      }
+    },
+    "/ventas": {
+      "get": {
+        "tags": ["Ventas"],
+        "summary": "Listar ventas",
+        "operationId": "listVentas",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de ventas" } }
+      },
+      "post": {
+        "tags": ["Ventas"],
+        "summary": "Crear venta",
+        "operationId": "createVenta",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Venta creada" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/ventas/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Ventas"],
+        "summary": "Actualizar venta",
+        "operationId": "updateVenta",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Venta actualizada" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Venta no encontrada" }
+        }
+      },
+      "delete": {
+        "tags": ["Ventas"],
+        "summary": "Eliminar venta",
+        "operationId": "deleteVenta",
+        "responses": {
+          "200": { "description": "Venta eliminada" },
+          "404": { "description": "Venta no encontrada" }
+        }
+      }
     },
     "/documentacion": {
-      "get": { "tags": ["Documentación"], "summary": "Swagger UI" }
+      "get": {
+        "tags": ["Documentación"],
+        "summary": "Listar registros de documentación",
+        "operationId": "listDocumentacion",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de documentación" } }
+      },
+      "post": {
+        "tags": ["Documentación"],
+        "summary": "Crear registro de documentación",
+        "operationId": "createDocumentacion",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Registro creado" },
+          "400": { "description": "Datos inválidos" },
+          "503": { "description": "Módulo no disponible" }
+        }
+      }
+    },
+    "/documentacion/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Documentación"],
+        "summary": "Actualizar registro de documentación",
+        "operationId": "updateDocumentacion",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Registro actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Registro no encontrado" },
+          "503": { "description": "Módulo no disponible" }
+        }
+      },
+      "delete": {
+        "tags": ["Documentación"],
+        "summary": "Eliminar registro de documentación",
+        "operationId": "deleteDocumentacion",
+        "responses": {
+          "200": { "description": "Registro eliminado" },
+          "404": { "description": "Registro no encontrado" },
+          "503": { "description": "Módulo no disponible" }
+        }
+      }
+    },
+    "/detalle-cotizacion": {
+      "get": {
+        "tags": ["Detalle cotización"],
+        "summary": "Listar detalles de cotización",
+        "operationId": "listDetalleCotizacion",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de detalles de cotización" } }
+      },
+      "post": {
+        "tags": ["Detalle cotización"],
+        "summary": "Agregar producto a cotización",
+        "operationId": "createDetalleCotizacion",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Detalle agregado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/detalle-cotizacion/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Detalle cotización"],
+        "summary": "Actualizar detalle de cotización",
+        "operationId": "updateDetalleCotizacion",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Detalle actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Detalle no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Detalle cotización"],
+        "summary": "Eliminar detalle de cotización",
+        "operationId": "deleteDetalleCotizacion",
+        "responses": {
+          "200": { "description": "Detalle eliminado" },
+          "404": { "description": "Detalle no encontrado" }
+        }
+      }
+    },
+    "/recuperacion-contrasena": {
+      "get": {
+        "tags": ["Recuperación de contraseña"],
+        "summary": "Listar solicitudes de recuperación",
+        "operationId": "listRecuperacionContrasena",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de solicitudes" } }
+      },
+      "post": {
+        "tags": ["Recuperación de contraseña"],
+        "summary": "Registrar solicitud de recuperación",
+        "operationId": "createRecuperacionContrasena",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Solicitud registrada" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/recuperacion-contrasena/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Recuperación de contraseña"],
+        "summary": "Actualizar solicitud de recuperación",
+        "operationId": "updateRecuperacionContrasena",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Solicitud actualizada" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Solicitud no encontrada" }
+        }
+      },
+      "delete": {
+        "tags": ["Recuperación de contraseña"],
+        "summary": "Eliminar solicitud de recuperación",
+        "operationId": "deleteRecuperacionContrasena",
+        "responses": {
+          "200": { "description": "Solicitud eliminada" },
+          "404": { "description": "Solicitud no encontrada" }
+        }
+      }
+    },
+    "/bitacora-auditoria": {
+      "get": {
+        "tags": ["Bitácora de auditoría"],
+        "summary": "Listar eventos de auditoría",
+        "operationId": "listBitacoraAuditoria",
+        "parameters": [{ "$ref": "#/components/parameters/IdQuery" }],
+        "responses": { "200": { "description": "Lista de eventos" } }
+      },
+      "post": {
+        "tags": ["Bitácora de auditoría"],
+        "summary": "Registrar evento de auditoría",
+        "operationId": "createBitacoraAuditoria",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "201": { "description": "Evento registrado" },
+          "400": { "description": "Datos inválidos" }
+        }
+      }
+    },
+    "/bitacora-auditoria/{id}": {
+      "parameters": [{ "$ref": "#/components/parameters/IdPath" }],
+      "put": {
+        "tags": ["Bitácora de auditoría"],
+        "summary": "Actualizar evento de auditoría",
+        "operationId": "updateBitacoraAuditoria",
+        "requestBody": { "$ref": "#/components/requestBodies/JsonObject" },
+        "responses": {
+          "200": { "description": "Evento actualizado" },
+          "400": { "description": "ID o datos inválidos" },
+          "404": { "description": "Evento no encontrado" }
+        }
+      },
+      "delete": {
+        "tags": ["Bitácora de auditoría"],
+        "summary": "Eliminar evento de auditoría",
+        "operationId": "deleteBitacoraAuditoria",
+        "responses": {
+          "200": { "description": "Evento eliminado" },
+          "404": { "description": "Evento no encontrado" }
+        }
+      }
     }
   },
   "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Token Bearer devuelto por /auth/login."
+      }
+    },
     "parameters": {
-      "Id": {
+      "IdPath": {
         "name": "id",
         "in": "path",
         "required": true,
-        "schema": { "type": "integer" }
+        "description": "ID entero positivo del registro",
+        "schema": { "type": "integer", "minimum": 1 }
+      },
+      "IdQuery": {
+        "name": "id",
+        "in": "query",
+        "required": false,
+        "description": "Filtra por ID entero positivo",
+        "schema": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "requestBodies": {
+      "JsonObject": {
+        "required": true,
+        "description": "Envía un objeto JSON con los campos admitidos por el recurso.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "additionalProperties": true,
+              "example": {}
+            }
+          }
+        }
       }
     }
   }

@@ -21,3 +21,4 @@ class Config:
         "FRONTEND_RESET_URL",
         "http://localhost:5000/frontend/olvido_contrasena/restablecer.html",
     )
+    API_TOKEN_SECRET = os.getenv("MARQUEZA_TOKEN_SECRET")
