@@ -5,13 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registro de actividad | MARQUEZA</title>
-    <!-- Estilos específicos para la sección de insumos y componentes responsivos -->
     <link rel="stylesheet" href="estilos_registro.css">
     <link rel="stylesheet" href="../shared/estilos-base.css">
+    <link rel="stylesheet" href="../shared/bitacora-vista.css?v=20261110-azul">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
-<body class="module-ayuda">
+<body class="module-actividad">
     <script src="../shared/persistencia-tema.js"></script>
     <!-- Barra lateral de navegación, inicialmente colapsada (clase 'close') -->
     <nav class="barra_lateral close">
@@ -340,14 +340,16 @@
                 </ol>
             </div>
         </div>
+        <section id="registroActividades" data-audit-view data-show-title="true" aria-label="Registro de actividad"></section>
     </main>
         
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
-    <script src="../shared/auditoria.js?v=20260927-auth1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../shared/navegacion.js?v=20261003-local-chat"></script>
-    <script src="interfaz_registro.js"></script>
-    <script src="registro_actividad.js"></script>
+    <script src="../shared/auditoria.js?v=20261114-confirmar-cierre-v5"></script>
+    <script src="../shared/navegacion.js?v=20261114-sesion-pestana"></script>
+    <script src="../shared/api.js?v=20261114-sesion-pestana"></script>
+    <script src="../shared/contenedor-aplicacion.js?v=20261110-sidebar"></script>
+    <script src="../shared/barra-lateral.js?v=20261110-sidebar"></script>
+    <script src="../shared/bitacora-vista.js?v=20261110-paginacion"></script>
 </body>
 
 </html>

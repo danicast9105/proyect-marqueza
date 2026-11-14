@@ -1,4 +1,5 @@
 const loginUrl = new URL("../inicio_sesion/inicio_sesion.html?motivo=servidor_desconectado", document.currentScript.src);
+const expiredSessionUrl = new URL("../inicio_sesion/inicio_sesion.html?motivo=sesion_requerida", document.currentScript.src);
 
 class MarquezaApi {
     static get baseUrl() {
@@ -15,12 +16,17 @@ class MarquezaApi {
     }
 
     static async request(path, options = {}) {
+        const suppressSessionRedirect = options.suppressSessionRedirect === true;
+        const requestOptions = { ...options };
+        delete requestOptions.suppressSessionRedirect;
+        const sessionToken = this.sessionToken();
         let response;
         try {
             response = await fetch(`${this.baseUrl}${path}`, {
-                ...options,
+                ...requestOptions,
                 headers: {
                     ...(options.body ? { "Content-Type": "application/json" } : {}),
+                    ...(sessionToken ? { Authorization: `Bearer ${sessionToken}` } : {}),
                     ...options.headers
                 }
             });
@@ -33,9 +39,10 @@ class MarquezaApi {
             }
             const hasActiveSession = session?.id && sessionStorage.getItem("marqueza_sesion_activa") === String(session.id);
             const isLoginPage = window.location.pathname.endsWith("/inicio_sesion/inicio_sesion.html");
-            if (hasActiveSession && !isLoginPage) {
+            if (hasActiveSession && !isLoginPage && !suppressSessionRedirect) {
                 localStorage.removeItem("marqueza_usuario_sesion");
                 sessionStorage.removeItem("marqueza_sesion_activa");
+                window.MarquezaAudit?.releaseSession();
                 window.location.replace(loginUrl);
             }
             throw new Error("No se pudo conectar con la API. Comprueba que el backend esté iniciado.");
@@ -51,9 +58,30 @@ class MarquezaApi {
             }
         }
         if (!response.ok) {
-            throw new Error(payload?.mensaje || payload?.message || `Error HTTP ${response.status}`);
+            const message = payload?.mensaje || payload?.message || `Error HTTP ${response.status}`;
+            if (response.status === 401 && sessionToken && !path.startsWith("/auth/")) {
+                localStorage.removeItem("marqueza_usuario_sesion");
+                sessionStorage.removeItem("marqueza_sesion_activa");
+                window.MarquezaAudit?.releaseSession();
+                window.location.replace(expiredSessionUrl);
+            }
+            throw new Error(message);
         }
         return payload;
+    }
+
+    static sessionToken() {
+        const storedSession = localStorage.getItem("marqueza_usuario_sesion");
+        if (!storedSession) return null;
+
+        let session;
+        try {
+            session = JSON.parse(storedSession);
+        } catch (error) {
+            console.error("No fue posible leer la sesión almacenada.", error);
+            throw new Error("No fue posible leer la sesión almacenada. Cierra sesión y vuelve a ingresar.");
+        }
+        return typeof session?.token === "string" && session.token ? session.token : null;
     }
 
     static list(resource) {
@@ -119,3 +147,4 @@ class MarquezaApi {
 }
 
 window.MarquezaApi = MarquezaApi;
+void window.MarquezaAudit?.syncPending?.();

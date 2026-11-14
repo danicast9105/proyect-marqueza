@@ -194,6 +194,12 @@ sidebar.addEventListener("mouseleave", () => {
 // --- Constantes y Selectores para la gestión de usuarios ---
 const STORAGE_KEY = 'marqueza_usuarios';
 const tableBody = document.querySelector(".cont_tabla tbody");
+const usersPagination = document.querySelector(".usuarios-pagination");
+const usersPageInfo = document.getElementById("usuariosPaginaInfo");
+const usersPreviousPage = document.getElementById("usuariosPaginaAnterior");
+const usersNextPage = document.getElementById("usuariosPaginaSiguiente");
+const USERS_PAGE_SIZE = 20;
+let usersCurrentPage = 1;
 const btnAgregar = document.querySelector(".agregar");
 const searchInput = document.querySelector(".cont_busqueda input");
 const btnBuscar = document.querySelector(".cont_busqueda button:not(.agregar)");
@@ -224,7 +230,7 @@ const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character =>
  * Soporta filtrado por texto.
  * @param {string} filtro - Texto para buscar en nombre o correo.
  */
-const renderTabla = (filtro = "") => {
+const renderTabla = (filtro = "", requestedPage = usersCurrentPage) => {
     if (!tableBody) return;
     // Mapeamos los usuarios para conservar su índice original del localStorage
     const registros = getUsuarios();
@@ -239,13 +245,18 @@ const renderTabla = (filtro = "") => {
         );
     }
 
+    const pageCount = Math.max(1, Math.ceil(usuarios.length / USERS_PAGE_SIZE));
+    usersCurrentPage = Math.min(Math.max(1, requestedPage), pageCount);
+    const firstRecord = (usersCurrentPage - 1) * USERS_PAGE_SIZE;
+    const pageUsers = usuarios.slice(firstRecord, firstRecord + USERS_PAGE_SIZE);
+
     tableBody.innerHTML = ""; 
 
     const emptyState = document.querySelector(".empty-state");
     if (emptyState) emptyState.style.display = usuarios.length ? "none" : "block";
     updateSummary(registros, usuarios);
 
-    usuarios.forEach((usuario) => {
+    pageUsers.forEach((usuario) => {
         const tr = document.createElement("tr");
         const esAdminProtegido = String(usuario.correo || "").trim().toLowerCase() === "admin@example.com" ||
             String(usuario.nombre || "").trim().toLowerCase() === "admin";
@@ -262,6 +273,12 @@ const renderTabla = (filtro = "") => {
         `;
         tableBody.appendChild(tr);
     });
+    if (usersPagination && usersPageInfo && usersPreviousPage && usersNextPage) {
+        usersPagination.hidden = usuarios.length <= USERS_PAGE_SIZE;
+        usersPageInfo.textContent = `Página ${usersCurrentPage} de ${pageCount} · ${usuarios.length} usuarios`;
+        usersPreviousPage.disabled = usersCurrentPage === 1;
+        usersNextPage.disabled = usersCurrentPage === pageCount;
+    }
 };
 
 const updateSummary = (registros, visibles) => {
@@ -280,10 +297,12 @@ const updateSummary = (registros, visibles) => {
 };
 
 // --- Listeners para Búsqueda ---
-btnBuscar?.addEventListener("click", () => renderTabla(searchInput.value));
+btnBuscar?.addEventListener("click", () => renderTabla(searchInput.value, 1));
 
 // Búsqueda en tiempo real mientras el usuario escribe
-searchInput?.addEventListener("input", () => renderTabla(searchInput.value));
+searchInput?.addEventListener("input", () => renderTabla(searchInput.value, 1));
+usersPreviousPage?.addEventListener("click", () => renderTabla(searchInput.value, usersCurrentPage - 1));
+usersNextPage?.addEventListener("click", () => renderTabla(searchInput.value, usersCurrentPage + 1));
 
 tableBody?.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-index]");

@@ -22,10 +22,21 @@ class MarquezaNavigation {
         if (logout) {
             logout.href = "../inicio_sesion/inicio_sesion.html";
             logout.setAttribute("aria-label", "Cerrar sesión");
-            logout.addEventListener("click", () => {
+            logout.addEventListener("click", async (event) => {
+                event.preventDefault();
                 window.MarquezaAudit?.log({ action: "Cierre de sesión", module: "Acceso", detail: "El usuario cerró la sesión." });
-                localStorage.removeItem("marqueza_usuario_sesion");
-                sessionStorage.removeItem("marqueza_sesion_activa");
+                try {
+                    if (window.MarquezaApi?.sessionToken()) {
+                        await window.MarquezaApi.request("/auth/logout", { method: "POST" });
+                    }
+                } catch (error) {
+                    await window.MarquezaApi?.notifyError(error, "No se pudo revocar la sesión");
+                } finally {
+                    window.MarquezaAudit?.releaseSession();
+                    localStorage.removeItem("marqueza_usuario_sesion");
+                    sessionStorage.removeItem("marqueza_sesion_activa");
+                    window.location.replace(logout.href);
+                }
             });
         }
     }

@@ -8,6 +8,7 @@
     <!-- Estilos específicos para la sección de usuarios y componentes responsivos -->
     <link rel="stylesheet" href="estilos4.css">
     <link rel="stylesheet" href="../shared/estilos-base.css">
+    <link rel="stylesheet" href="../shared/bitacora-vista.css?v=20261110-profesional">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 
@@ -143,7 +144,15 @@
             <div class="workspace-header"><div><span class="eyebrow">Directorio interno</span><h2>Equipo y accesos</h2></div><span class="record-count" id="resultadosUsuarios">0 resultados</span></div>
             <div class="cont_busqueda"><div class="campo_busqueda"><i class="bx bx-search" aria-hidden="true"></i><input id="buscarUsuario" type="search" placeholder="Buscar por nombre o correo..." aria-label="Buscar usuarios"></div><button type="button" id="btnBuscar" class="btn-buscar"><i class="bx bx-search" aria-hidden="true"></i><span>Buscar</span></button></div>
         </section>
-        <div class="cont_tabla"><div class="table-scroll"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Contraseña</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table><p class="empty-state">No encontramos usuarios con esa búsqueda.</p></div></div>
+        <div class="cont_tabla">
+            <div class="table-scroll"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Contraseña</th><th>Editar</th><th>Eliminar</th></tr></thead><tbody></tbody></table><p class="empty-state">No encontramos usuarios con esa búsqueda.</p></div>
+            <nav class="usuarios-pagination" aria-label="Paginación de usuarios" hidden>
+                <button type="button" id="usuariosPaginaAnterior" aria-label="Página anterior"><i class="bx bx-chevron-left"></i><span>Anterior</span></button>
+                <span id="usuariosPaginaInfo" aria-live="polite"></span>
+                <button type="button" id="usuariosPaginaSiguiente" aria-label="Página siguiente"><span>Siguiente</span><i class="bx bx-chevron-right"></i></button>
+            </nav>
+        </div>
+        <section id="actividadesUsuarios" data-audit-view data-audit-mode="logins" data-show-title="false" aria-label="Inicios de sesión de los usuarios"></section>
     </main>
 
     <!-- Ventana Modal para Agregar Usuario -->
@@ -222,12 +231,13 @@
     </div>
 
     <!-- Enlaza el archivo JavaScript personalizado para la lógica del dashboard -->
-    <script src="../shared/auditoria.js?v=20260927-auth1"></script>
+    <script src="../shared/auditoria.js?v=20261114-confirmar-cierre-v5"></script>
     <script src="../shared/actualizacion-tiempo-real.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../shared/navegacion.js?v=20261003-local-chat"></script>
-    <script src="../shared/api.js"></script>
-    <script src="usuarios.js"></script>
+    <script src="../shared/navegacion.js?v=20261114-sesion-pestana"></script>
+    <script src="../shared/api.js?v=20261114-sesion-pestana"></script>
+    <script src="usuarios.js?v=20261110-paginacion"></script>
+    <script src="../shared/bitacora-vista.js?v=20261110-paginacion"></script>
 </body>
 
 </html>
